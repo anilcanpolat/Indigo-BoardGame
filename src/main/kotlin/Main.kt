@@ -1,6 +1,6 @@
-import view.SopraApplication
+import view.IndigoApplication
 
 fun main() {
-    SopraApplication().show()
+    IndigoApplication().show()
     println("Application ended. Goodbye")
 }

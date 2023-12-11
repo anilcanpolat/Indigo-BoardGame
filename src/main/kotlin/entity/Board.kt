@@ -6,5 +6,5 @@ package entity
  */
 data class Board(
     val gates: Array<Pair<PlayerToken, PlayerToken>>,
-    val grid: TileGrid,
+    val grid: TileGrid
 )
