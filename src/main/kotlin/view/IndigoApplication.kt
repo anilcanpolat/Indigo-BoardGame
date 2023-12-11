@@ -14,14 +14,14 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     private val chosePlayerCountScene = ChosePlayerCountScene()
 
-    private val selectNameAndLoadScene = SelectNameAndKiScene()
+    private val selectNameAndKiScene = SelectNameAndKiScene()
 
     private val saveAndLoadScene = SaveAndLoadScene()
 
     private val endGameScene = EndgameScene()
 
     init {
-        this.showMenuScene(saveAndLoadScene)
+        this.showMenuScene(selectNameAndKiScene)
     }
 
 }
