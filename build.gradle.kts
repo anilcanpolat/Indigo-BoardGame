@@ -13,6 +13,16 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://sopra-gitlab.cs.tu-dortmund.de/api/v4/projects/1599/packages/maven")
+        credentials(HttpHeaderCredentials::class) {
+            name = "Private-Token"
+            value = "glpat-2e8xQHhP1LxmdUSsNoxK"
+        }
+        authentication {
+            create<HttpHeaderAuthentication>("header")
+        }
+    }
 }
 
 application {
@@ -21,9 +31,10 @@ application {
 
 dependencies {
     testImplementation(kotlin("test-junit5"))
-    implementation(group = "tools.aqua", name = "bgw-gui", version = "0.8.1")
-    implementation(group = "tools.aqua", name = "bgw-net-common", version = "0.8.1")
-    implementation(group = "tools.aqua", name = "bgw-net-client", version = "0.8.1")
+    implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9")
+    implementation(group = "tools.aqua", name = "bgw-net-common", version = "0.9")
+    implementation(group = "tools.aqua", name = "bgw-net-client", version = "0.9")
+    implementation(group = "edu.udo.cs.sopra", name = "ntf", version = "1.0")
 }
 
 tasks.distZip {
