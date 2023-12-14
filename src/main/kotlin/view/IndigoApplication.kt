@@ -25,7 +25,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val endGameScene = EndgameScene()
 
     init {
-        this.showMenuScene(chosePlayerCountScene)
+        this.showMenuScene(endGameScene)
     }
 
 }

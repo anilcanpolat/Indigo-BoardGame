@@ -7,7 +7,6 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
 
-import view.IndigoApplication
 
 /**
  * creates a selection menu for the different numbers of players
