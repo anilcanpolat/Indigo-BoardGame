@@ -3,6 +3,10 @@ package view
 import tools.aqua.bgw.core.BoardGameApplication
 import view.ui.*
 
+/**
+ * Create scenes and give some buttons there functionality.
+ * initialize the scenes afterwards
+ */
 class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val gameScene = GameScene()
 

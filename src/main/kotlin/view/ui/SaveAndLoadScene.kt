@@ -5,6 +5,16 @@ import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.visual.ColorVisual
 
+/**
+ * @property returnFromSaveButton creates button to return to previous menu
+ * @property labelOne - labelFour just carries a digit for the respective save state
+ * @property saveButtonOne if the save Button does hold a save state it suppose to
+ * say "EMPTY", then onclick it should be able to create a save state.
+ * When the Button was already used to hold a save state, it says "Game from: "
+ * and on Click it loads the respective save state
+ * @property deleteButtonOne deletes the gameState,
+ * that is saved in the respective button
+ */
 class SaveAndLoadScene : MenuScene(1920, 1080) {
 
     private val returnFromSaveButton = Button(

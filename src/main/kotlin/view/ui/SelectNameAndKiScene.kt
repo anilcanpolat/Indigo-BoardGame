@@ -7,6 +7,11 @@ import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.visual.ColorVisual
 
+/**
+ * scene that allows the player to input there name and other utilities
+ * required for the game to start. only shows properties that are required for
+ * the amount of players selected. also gives us control over KI.
+ */
 class SelectNameAndKiScene : MenuScene(1920, 1080) {
 
     private val returnFromNameButton = Button(
