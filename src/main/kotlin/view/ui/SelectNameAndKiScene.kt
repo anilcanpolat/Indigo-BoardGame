@@ -7,7 +7,7 @@ import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.visual.ColorVisual
 
-class SelectNameAndKiScene : MenuScene(1440, 810) {
+class SelectNameAndKiScene : MenuScene(1920, 1080) {
 
     private val returnFromNameButton = Button(
         posX = 10, posY = 10,

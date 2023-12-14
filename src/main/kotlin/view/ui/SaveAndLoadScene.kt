@@ -5,7 +5,7 @@ import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.visual.ColorVisual
 
-class SaveAndLoadScene : MenuScene(1440, 810) {
+class SaveAndLoadScene : MenuScene(1920, 1080) {
 
     private val returnFromSaveButton = Button(
         posX = 10, posY = 10,

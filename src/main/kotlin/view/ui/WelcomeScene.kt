@@ -7,7 +7,7 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
-class WelcomeScene : MenuScene(1440, 810) {
+class WelcomeScene : MenuScene(1920, 1080) {
 
     private val headLineLabel = Label(width = 750, height = 100,posX = 575, posY = 100,
         text="Indigo-Game!", font = Font(size = 100)
