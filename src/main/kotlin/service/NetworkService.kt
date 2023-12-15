@@ -11,7 +11,7 @@ import tools.aqua.bgw.net.common.response.JoinGameResponse
  * Type wrapping network interactions with remote players.
  * @param rootService reference to the root service used for state access and game initialization
  */
-class NetworkService(private val rootService: RootService): MessageHandler {
+class NetworkService(val rootService: RootService): MessageHandler {
     private var state = ConnectionState.DISCONNECTED
     private var client = IndigoClient(this, "dummy")
     private var gameMode = GameMode.TWO_PLAYERS
