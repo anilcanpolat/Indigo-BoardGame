@@ -8,7 +8,7 @@ import kotlin.math.absoluteValue
  * @param rootService reference to the root service used for state access and game initialization
  */
 class NetworkService(val rootService: RootService) {
-    private var indigoClient: IndigoClient? = null
+    var indigoClient: IndigoClient? = null
 
     /**
      * Create a new game as the host. Once enough players have joined, the [[RootService.startGame]]
@@ -18,7 +18,14 @@ class NetworkService(val rootService: RootService) {
      * @param gameMode The gamemode played in the session. This will decide how many players can join before starting.
      */
     fun createGame(sessionID: String, name: String, gameMode: entity.GameMode) {
-        error("not implemented")
+        val handler = HostMessageHandler(this, name, gameMode)
+        val client = IndigoClient(handler, name)
+
+        if (client.connect()) {
+            client.createGame("Indigo", sessionID, "Hello World :)")
+        } else {
+            throw NetworkServiceException(NetworkServiceException.Type.CannotConnectToServer)
+        }
     }
 
     /**
@@ -33,7 +40,8 @@ class NetworkService(val rootService: RootService) {
         val client = IndigoClient(handler, name)
 
         if (client.connect()) {
-            client.joinGame(sessionID, "Hello, World!")
+            // TODO: Discuss with ntf group how to set name when joining the game
+            client.joinGame(sessionID, name)
         } else {
             throw NetworkServiceException(NetworkServiceException.Type.CannotConnectToServer)
         }
