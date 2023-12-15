@@ -8,6 +8,6 @@ data class Player(
     val age: Int,
     val playerType: PlayerType,
     val playerToken: PlayerToken,
-    val currentTile: Tile? = null,
+    var currentTile: Tile? = null,
     val collectedGems: MutableList<Gem> = mutableListOf()
 )
