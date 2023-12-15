@@ -3,7 +3,7 @@ package service
 import edu.udo.cs.sopra.ntf.*
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 
-class GuestMessageHandler(val networkService: NetworkService): MessageHandler, AbstractRefreshingService() {
+class GuestMessageHandler(val networkService: NetworkService, private val name: String): MessageHandler, AbstractRefreshingService() {
     override fun onJoinGame(resp: JoinGameResponse) {
         println("Successfully joined game")
     }
@@ -11,10 +11,9 @@ class GuestMessageHandler(val networkService: NetworkService): MessageHandler, A
     override fun onInitMessage(initMessage: GameInitMessage) {
         val tiles = initMessage.tileList.map { entity.Tile(translateTileType(it)) }.toMutableList()
 
-        // TODO: identify which player we are
         val players = initMessage.players.map {
             val firstTile = tiles.removeFirst()
-            val player = translatePlayer(it)
+            val player = translatePlayer(it, name == it.name) // TODO: check with ntf whether names are unique
 
             player.currentTile = firstTile
             player
@@ -23,10 +22,28 @@ class GuestMessageHandler(val networkService: NetworkService): MessageHandler, A
         val gates = gatesFromMode(players, initMessage.gameMode).toTypedArray()
         val state = entity.GameState(players[0], entity.Board(gates, entity.TileGrid(HashMap())), players, tiles)
 
-        // TODO: rootService has to enable mutating the gameState directly
-        // networkService.rootService.gameState = state
+        setGameState(state)
 
         onAllRefreshables { onGameStart(players, gates.toList()) }
+    }
+
+    override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage) {
+        val tile = getGameState().currentPlayer.currentTile!!
+        getGameState().currentPlayer.currentTile = null
+
+        val rotation = tilePlacedMessage.rotation
+        val position = Pair(tilePlacedMessage.qCoordinate, tilePlacedMessage.rCoordinate)
+
+        // TODO: the service layer is not implemented to the necessary level yet
+        // networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
+    }
+
+    // TODO: the service layer is not implemented to the necessary level yet
+    private fun getGameState(): entity.GameState = error("not implemented")
+
+    // TODO: the service layer is not implemented to the necessary level yet
+    private fun setGameState(state: entity.GameState) {
+        error("not implemented")
     }
 
     private fun gatesFromMode(players: List<entity.Player>, mode: GameMode): List<Pair<entity.PlayerToken, entity.PlayerToken>> =
