@@ -27,14 +27,18 @@ interface MessageHandler {
 
     /**
      * Method called when the game is started by the current host.
-     * This method contains all the state required to fully initialize [[entity.GameState]]
+     * This method contains all the state required to fully initialize [[entity.GameState]].
+     * @param initMessage Data send from another member of the session.
+     * @param sender Name of the sender.
      */
-    fun onInitMessage(initMessage: GameInitMessage) {}
+    fun onInitMessage(initMessage: GameInitMessage, sender: String) {}
 
     /**
      * Method called when a tile was placed by the current player.
      * The passed state is minimal, but the player executing the
      * action and the placed tile can be derived from it.
+     * @param tilePlacedMessage Data send from another member of the session.
+     * @param sender Name of the sender.
      */
-    fun onTilePlaced(tilePlacedMessage: TilePlacedMessage) {}
+    fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {}
 }

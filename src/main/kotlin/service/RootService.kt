@@ -11,6 +11,7 @@ import entity.*
 class RootService: AbstractRefreshingService() {
     var currentGame: GameState? = null
     var networkService = NetworkService(this)
+    var playerService = PlayerActionService(this)
 
     /**
      * Create a new local game. Creating a network game, either as a host or

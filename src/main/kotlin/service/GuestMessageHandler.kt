@@ -6,7 +6,8 @@ import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
 
 /** class handling bgw-net messages when running as a guest */
-class GuestMessageHandler(private val networkService: NetworkService, private val name: String): MessageHandler, AbstractRefreshingService() {
+class GuestMessageHandler(private val networkService: NetworkService,
+                          private val name: String): MessageHandler, AbstractRefreshingService() {
     override fun onJoinGame(resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
@@ -15,12 +16,12 @@ class GuestMessageHandler(private val networkService: NetworkService, private va
         println("Successfully joined game")
     }
 
-    override fun onInitMessage(initMessage: GameInitMessage) {
+    override fun onInitMessage(initMessage: GameInitMessage, sender: String) {
         val tiles = initMessage.tileList.map { entity.Tile(translateTileType(it)) }.toMutableList()
 
         val players = initMessage.players.map {
             val firstTile = tiles.removeFirst()
-            val player = translatePlayer(it, name == it.name) // TODO: check with ntf whether names are unique
+            val player = translatePlayer(it, name == it.name)
 
             player.currentTile = firstTile
             player
@@ -34,15 +35,11 @@ class GuestMessageHandler(private val networkService: NetworkService, private va
         onAllRefreshables { onGameStart(players, gates.toList()) }
     }
 
-    override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage) {
-        val tile = getGameState().currentPlayer.currentTile!!
-        getGameState().currentPlayer.currentTile = null
-
+    override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
         val rotation = tilePlacedMessage.rotation
         val position = Pair(tilePlacedMessage.qCoordinate, tilePlacedMessage.rCoordinate)
 
-        // TODO: the service layer is not implemented to the necessary level yet
-        // networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
+        networkService.rootService.playerService.playerMove(getGameState().currentPlayer, rotation, position)
     }
 
     private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)
@@ -51,7 +48,10 @@ class GuestMessageHandler(private val networkService: NetworkService, private va
         networkService.rootService.currentGame = state
     }
 
-    private fun gatesFromMode(players: List<entity.Player>, mode: GameMode): List<Pair<entity.PlayerToken, entity.PlayerToken>> =
+    private fun gatesFromMode(
+        players: List<entity.Player>,
+        mode: GameMode
+    ): List<Pair<entity.PlayerToken, entity.PlayerToken>> =
         when (mode) {
             GameMode.TWO_NOT_SHARED_GATEWAYS -> {
                 val fst = players[0].playerToken

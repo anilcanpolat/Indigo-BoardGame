@@ -44,27 +44,21 @@ class NetworkService(val rootService: RootService) {
         val client = checkNotNull(indigoClient)
 
         if (client.connect()) {
-            // TODO: Discuss with ntf group how to set name when joining the game
-            client.joinGame(sessionID, name)
+            client.joinGame(sessionID, "Hello World")
         } else {
             throw NetworkServiceException(NetworkServiceException.Type.CannotConnectToServer)
         }
     }
 
     /**
-     * Send a message to all players notifying them that a tile has been placed.
-     *
-     * The current ntf protocol does not require passing a [entity.Tile] object,
-     * since it assumes that the player is placing the tile stored in [entity.Player.currentTile].
-     * The parameter is left for compatibility with future changes.
-     *
-     * @param tile the placed tile
+     * Send a message to all players notifying them that the current player
+     * placed their tile at the given position with the given rotation.
      * @param rotation rotation of the tile
      * @param position position of the tile
      * @throws IllegalStateException when the network client has not been initialised by [createGame] or [joinGame] yet
      * @throws IllegalArgumentException when the value for [position] or [rotation] is invalid
      */
-    fun sendTilePlaced(tile: entity.Tile, rotation: Int, position: Pair<Int, Int>) {
+    fun sendTilePlaced(rotation: Int, position: Pair<Int, Int>) {
         require(isPositionValid(position)) { "not a valid position for a tile to be placed on" }
         require(rotation in 0..5) { "not a valid value for rotation" }
 

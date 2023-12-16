@@ -32,12 +32,14 @@ class IndigoClient(
     }
 
     @GameActionReceiver
+    @SuppressWarnings("unused")
     private fun onGameInitMessage(msg: GameInitMessage, sender: String) {
-        eventHandler.onInitMessage(msg)
+        eventHandler.onInitMessage(msg, sender)
     }
 
     @GameActionReceiver
+    @SuppressWarnings("unused")
     private fun onTilePlacedMessage(msg: TilePlacedMessage, sender: String) {
-        eventHandler.onTilePlaced(msg)
+        eventHandler.onTilePlaced(msg, sender)
     }
 }
