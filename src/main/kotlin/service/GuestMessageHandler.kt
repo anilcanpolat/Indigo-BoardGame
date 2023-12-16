@@ -1,6 +1,7 @@
 package service
 
 import edu.udo.cs.sopra.ntf.*
+import entity.Tile
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
@@ -27,8 +28,18 @@ class GuestMessageHandler(private val networkService: NetworkService,
             player
         }
 
+        val treasureTiles = hashMapOf(
+            Pair(Pair(0, 0), Tile(entity.TileType.TREASURE_CENTER)),
+            Pair(Pair(-4, 4), Tile(entity.TileType.TREASURE_CORNER)),
+            Pair(Pair(0, 4), Tile(entity.TileType.TREASURE_CORNER)),
+            Pair(Pair(-4, 0), Tile(entity.TileType.TREASURE_CORNER)),
+            Pair(Pair(4, -4), Tile(entity.TileType.TREASURE_CORNER)),
+            Pair(Pair(4, 0), Tile(entity.TileType.TREASURE_CORNER)),
+            Pair(Pair(0, -4), Tile(entity.TileType.TREASURE_CORNER))
+        )
+
         val gates = gatesFromMode(players, initMessage.gameMode).toTypedArray()
-        val state = entity.GameState(players[0], entity.Board(gates, entity.TileGrid(HashMap())), players, tiles)
+        val state = entity.GameState(players[0], entity.Board(gates, entity.TileGrid(treasureTiles)), players, tiles)
 
         setGameState(state)
 
