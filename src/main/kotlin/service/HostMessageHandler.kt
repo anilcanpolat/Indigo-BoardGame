@@ -15,11 +15,11 @@ class HostMessageHandler(private val networkService: NetworkService, private val
     }
 
     override fun onPlayerJoined(player: PlayerJoinedNotification) {
-        playerList.add(entity.PlayerConfig(player.message, 0, entity.PlayerType.REMOTE))
+        playerList.add(entity.PlayerConfig(player.sender, 0, entity.PlayerType.REMOTE))
 
         if (playerList.size == playerCountInMode(mode)) {
-            // TODO: the current startNewGame method in RootService is incorrect
-            // networkService.rootService.startNewGame(playerList, mode)
+            networkService.rootService.startGame(playerList, mode)
+
             val msg = convertGameState()
             networkService.indigoClient!!.sendGameActionMessage(msg)
         }
@@ -36,8 +36,7 @@ class HostMessageHandler(private val networkService: NetworkService, private val
         // networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
     }
 
-    // TODO: the service layer is not implemented to the necessary level yet
-    private fun getGameState(): entity.GameState = error("not implemented")
+    private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)
 
     private fun convertGameState(): GameInitMessage {
         val state = getGameState()

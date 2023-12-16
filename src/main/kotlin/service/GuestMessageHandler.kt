@@ -43,12 +43,10 @@ class GuestMessageHandler(val networkService: NetworkService, private val name: 
         // networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
     }
 
-    // TODO: the service layer is not implemented to the necessary level yet
-    private fun getGameState(): entity.GameState = error("not implemented")
+    private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)
 
-    // TODO: the service layer is not implemented to the necessary level yet
     private fun setGameState(state: entity.GameState) {
-        error("not implemented")
+        networkService.rootService.currentGame = state
     }
 
     private fun gatesFromMode(players: List<entity.Player>, mode: GameMode): List<Pair<entity.PlayerToken, entity.PlayerToken>> =

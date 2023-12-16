@@ -19,7 +19,9 @@ class NetworkService(val rootService: RootService) {
      */
     fun createGame(sessionID: String, name: String, gameMode: entity.GameMode) {
         val handler = HostMessageHandler(this, name, gameMode)
-        val client = IndigoClient(handler, name)
+        indigoClient = IndigoClient(handler, name)
+
+        val client = checkNotNull(indigoClient)
 
         if (client.connect()) {
             client.createGame("Indigo", sessionID, "Hello World :)")
@@ -37,7 +39,9 @@ class NetworkService(val rootService: RootService) {
      */
     fun joinGame(sessionID: String, name: String) {
         val handler = GuestMessageHandler(this, name)
-        val client = IndigoClient(handler, name)
+        indigoClient = IndigoClient(handler, name)
+
+        val client = checkNotNull(indigoClient)
 
         if (client.connect()) {
             // TODO: Discuss with ntf group how to set name when joining the game
