@@ -10,8 +10,17 @@ import entity.*
  */
 class RootService: AbstractRefreshingService() {
     var currentGame: GameState? = null
+    var networkService = NetworkService(this)
 
-    fun startGame(players: List<PlayerConfig>, gameMode: entity.GameMode) {
+    /**
+     * Create a new local game. Creating a network game, either as a host or
+     * a guest has to be done using the [networkService]. The [networkService]
+     * will call [startGame] indirectly, when the network game is started.
+     * @param players list of players participating in the game
+     * @param gameMode The [GameMode] to play. This must match the size of [players].
+     * @throws IllegalStateException when the size of [players] does not match the value of [gameMode]
+     */
+    fun startGame(players: List<PlayerConfig>, gameMode: GameMode) {
         require(players.size == playerCountForMode(gameMode)) {
             "incorrect GameMode chosen for the number of participating players"
         }
