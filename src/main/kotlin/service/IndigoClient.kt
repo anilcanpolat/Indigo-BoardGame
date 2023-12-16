@@ -32,12 +32,12 @@ class IndigoClient(
     }
 
     @GameActionReceiver
-    private fun onGameInitMessage(msg: GameInitMessage) {
+    private fun onGameInitMessage(msg: GameInitMessage, sender: String) {
         eventHandler.onInitMessage(msg)
     }
 
     @GameActionReceiver
-    private fun onTilePlacedMessage(msg: TilePlacedMessage) {
+    private fun onTilePlacedMessage(msg: TilePlacedMessage, sender: String) {
         eventHandler.onTilePlaced(msg)
     }
 }
