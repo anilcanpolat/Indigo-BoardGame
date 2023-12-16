@@ -8,7 +8,7 @@ import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
 /** class handling bgw-net messages when running as a guest */
 class GuestMessageHandler(private val networkService: NetworkService,
-                          private val name: String): MessageHandler, AbstractRefreshingService() {
+                          private val name: String): MessageHandler {
     override fun onJoinGame(resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
@@ -43,7 +43,7 @@ class GuestMessageHandler(private val networkService: NetworkService,
 
         setGameState(state)
 
-        onAllRefreshables { onGameStart(players, gates.toList()) }
+        networkService.onAllRefreshables { onGameStart(players, gates.toList()) }
     }
 
     override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
