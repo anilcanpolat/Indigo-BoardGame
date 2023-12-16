@@ -5,6 +5,7 @@ import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.CreateGameResponse
 import tools.aqua.bgw.net.common.response.CreateGameResponseStatus
 
+/** class handling bgw-net messages when running as the host */
 class HostMessageHandler(private val networkService: NetworkService, private val name: String, private val mode: entity.GameMode): MessageHandler, AbstractRefreshingService() {
     private val playerList = mutableListOf(entity.PlayerConfig(name, 0, entity.PlayerType.PERSON))
 

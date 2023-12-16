@@ -4,7 +4,9 @@ import edu.udo.cs.sopra.ntf.*
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
-class GuestMessageHandler(val networkService: NetworkService, private val name: String): MessageHandler, AbstractRefreshingService() {
+
+/** class handling bgw-net messages when running as a guest */
+class GuestMessageHandler(private val networkService: NetworkService, private val name: String): MessageHandler, AbstractRefreshingService() {
     override fun onJoinGame(resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
