@@ -68,6 +68,7 @@ class GameScene : BoardGameScene(1920, 1080) {
 
 
     init {
+        //There should not be a coordinate like [4,1], [-4,-1] or [-4,-4] and others
         for (row in -4..4) {
             for (col in -4..4) {
                 if ((row + col).absoluteValue >= 5) {
