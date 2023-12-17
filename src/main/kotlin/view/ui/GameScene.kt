@@ -31,7 +31,7 @@ class GameScene : BoardGameScene(1920, 1080) {
         posX = 1800, posY = 50,
     ).apply {
         visual = CompoundVisual(
-            ColorVisual(221, 136, 136),
+            ColorVisual(204, 20, 0),
             ImageVisual(path = "exit.png"))
     }
 
