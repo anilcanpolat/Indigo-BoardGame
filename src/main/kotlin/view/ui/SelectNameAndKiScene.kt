@@ -5,6 +5,7 @@ import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
 /**
@@ -128,6 +129,12 @@ class SelectNameAndKiScene : MenuScene(1920, 1080) {
     )
 
 
+    private val startGameButton = Button(
+        posX = 300, posY = 640,
+        width = 200, height = 100,
+        text = "Start!", font = Font(50)
+    )
+
     init {
         addComponents(
             returnFromNameButton,
@@ -137,7 +144,8 @@ class SelectNameAndKiScene : MenuScene(1920, 1080) {
             playerSequenzAButton, playerSequenzBButton,
             playerSequenzCButton, playerSequenzDButton,
             labelKiSpeedPartA, labelKiSpeedPartB, kiSpeedTextField,
-            playerSequenceLabel, randomCheckbox
+            playerSequenceLabel, randomCheckbox,
+            startGameButton
         )
     }
 }

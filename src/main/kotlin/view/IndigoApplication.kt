@@ -29,7 +29,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val endGameScene = EndgameScene()
 
     init {
-        this.showMenuScene(endGameScene)
+        this.showMenuScene(selectNameAndKiScene)
     }
 
 }
