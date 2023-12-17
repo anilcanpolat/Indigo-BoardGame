@@ -5,6 +5,7 @@ package entity
  * its rotation and the gems on top of it
  */
 data class Tile(
+    val tileType: TileType,
     var rotation: Int = 0,
     val paths: Array<Int?> = Array(6){null},
     val gems: Array<Int?> = Array(6){null}
@@ -15,7 +16,7 @@ data class Tile(
      * value specified by the given [TileType]
      * @param tileType type of the tile
      */
-    constructor(tileType: TileType) : this() {
+    constructor(tileType: TileType) : this(tileType, 0) {
         val p = pathsForTileType(tileType)
 
         for (i in 0..5) {
