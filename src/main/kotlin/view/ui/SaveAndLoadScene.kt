@@ -21,7 +21,7 @@ class SaveAndLoadScene : MenuScene(1920, 1080) {
         posX = 10, posY = 10,
         width = 80, height = 30,
         text = "return"
-    )
+    ).apply { }
 
 
     private val labelOne = Label(
