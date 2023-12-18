@@ -33,7 +33,11 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
     }
 
-    private val selectNameAndKiScene : MenuScene = SelectNameAndKiScene()
+    private val selectNameAndKiScene : MenuScene = SelectNameAndKiScene().apply {
+        returnFromNameButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(chosePlayerCountScene)
+        }
+    }
 
     private val saveAndLoadScene : MenuScene = SaveAndLoadScene().apply {
         returnFromSaveButton.onMouseClicked = {
@@ -44,7 +48,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val endGameScene : MenuScene = EndgameScene()
 
     init {
-        this.showMenuScene(welcomeScene)
+        this.showMenuScene(saveAndLoadScene)
     }
 
 }
