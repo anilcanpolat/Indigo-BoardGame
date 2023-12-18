@@ -47,10 +47,15 @@ class GuestMessageHandler(private val networkService: NetworkService,
     }
 
     override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
+        val currentPlayer = getGameState().currentPlayer
         val rotation = tilePlacedMessage.rotation
         val position = Pair(tilePlacedMessage.qCoordinate, tilePlacedMessage.rCoordinate)
 
-        networkService.rootService.playerService.playerMove(getGameState().currentPlayer, rotation, position)
+        val tile = checkNotNull(currentPlayer.currentTile) {
+            "current player does not hold a tile"
+        }
+
+        networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
     }
 
     private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)

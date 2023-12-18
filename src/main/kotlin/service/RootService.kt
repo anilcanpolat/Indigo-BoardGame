@@ -63,15 +63,6 @@ class RootService: AbstractRefreshingService() {
         onAllRefreshables { onGameStart(playerList, gates.toList()) }
     }
 
-     /**
-      * Startet ein neues Spiel mit den angegebenen Spielern.
-      *
-      * @param playerList Die Liste der Spieler, die am Spiel teilnehmen.
-      */
-    fun startNewGame(playerList: List<Player>,gameMode:GameMode) {
-
-    }
-
     /**
      * Get the gate configuration for the given game mode.
      * @param players list of players to get their tokens from

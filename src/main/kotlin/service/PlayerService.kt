@@ -13,7 +13,7 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
      * @param position position where the tile will be placed
      */
 
-    fun playerMove(player: Player, rotation: Int, position: Pair<Int, Int>){
+    fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>){
         /*val game = rootService.currentGame
         checkNotNull(game)
         /**if there is already a tile in this position
