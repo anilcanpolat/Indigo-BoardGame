@@ -1,32 +1,47 @@
 package view
 
 import tools.aqua.bgw.core.BoardGameApplication
+import tools.aqua.bgw.core.MenuScene
 import view.ui.*
+import java.awt.Menu
 
 /**
  * Create scenes and give some buttons there functionality.
  * initialize the scenes afterwards
  */
 class IndigoApplication : BoardGameApplication("Indigo-Game") {
-    private val gameScene = GameScene()
 
-    private val welcomeScene = WelcomeScene().apply {
+    private val gameScene : GameScene = GameScene()
+
+    private val welcomeScene : MenuScene = WelcomeScene().apply {
+        loadGameButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(saveAndLoadScene)
+        }
+
+        hotSeatModeButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(chosePlayerCountScene)
+        }
+
         quitButton.onMouseClicked = {
             exit()
         }
     }
 
-    private val chosePlayerCountScene = ChosePlayerCountScene().apply {
-   //     backButton.onMouseClicked = {
-   //         this@IndigoApplication.showMenuScene(SelectNameAndKiScene)
-   //     }
+    private val chosePlayerCountScene : MenuScene = ChosePlayerCountScene().apply {
+       backButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(welcomeScene)
+       }
     }
 
-    private val selectNameAndKiScene = SelectNameAndKiScene()
+    private val selectNameAndKiScene : MenuScene = SelectNameAndKiScene()
 
-    private val saveAndLoadScene = SaveAndLoadScene()
+    private val saveAndLoadScene : MenuScene = SaveAndLoadScene().apply {
+        returnFromSaveButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+    }
 
-    private val endGameScene = EndgameScene()
+    private val endGameScene : MenuScene = EndgameScene()
 
     init {
         this.showMenuScene(welcomeScene)

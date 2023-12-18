@@ -17,7 +17,7 @@ import tools.aqua.bgw.visual.ColorVisual
  */
 class SaveAndLoadScene : MenuScene(1920, 1080) {
 
-    private val returnFromSaveButton = Button(
+    val returnFromSaveButton = Button(
         posX = 10, posY = 10,
         width = 80, height = 30,
         text = "return"
