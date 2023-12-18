@@ -48,7 +48,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val endGameScene : MenuScene = EndgameScene()
 
     init {
-        this.showMenuScene(saveAndLoadScene)
+        this.showMenuScene(welcomeScene)
     }
 
 }
