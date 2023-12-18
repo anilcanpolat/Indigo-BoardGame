@@ -7,7 +7,7 @@ data class GameState(
     val currentPlayer: Player,
     val board: Board,
     val players: List<Player>,
-    val drawPile: List<Tile>,
-    val previousState: GameState? = null,
-    val nextState: GameState? = null
+    val drawPile: MutableList<Tile>,
+    var previousState: GameState? = null,
+    var nextState: GameState? = null
 )
