@@ -131,10 +131,9 @@
          * Regress the [GameState] assuming that previous [GameState] exists
          */
         fun undo() {
-            //checkNotNull(currentGame)
+           checkNotNull(currentGame)
             if (currentGame?.currentPlayer?.playerType != PlayerType.REMOTE) {
                 if (currentGame?.previousState != null) {
-                    currentGame?.nextState = currentGame
                     currentGame = currentGame?.previousState
                 }
             }
@@ -145,10 +144,9 @@
          */
 
         fun redo() {
-            // checkNotNull(currentGame)
+             checkNotNull(currentGame)
             if (currentGame?.currentPlayer?.playerType != PlayerType.REMOTE) {
                 if (currentGame?.nextState != null) {
-                    currentGame?.previousState = currentGame
                     currentGame = currentGame?.nextState
                 }
             }
