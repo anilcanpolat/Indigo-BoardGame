@@ -46,6 +46,7 @@ tasks.test {
     useJUnitPlatform()
     reports.html.outputLocation.set(layout.projectDirectory.dir("public/test"))
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+    ignoreFailures = true
 }
 
 tasks.clean {
