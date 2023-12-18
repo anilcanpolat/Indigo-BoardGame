@@ -7,7 +7,7 @@ import entity.*
  * to all other service classes and holds the [currentGame] state for these
  * services to access.
  */
-class RootService: AbstractRefreshingService() {
+class RootService : AbstractRefreshingService() {
     var currentGame: GameState? = null
     var networkService = NetworkService(this)
     var playerService = PlayerActionService(this)
@@ -119,4 +119,29 @@ class RootService: AbstractRefreshingService() {
             GameMode.THREE_PLAYERS_SHARED_GATES -> 3
             GameMode.FOUR_PLAYERS -> 4
         }
+
+    fun undo() {
+        checkNotNull(currentGame)
+        if (currentGame?.currentPlayer?.playerType != PlayerType.REMOTE) {
+            if (currentGame?.previousState != null) {
+                currentGame?.nextState = currentGame
+                currentGame = currentGame?.previousState
+            }
+        }
+    }
+
+    fun redo() {
+        checkNotNull(currentGame)
+        if (currentGame?.currentPlayer?.playerType != PlayerType.REMOTE) {
+            if (currentGame?.nextState != null) {
+                currentGame?.previousState = currentGame
+                currentGame = currentGame?.nextState
+            }
+        }
+    }
+    fun save(path: String) {
+
+    }
+    fun load(path: String) {}
+
 }
