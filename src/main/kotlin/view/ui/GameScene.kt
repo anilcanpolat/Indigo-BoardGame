@@ -58,7 +58,7 @@ class GameScene : BoardGameScene(1920, 1080) {
 
 
     private val hexagonGrid = HexagonGrid<HexagonView>(
-         coordinateSystem = HexagonGrid.CoordinateSystem.AXIAL, posX = 900, posY = 500
+         coordinateSystem = HexagonGrid.CoordinateSystem.AXIAL, posX = 900, posY = 450
     ).apply { rotate(30) }
 
     private val playersTile = HexagonView(
@@ -75,7 +75,7 @@ class GameScene : BoardGameScene(1920, 1080) {
                     continue
                 }
 
-                val hexagon = HexagonView(visual = ColorVisual(250,240,202 ), size = 50)
+                val hexagon = HexagonView(visual = ColorVisual(250,240,202 ), size = 65)
                 hexagonGrid[col, row] = hexagon
             }
         }
@@ -85,13 +85,13 @@ class GameScene : BoardGameScene(1920, 1080) {
     }
 
     private fun placeTiles(){
-        hexagonGrid[0,-4]!!.apply { visual = ColorVisual.BLUE }
-        hexagonGrid[0,4]!!.apply { visual = ColorVisual.BLUE }
-        hexagonGrid[-4,4]!!.apply { visual = ColorVisual.BLUE }
-        hexagonGrid[-4,0]!!.apply { visual = ColorVisual.BLUE }
-        hexagonGrid[4,0]!!.apply { visual = ColorVisual.BLUE }
-        hexagonGrid[4,-4]!!.apply { visual = ColorVisual.BLUE }
-        hexagonGrid[0,0]!!.apply { visual = ColorVisual.GREEN }
+        hexagonGrid[0,-4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[0,4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[-4,4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[-4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[4,-4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
 
     }
 }
