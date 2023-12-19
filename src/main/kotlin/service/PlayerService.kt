@@ -5,7 +5,7 @@ import entity.*
  *
  * @param rootService the [RootService] connects the view with the service layer and the entity layer
  */
-class PlayerActionService( val rootService: RootService) : AbstractRefreshingService() {
+class PlayerService( val rootService: RootService) : AbstractRefreshingService() {
     /**
      * place a tile on indigos board and move/award/eliminate gems if applicable
      * @param player the current player placing the tile
@@ -18,7 +18,7 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
         checkNotNull(game)
         /**if there is already a tile in this position
          * we cancel the placement of this tile in this position
-         * and the player should choose an other position to place the tile
+         * and the player should choose another position to place the tile
          */
         if (game.board.grid.grid.get(position) != null) {
            // cancelTilePlacement()
