@@ -7,7 +7,6 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.ImageVisual
-import view.IndigoApplication
 
 /**
  * Scene that welcomes the player in and gives the option to play online through
@@ -25,26 +24,26 @@ class WelcomeScene : MenuScene(1920, 1080,
         posX = 860, posY = 250,
         width = 200, height = 50,
         text = "Online-Game"
-    ).apply { visual = ColorVisual(254, 238, 212) }
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
     private val hostButton = Button(
         posX = 860, posY = 310,
         width = 200, height = 50,
         text = "Play as Host: "
-    ).apply { visual = ColorVisual(232, 209, 165) }
+    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue()) }
 
     private val guestButton = Button(
         posX = 860, 370,
         200, 50,
         text = "Play as Guest: "
-    ).apply { visual = ColorVisual(232, 209, 165)
+    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
     isDisabled = true}
 
     private val guestIdFiled = TextField(
         posX = 885, 440,
         150, 30,
         prompt = "Enter id: "
-    ).apply { visual = ColorVisual(232, 209, 165)
+    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
     onKeyTyped = {
             guestButton.isDisabled = false
             }
@@ -54,19 +53,19 @@ class WelcomeScene : MenuScene(1920, 1080,
         posX = 860, posY = 550,
         width = 200, height = 50,
         text = "Hotseat - Mode"
-    ).apply { visual = ColorVisual(157, 189, 137) }
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
     val loadGameButton = Button(
         posX = 860, posY = 650,
         width = 200, height = 50,
         text = "load game"
-    ).apply { visual = ColorVisual(157, 189, 137) }
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
     val quitButton = Button(
     posX = 910, posY = 750,
     width = 100, height = 35,
         text = "Quit." //, font = Font(color = Color.WHITE)
-    ).apply { visual = ColorVisual(204, 20, 0)
+    ).apply { visual = ColorVisual(ColorEnum.EngOrange.toRgbValue() )
     }
 
     init {
