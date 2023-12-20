@@ -14,29 +14,38 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
      */
 
     fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>){
-        /*val game = rootService.currentGame
+        val game = rootService.currentGame
         checkNotNull(game)
         /**if there is already a tile in this position
          * we cancel the placement of this tile in this position
          * and the player should choose an other position to place the tile
          */
         if (game.board.grid.grid.get(position) != null) {
-           // cancelTilePlacement()
-            return
+            throw Exception("there is already a tile in this position.Choose an other position to place the tile")
         }
-        val tile = player.currentTile
-        tile.rotate(rotation)
-        game.board.grid.grid.put(position, tile)
-        game.board.grid.grid.put(position, tile)
-        player.currentTile = null
+        rotate(move.first,move.second)
+        game.board.grid.grid.put(position, move.first)
         // for each neighbour of this tile,
         //if there is a gem we move it to the end of the path
+        //moveGemToEnd(game.currentPlayer.currentTile)
+        game.currentPlayer.currentTile = null
         if (game.drawPile.isEmpty()) {
             endGame()
         } else {
-            player.currentTile = game.drawPile.removeLast()
-        }*/
+            game.currentPlayer.currentTile = game.drawPile.removeLast()
+        }
     }
+    private fun rotate(tile:Tile,int:Int){
+
+    }
+    private fun endGame(){
+            val game = rootService.currentGame
+            checkNotNull(game) { "Noch kein Spiel gestartet." }
+            onAllRefreshables { onGameFinished(game.players) }
+        }
+
+
+
     /**
      * Move a gem to the end of the path starting at fromTile at the
      * edge specified by fromEdge.
