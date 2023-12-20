@@ -18,7 +18,7 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
         checkNotNull(game)
         /**if there is already a tile in this position
          * we cancel the placement of this tile in this position
-         * and the player should choose an other position to place the tile
+         * and the player should choose another position to place the tile
          */
         if (game.board.grid.grid.get(position) != null) {
             throw Exception("there is already a tile in this position.Choose an other position to place the tile")
@@ -36,8 +36,10 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
         }
     }
     private fun rotate(tile:Tile,int:Int){
-
+        //Increment the rotation of the tile by the specified number of steps(int)
+        tile.rotation = (tile.rotation + int) % 6
     }
+
     private fun endGame(){
             val game = rootService.currentGame
             checkNotNull(game) { "Noch kein Spiel gestartet." }
@@ -53,6 +55,41 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
      * @param fromEdge number of the edge the gem currently lays on
      * @param gem the gem to move
      */
-    fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem) {}
 
+    /**
+    fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem) {
+        //check bordering gates, give points to the owners of the gates
+        val gates = getBorderingGates(fromTile, fromEdge)
+        if(gates != null){
+            getPlayers().forEach { player ->
+                if (player.playerToken == gates.first || player.playerToken == gates.second) {
+                    player.collectedGems.add(gem)
+                }
+            }
+            //remove the gem
+            fromTile.gems[fromEdge] = null
+            return
+        }
+
+        val neighbours = getNeighboursOf(fromTile)
+
+        //no neighbour means the gem is already at the end of the path
+        if(neighbours[fromEdge] == null) {
+            return
+        }
+
+        //Gem on the same route,colliding.Remove gems.
+        if(neighbours[fromEdge]?.gems[(fromEdge + 3) % 6] != null) {
+            fromTile.gems[fromEdge] = null
+            neighbours[fromEdge]?.gems[(fromEdge + 3) % 6] = null
+            return
+        }
+
+        val newEdge = neighbours[fromEdge]?.paths[(fromEdge + 3) % 6] ?: throw IllegalStateException("Path leads to a tile with no connecting path")
+
+        // Move gem one step. Repeat the gem moving through recursion
+        neighbours[fromEdge]?.gems[newEdge] = gem
+        moveGemToEnd(neighbours[fromEdge]!!, newEdge, gem)
+    }
+    */
 }
