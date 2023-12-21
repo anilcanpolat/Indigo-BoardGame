@@ -45,7 +45,17 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
         }
     }
 
-    private val endGameScene : MenuScene = EndgameScene()
+    private val endGameScene : MenuScene = EndgameScene().apply {
+        quitButton.onMouseClicked = {
+            exit()
+        }
+
+        startGameButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+
+
+    }
 
     init {
         this.showMenuScene(welcomeScene)
