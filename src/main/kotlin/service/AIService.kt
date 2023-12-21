@@ -60,40 +60,23 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
     fun calculateNextMove(): Pair<Tile, Int> {
         val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
 
+        val currentTile = game.drawPile.first()
+
         //calculate all possible moves
-        val possibleMoves = calculatePossibleMoves(game)
+        val possibleMoves = mutableListOf<Pair<Pair<Int,Int>, Int>>()
+        game.board.grid.grid.forEach {position, _ ->
+            if(!game.board.grid.grid.containsKey(position)) {
+                for (rotation in 0 until 6) {
+                    possibleMoves.add(position to rotation)
+                }
+            }
+        }
 
         //select a random move
-        val selectedMove = selectRandomMove(possibleMoves)
+        val selectedMove = possibleMoves.random()
 
-        return selectedMove
-    }
+        return Pair(currentTile, selectedMove.second)
 
-    /**
-     * Calculates all possible moves for the AI player based on the current game state.
-     * This method considers the current board configuration and available tiles,
-     * generating a list of valid tile and rotation combinations.
-     *
-     * @param game The current GameState object.
-     * @return A list of Pair<Tile, Int>, each representing a potential move.
-     */
-    private fun calculatePossibleMoves(game: GameState): List <Pair<Tile,Int>> {
-
-        // get current game state, identify empty positions on the board and available tiles.
-        // create a list of every valid tile and rotation combination
-        return TODO("Implement calculation of possible moves")
-    }
-
-    /**
-     * Selects a random move from a list of possible moves.
-     * This is part of the AI's decision-making process to add unpredictability to its actions.
-     *
-     * @param possibleMoves A list of possible moves (Pair<Tile, Int>) for the AI to choose from.
-     * @return A randomly selected move (Pair<Tile, Int>) from the list.
-     */
-    private fun selectRandomMove(possibleMoves: List<Pair<Tile, Int>>): Pair<Tile,Int>{
-        //Randomly select a move from the list of possible moves.
-        return TODO("Implement selection of a random move")
     }
 
 }
