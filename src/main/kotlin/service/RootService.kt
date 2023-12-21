@@ -1,10 +1,10 @@
     package service
 
     import java.io.File
-
-    import entity.*
-    import kotlinx.serialization.encodeToString
     import kotlinx.serialization.json.Json
+    import entity.*
+    import kotlinx.serialization.decodeFromString
+    import kotlinx.serialization.encodeToString
 
     /**
      * Main class of the service layer for the card game. Provides access
@@ -157,7 +157,7 @@
          */
         fun save(path: String) {
             if (currentGame != null) {
-                val jsonStr = Json.encodetoString(currentGame)
+                val jsonStr = Json.encodeToString(currentGame)
                 File(path).writeText(jsonStr)
             }
         }
