@@ -1,6 +1,5 @@
 package view.ui
 
-import entity.*
 import service.Refreshable
 import tools.aqua.bgw.components.container.HexagonGrid
 import tools.aqua.bgw.components.gamecomponentviews.HexagonView
