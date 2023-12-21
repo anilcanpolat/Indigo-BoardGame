@@ -1,5 +1,7 @@
 package view.ui
 
+import entity.*
+import service.Refreshable
 import tools.aqua.bgw.components.container.HexagonGrid
 import tools.aqua.bgw.components.gamecomponentviews.HexagonView
 import tools.aqua.bgw.components.uicomponents.Button
@@ -13,7 +15,7 @@ import kotlin.math.absoluteValue
  * show the game filed and all of the user UI,
  * take inputs from the User and show results
  */
-class GameScene : BoardGameScene(1920, 1080) {
+class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
     private val saveButton =  Button(
         width = 65, height = 65,
@@ -52,19 +54,23 @@ class GameScene : BoardGameScene(1920, 1080) {
     private val rotateLeftButton = Button(
         width = 130, height = 50,
         posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
-    )
+    ).apply { onMouseClicked={
+        playersTile.rotate(-60)
+    } }
 
     private val rotateRightButton = Button(
         width = 130, height = 50,
         posX = 100, posY = 950, visual = ColorVisual.GRAY, text = "Rotate Right"
-    )
+    ).apply { onMouseClicked={
+        playersTile.rotate(60)
+    } }
 
     private val hexagonGrid = HexagonGrid<HexagonView>(
          coordinateSystem = HexagonGrid.CoordinateSystem.AXIAL, posX = 900, posY = 450
     ).apply { rotate(30) }
 
     private val playersTile = HexagonView(
-        posX = 100, posY = 750, size =65, visual = ColorVisual(250,240,202)
+        posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png")
     )
 
     private val routeStack = HexagonView(
@@ -92,6 +98,8 @@ class GameScene : BoardGameScene(1920, 1080) {
             hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack)
     }
 
+
+
     private fun placeTiles(){
         //up
         hexagonGrid[0,-4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(240) } }
@@ -109,4 +117,5 @@ class GameScene : BoardGameScene(1920, 1080) {
         hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
 
     }
+
 }
