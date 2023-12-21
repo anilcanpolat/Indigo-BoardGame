@@ -17,7 +17,7 @@ class GameScene : BoardGameScene(1920, 1080) {
 
     private val saveButton =  Button(
         width = 65, height = 65,
-        posX = 1700, posY = 50,
+        posX = 150, posY = 50,
 
     ).apply {
         visual = CompoundVisual(
@@ -28,41 +28,48 @@ class GameScene : BoardGameScene(1920, 1080) {
 
     private val quitButton = Button(
         width = 65, height = 65,
-        posX = 1800, posY = 50,
+        posX = 50, posY = 50,
     ).apply {
-        visual = CompoundVisual(
-            ColorVisual(204, 20, 0),
-            ImageVisual(path = "exit.png"))
+        visual = ImageVisual(path = "blackArrow.png")
     }
 
     private val undoButton = Button(
-        width = 75, height = 75,
-        posX = 1800, posY = 500,
+        width = 65, height = 65,
+        posX = 250, posY = 50,
     ).apply {
         visual = CompoundVisual(
             ImageVisual(path = "undo.png"))
     }
 
     private val redoButton = Button(
-        width = 70, height = 70,
-        posX = 1800, posY = 600,
+        width = 65, height = 65,
+        posX = 350, posY = 50,
     ).apply {
         visual = CompoundVisual(
             ImageVisual(path = "redo.png"))
     }
 
-    private val rotateButton = Button(
-        width = 100, height = 50,
-        posX = 1700, posY = 900, visual = ColorVisual.GRAY, text = "Rotate"
+    private val rotateLeftButton = Button(
+        width = 130, height = 50,
+        posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
     )
 
+    private val rotateRightButton = Button(
+        width = 130, height = 50,
+        posX = 100, posY = 950, visual = ColorVisual.GRAY, text = "Rotate Right"
+    )
 
     private val hexagonGrid = HexagonGrid<HexagonView>(
          coordinateSystem = HexagonGrid.CoordinateSystem.AXIAL, posX = 900, posY = 450
     ).apply { rotate(30) }
 
     private val playersTile = HexagonView(
-        posX = 1500, posY = 900, size =50, visual = ColorVisual(250,240,202)
+        posX = 100, posY = 750, size =65, visual = ColorVisual(250,240,202)
+    )
+
+    private val routeStack = HexagonView(
+        posX = 100, posY = 500, size =65, visual = CompoundVisual(
+            ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png"))
     )
 
 
@@ -81,16 +88,24 @@ class GameScene : BoardGameScene(1920, 1080) {
         }
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
-        addComponents(saveButton, quitButton,redoButton,undoButton, hexagonGrid, rotateButton, playersTile)
+        addComponents(saveButton, quitButton,redoButton,undoButton,
+            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack)
     }
 
     private fun placeTiles(){
-        hexagonGrid[0,-4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
-        hexagonGrid[0,4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
-        hexagonGrid[-4,4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
-        hexagonGrid[-4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        //up
+        hexagonGrid[0,-4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(240) } }
+        //down
+        hexagonGrid[0,4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(60) }}
+        //down left
+        hexagonGrid[-4,4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(120) }}
+        //up left
+        hexagonGrid[-4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(180) } }
+        //down right
         hexagonGrid[4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
-        hexagonGrid[4,-4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        //up right
+        hexagonGrid[4,-4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(-60) } }
+        //center
         hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
 
     }
