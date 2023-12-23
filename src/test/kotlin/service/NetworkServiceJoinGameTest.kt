@@ -5,6 +5,8 @@ import entity.GameMode
 import entity.Player
 import entity.PlayerToken
 import kotlin.test.*
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 
 /** test cases for [NetworkService.joinGame] */
 class NetworkServiceJoinGameTest {
@@ -98,5 +100,43 @@ class NetworkServiceJoinGameTest {
 
             semaphore.acquire()
         }
+    }
+
+    /**
+     * Make sure that [NetworkService.joinGame] constructs a valid [entity.GameState]
+     * that is equivalent to the hosts [entity.GameState]
+     */
+    @Test
+    fun gameStateConstruction() {
+        val host = RootService()
+        val guest = RootService()
+        val sessionID = java.util.Random().nextInt().toString()
+        val gameStartSemaphore = Semaphore(0)
+
+        runBlocking {
+            host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        }
+
+        guest.networkService.addRefreshable(object : Refreshable {
+            override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
+                gameStartSemaphore.release()
+            }
+        })
+
+        guest.networkService.joinGame(sessionID, "Bob")
+        gameStartSemaphore.tryAcquire(1, TimeUnit.SECONDS)
+
+        val hostState = checkNotNull(host.currentGame)
+        val guestState = checkNotNull(guest.currentGame)
+
+        check(hostState.drawPile == guestState.drawPile)
+        check(hostState.board.gates.contentEquals(guestState.board.gates))
+        check(hostState.board.grid == guestState.board.grid)
+
+        check(hostState.currentPlayer.let { p ->
+            guestState.currentPlayer.let { q ->
+                p.name == q.name && p.playerToken == q.playerToken && p.currentTile == q.currentTile
+            }
+        })
     }
 }
