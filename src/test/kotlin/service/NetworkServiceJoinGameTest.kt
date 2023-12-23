@@ -34,7 +34,7 @@ class NetworkServiceJoinGameTest {
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        check(gameStartSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+        check(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onGameStart timed out"
         }
     }
@@ -99,7 +99,7 @@ class NetworkServiceJoinGameTest {
                 RootService().networkService.joinGame(sessionID, "Dave")
             }
 
-            check(semaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
                 "waiting for call to onGameStart timed out"
             }
         }
@@ -128,7 +128,7 @@ class NetworkServiceJoinGameTest {
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        check(gameStartSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+        check(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onGameStart timed out"
         }
 

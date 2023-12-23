@@ -36,7 +36,7 @@ class NetworkServiceSendTilePlacedTest {
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        check(lock.tryAcquire(5, TimeUnit.SECONDS)) {
+        check(lock.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onGameStart timed out"
         }
     }

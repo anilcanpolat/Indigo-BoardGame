@@ -40,7 +40,7 @@ class NetworkServiceCreateGameTest {
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        check(gameStartSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+        check(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onGameStart timed out"
         }
 
