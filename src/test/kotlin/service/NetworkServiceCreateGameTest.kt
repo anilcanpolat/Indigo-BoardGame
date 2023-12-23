@@ -34,9 +34,9 @@ class NetworkServiceCreateGameTest {
 
         val sessionID = java.util.Random().nextInt().toString()
 
-        runBlocking {
-            host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
-        }
+        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+
+        Thread.sleep(1000)
 
         guest.networkService.joinGame(sessionID, "Bob")
 

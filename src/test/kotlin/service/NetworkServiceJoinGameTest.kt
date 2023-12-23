@@ -28,9 +28,8 @@ class NetworkServiceJoinGameTest {
             }
         })
 
-        runBlocking {
-            host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
-        }
+        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        Thread.sleep(1000)
 
         guest.networkService.joinGame(sessionID, "Bob")
 
@@ -85,9 +84,8 @@ class NetworkServiceJoinGameTest {
                 }
             })
 
-            runBlocking {
-                host.networkService.createGame(sessionID, "Alice", mode)
-            }
+            host.networkService.createGame(sessionID, "Alice", mode)
+            Thread.sleep(1000)
 
             guest.networkService.joinGame(sessionID, "Bob")
 
@@ -116,9 +114,8 @@ class NetworkServiceJoinGameTest {
         val sessionID = java.util.Random().nextInt().toString()
         val gameStartSemaphore = Semaphore(0)
 
-        runBlocking {
-            host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
-        }
+        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        Thread.sleep(1000)
 
         guest.networkService.addRefreshable(object : Refreshable {
             override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
