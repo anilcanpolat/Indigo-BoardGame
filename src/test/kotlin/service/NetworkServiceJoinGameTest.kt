@@ -40,9 +40,9 @@ class NetworkServiceJoinGameTest {
         check(onGameStartCalled)
     }
 
-    /** make sure that the gate configuration created by [GuestMessageHandler.gatesFromMode] is correct */
+    /** make sure that starting and joining a game with all [GameMode] instances works correctly */
     @Test
-    fun gateConfigTest() {
+    fun joinAllGameModes() {
         val modes = GameMode.values()
 
         modes.forEach { mode ->

@@ -41,6 +41,8 @@ data class Tile(
 
         return true
     }
+
+    override fun hashCode(): Int = tileType.hashCode() * rotation.hashCode()
 }
 
 private fun pathsForTileType(tileType: TileType): Array<Int?> {
