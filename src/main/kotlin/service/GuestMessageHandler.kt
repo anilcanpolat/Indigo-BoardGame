@@ -18,7 +18,7 @@ class GuestMessageHandler(private val networkService: NetworkService,
     }
 
     override fun onInitMessage(initMessage: GameInitMessage, sender: String) {
-        val tiles = initMessage.tileList.map { entity.Tile(translateTileType(it)) }.toMutableList()
+        val tiles = initMessage.tileList.map { Tile(translateTileType(it)) }.toMutableList()
 
         val players = initMessage.players.map {
             val firstTile = tiles.removeFirst()
@@ -38,7 +38,7 @@ class GuestMessageHandler(private val networkService: NetworkService,
             Pair(Pair(0, -4), Tile(entity.TileType.TREASURE_CORNER))
         )
 
-        val gates = gatesFromMode(players, initMessage.gameMode).toTypedArray()
+        val gates = translateMode(initMessage.gameMode).gateConfiguration()
         val state = entity.GameState(players[0], entity.Board(gates, entity.TileGrid(treasureTiles)), players, tiles)
 
         setGameState(state)
@@ -59,46 +59,12 @@ class GuestMessageHandler(private val networkService: NetworkService,
         networkService.rootService.currentGame = state
     }
 
-    private fun gatesFromMode(
-        players: List<entity.Player>,
-        mode: GameMode
-    ): List<Pair<entity.PlayerToken, entity.PlayerToken>> =
-        when (mode) {
-            GameMode.TWO_NOT_SHARED_GATEWAYS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-
-                val fstPair = Pair(fst, fst)
-                val sndPair = Pair(snd, snd)
-
-                listOf(fstPair, sndPair, fstPair, sndPair, fstPair, sndPair)
-            }
-            GameMode.THREE_NOT_SHARED_GATEWAYS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-                val thd = players[2].playerToken
-
-                val fstPair = Pair(fst, fst)
-                val sndPair = Pair(snd, snd)
-                val thdPair = Pair(thd, thd)
-
-                listOf(fstPair, sndPair, thdPair, fstPair, sndPair, thdPair)
-            }
-            GameMode.THREE_SHARED_GATEWAYS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-                val thd = players[2].playerToken
-
-                listOf(Pair(fst, fst), Pair(fst, snd), Pair(thd, thd), Pair(thd, fst), Pair(snd, snd), Pair(snd, thd))
-            }
-            GameMode.FOUR_SHARED_GATEWAYS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-                val thd = players[2].playerToken
-                val fth = players[3].playerToken
-
-                listOf(Pair(fst, snd), Pair(snd, thd), Pair(fst, fth), Pair(fth, snd), Pair(thd, fst), Pair(thd, fth))
-            }
+    private fun translateMode(mode: GameMode): entity.GameMode =
+        when(mode) {
+            GameMode.TWO_NOT_SHARED_GATEWAYS -> entity.GameMode.TWO_PLAYERS
+            GameMode.THREE_SHARED_GATEWAYS -> entity.GameMode.THREE_PLAYERS_SHARED_GATES
+            GameMode.THREE_NOT_SHARED_GATEWAYS -> entity.GameMode.THREE_PLAYERS
+            GameMode.FOUR_SHARED_GATEWAYS -> entity.GameMode.FOUR_PLAYERS
         }
 
     private fun translateTileType(tile: TileType): entity.TileType =
