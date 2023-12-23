@@ -30,11 +30,12 @@ class NetworkServiceJoinGameTest {
             }
         })
 
-        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
-        Thread.sleep(1000)
+        runBlocking {
+            host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        }
 
         guest.networkService.joinGame(sessionID, "Bob")
-        gameStartSemaphore.acquire()
+        gameStartSemaphore.tryAcquire(1, TimeUnit.SECONDS)
 
         check(onGameStartCalled)
     }
@@ -85,8 +86,9 @@ class NetworkServiceJoinGameTest {
                 }
             })
 
-            host.networkService.createGame(sessionID, "Alice", mode)
-            Thread.sleep(1000)
+            runBlocking {
+                host.networkService.createGame(sessionID, "Alice", mode)
+            }
 
             guest.networkService.joinGame(sessionID, "Bob")
 
@@ -98,7 +100,7 @@ class NetworkServiceJoinGameTest {
                 RootService().networkService.joinGame(sessionID, "Dave")
             }
 
-            semaphore.acquire()
+            semaphore.tryAcquire(1, TimeUnit.SECONDS)
         }
     }
 
