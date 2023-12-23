@@ -35,7 +35,10 @@ class NetworkServiceSendTilePlacedTest {
         })
 
         guest.networkService.joinGame(sessionID, "Bob")
-        lock.tryAcquire(1, TimeUnit.SECONDS)
+
+        check(lock.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onGameStart timed out"
+        }
     }
 
     /** make sure that valid tile placement messages can be received by other players */

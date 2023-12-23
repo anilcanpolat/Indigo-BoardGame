@@ -17,7 +17,6 @@ class NetworkServiceJoinGameTest {
         val guest = RootService()
 
         val sessionID = java.util.Random().nextInt().toString()
-        var onGameStartCalled = false
         val gameStartSemaphore = Semaphore(0)
 
         guest.networkService.addRefreshable(object: Refreshable {
@@ -25,7 +24,6 @@ class NetworkServiceJoinGameTest {
                 check(players.any { it.name == "Alice" })
                 check(players.any { it.name == "Bob" })
 
-                onGameStartCalled = true
                 gameStartSemaphore.release()
             }
         })
@@ -35,9 +33,10 @@ class NetworkServiceJoinGameTest {
         }
 
         guest.networkService.joinGame(sessionID, "Bob")
-        gameStartSemaphore.tryAcquire(1, TimeUnit.SECONDS)
 
-        check(onGameStartCalled)
+        check(gameStartSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onGameStart timed out"
+        }
     }
 
     /** make sure that starting and joining a game with all [GameMode] instances works correctly */
@@ -100,7 +99,9 @@ class NetworkServiceJoinGameTest {
                 RootService().networkService.joinGame(sessionID, "Dave")
             }
 
-            semaphore.tryAcquire(1, TimeUnit.SECONDS)
+            check(semaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+                "waiting for call to onGameStart timed out"
+            }
         }
     }
 
@@ -126,7 +127,10 @@ class NetworkServiceJoinGameTest {
         })
 
         guest.networkService.joinGame(sessionID, "Bob")
-        gameStartSemaphore.tryAcquire(1, TimeUnit.SECONDS)
+
+        check(gameStartSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onGameStart timed out"
+        }
 
         val hostState = checkNotNull(host.currentGame)
         val guestState = checkNotNull(guest.currentGame)

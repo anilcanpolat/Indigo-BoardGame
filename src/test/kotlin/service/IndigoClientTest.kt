@@ -31,7 +31,10 @@ class IndigoClientTest {
         check(client.connect()) { "cannot connect to bgw server" }
         client.createGame("Indigo", "Hello World")
 
-        semaphore.tryAcquire(1, TimeUnit.SECONDS)
+        check(semaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onCreateGame timed out"
+        }
+
         assert(createGameCalled)
     }
 
@@ -75,13 +78,20 @@ class IndigoClientTest {
         host.createGame("Indigo", sessionID, "Hello World")
 
         // wait until the game is created
-        hostSemaphore.tryAcquire(1, TimeUnit.SECONDS)
+        check(hostSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onCreateGame timed out"
+        }
 
         guest.joinGame(sessionID, "Hello World")
 
         // wait until playerJoined and joinGame are called
-        hostSemaphore.tryAcquire(1, TimeUnit.SECONDS)
-        guestSemaphore.tryAcquire(1, TimeUnit.SECONDS)
+        check(hostSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onPlayerJoined timed out"
+        }
+
+        check(guestSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
+            "waiting for call to onJoinGame timed out"
+        }
 
         check(playerJoinedCalled)
         check(onJoinGameCalled)
