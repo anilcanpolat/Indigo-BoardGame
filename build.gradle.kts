@@ -6,6 +6,7 @@ plugins {
     jacoco
     id("io.gitlab.arturbosch.detekt") version "1.18.0-RC3"
     id("org.jetbrains.dokka") version "1.4.32"
+    kotlin("plugin.serialization")version "1.8.21"
 }
 
 group = "edu.udo.cs.sopra"
@@ -30,6 +31,13 @@ application {
 }
 
 dependencies {
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("org.danbrough.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.danbrough.kotlinx:kotlinx-serialization-json:1.5.0")
     testImplementation(kotlin("test-junit5"))
     implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9")
     implementation(group = "tools.aqua", name = "bgw-net-common", version = "0.9")
