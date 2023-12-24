@@ -1,5 +1,7 @@
 package entity
+import kotlinx.serialization.Serializable
 
+@Serializable
 /**
  * class representing a single tile including its paths,
  * its rotation and the gems on top of it
