@@ -8,10 +8,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class GameState(
-    @Contextual val currentPlayer: Player,
-    @Contextual val board: Board,
-    @Contextual val players: List<Player>,
-    @Contextual val drawPile: MutableList<Tile>,
-    @Contextual var previousState: GameState? = null,
-    @Contextual var nextState: GameState? = null
-)
+    val currentPlayer: Player,
+     val board: Board,
+     val players: List<Player>,
+     val drawPile: MutableList<Tile>,
+     var previousState: GameState? = null,
+     var nextState: GameState? = null
+)//@Contextual

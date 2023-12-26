@@ -151,13 +151,16 @@
                 }
             }
         }
-
+      //fun Person(val nom: String, val prenom: String)
+        // val p = Person("Nour", "Shabou",22)
         /**
          * save a game at a specific location
          */
+        @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
         fun save(path: String) {
             if (currentGame != null) {
-                val jsonStr = Json.encodeToString(currentGame)
+                val jsonStr = Json.encodeToString(currentGame)//
+                println(jsonStr)
                 File(path).writeText(jsonStr)
             }
         }
@@ -165,6 +168,7 @@
         /**
          * load a game from a specific location
          */
+        @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
         fun load(path: String) {
             val jsonStr = File(path).readText()
             currentGame = Json.decodeFromString<GameState>(jsonStr)

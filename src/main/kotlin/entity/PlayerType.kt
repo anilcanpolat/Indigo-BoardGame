@@ -8,5 +8,5 @@ package entity
 enum class PlayerType {
     PERSON,
     COMPUTER,
-    REMOTE
+    REMOTE,
 }
