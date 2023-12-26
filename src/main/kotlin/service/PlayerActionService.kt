@@ -23,6 +23,12 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
         if (game.board.grid.grid.get(position) != null) {
             throw Exception("there is already a tile in this position.Choose an other position to place the tile")
         }
+
+        //check for the illegal moves
+        if(isCurveTile(move.first.tileType) && isBlockingTwoGates(position, game.board)){
+            throw Exception("It is not permitted to block two gates by putting a curve to both gates")
+        }
+
         rotate(move.first,move.second)
         game.board.grid.grid.put(position, move.first)
         // for each neighbour of this tile,
@@ -35,6 +41,15 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
             game.currentPlayer.currentTile = game.drawPile.removeLast()
         }
     }
+
+    private fun isCurveTile(tileType: TileType): Boolean {
+        return tileType.toType() in listOf(2,3,4)
+    }
+
+    private fun isBlockingTwoGates(position: Pair<Int,Int>, board: Board): Boolean {
+        return TODO("Implement logic to check if placing the tile at the given position blocks two gates")
+    }
+
     private fun rotate(tile:Tile,int:Int){
         //Increment the rotation of the tile by the specified number of steps(int)
         tile.rotation = (tile.rotation + int) % 6
@@ -56,12 +71,12 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
      * @param gem the gem to move
      */
 
-    /**
+
     fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem) {
         //check bordering gates, give points to the owners of the gates
         val gates = getBorderingGates(fromTile, fromEdge)
-        if(gates != null){
-            getPlayers().forEach { player ->
+        if (gates != null) {
+            getPlayers().forEach { player: Player ->
                 if (player.playerToken == gates.first || player.playerToken == gates.second) {
                     player.collectedGems.add(gem)
                 }
@@ -73,23 +88,40 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
 
         val neighbours = getNeighboursOf(fromTile)
 
-        //no neighbour means the gem is already at the end of the path
-        if(neighbours[fromEdge] == null) {
-            return
+        neighbours[fromEdge]?.let { neighbourTile ->
+            // Check for collision of gems
+            if (neighbourTile.gems[(fromEdge + 3) % 6] != null) {
+                fromTile.gems[fromEdge] = null
+                neighbourTile.gems[(fromEdge + 3) % 6] = null
+                return
+            }
+
+            // Find the new edge for the gem to move to
+            val newEdge = neighbourTile.paths[(fromEdge + 3) % 6]
+            if (newEdge == null) {
+                throw IllegalStateException("Path leads to a tile with no connecting path")
+            } else {
+                // Move the gem one step and repeat
+                neighbourTile.gems[newEdge] = gem.ordinal
+                moveGemToEnd(neighbourTile, newEdge, gem)
+            }
         }
-
-        //Gem on the same route,colliding.Remove gems.
-        if(neighbours[fromEdge]?.gems[(fromEdge + 3) % 6] != null) {
-            fromTile.gems[fromEdge] = null
-            neighbours[fromEdge]?.gems[(fromEdge + 3) % 6] = null
-            return
-        }
-
-        val newEdge = neighbours[fromEdge]?.paths[(fromEdge + 3) % 6] ?: throw IllegalStateException("Path leads to a tile with no connecting path")
-
-        // Move gem one step. Repeat the gem moving through recursion
-        neighbours[fromEdge]?.gems[newEdge] = gem
-        moveGemToEnd(neighbours[fromEdge]!!, newEdge, gem)
     }
-    */
+
+    private fun getBorderingGates(fromTile: Tile, fromEdge: Int): Pair<PlayerToken, PlayerToken>? {
+        //Implement logic to determine if the specified edge of the tile is bordering any gates
+        return TODO("Implement getBorderingGates")
+    }
+
+    private fun getNeighboursOf(fromTile: Tile): Array<Tile?> {
+        //Implement logic to determine the neighboring tiles of the specified tile
+        return TODO("Implement getNeighboursOf")
+    }
+
+    private fun getPlayers(): List<Player> {
+        val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
+        return game.players
+    }
+
+
 }
