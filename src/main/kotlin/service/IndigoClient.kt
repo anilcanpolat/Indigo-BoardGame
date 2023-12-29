@@ -8,10 +8,13 @@ import tools.aqua.bgw.net.common.annotations.GameActionReceiver
 import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.CreateGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponse
+import tools.aqua.bgw.core.BoardGameApplication.Companion.runOnGUIThread
 
 /**
- * Network client receiving responses from the bgw backend.
- * Callbacks are forwarded to an instance of [[MessageHandler]]
+ * Network client asynchronously receiving responses from the bgw backend.
+ * Callbacks are forwarded to an instance of [[MessageHandler]] and only
+ * ever run in the current GUI thread, making it safe to change GUI state
+ * in response to any of the callbacks in [[MessageHandler]].
  */
 class IndigoClient(
     private val eventHandler: MessageHandler,
@@ -20,26 +23,36 @@ class IndigoClient(
     secret: String = "game23d"
 ): BoardGameClient(playerName, host, secret, NetworkLogging.VERBOSE) {
     override fun onCreateGameResponse(response: CreateGameResponse) {
-        eventHandler.onCreateGame(response)
+        runOnGUIThread(Runnable {
+            eventHandler.onCreateGame(response)
+        })
     }
 
     override fun onJoinGameResponse(response: JoinGameResponse) {
-        eventHandler.onJoinGame(response)
+        runOnGUIThread(Runnable {
+            eventHandler.onJoinGame(response)
+        })
     }
 
     override fun onPlayerJoined(notification: PlayerJoinedNotification) {
-        eventHandler.onPlayerJoined(notification)
+        runOnGUIThread(Runnable {
+            eventHandler.onPlayerJoined(notification)
+        })
     }
 
     @GameActionReceiver
     @SuppressWarnings("unused")
     private fun onGameInitMessage(msg: GameInitMessage, sender: String) {
-        eventHandler.onInitMessage(msg, sender)
+        runOnGUIThread(Runnable {
+            eventHandler.onInitMessage(msg, sender)
+        })
     }
 
     @GameActionReceiver
     @SuppressWarnings("unused")
     private fun onTilePlacedMessage(msg: TilePlacedMessage, sender: String) {
-        eventHandler.onTilePlaced(msg, sender)
+        runOnGUIThread(Runnable {
+            eventHandler.onTilePlaced(msg, sender)
+        })
     }
 }

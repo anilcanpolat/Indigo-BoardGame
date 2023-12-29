@@ -5,8 +5,8 @@ package entity
  * to specify which player(s) own a gate.
  */
 enum class PlayerToken {
-    WHITE,
     RED,
-    PURPLE,
     CYAN,
+    WHITE,
+    PURPLE,
 }
