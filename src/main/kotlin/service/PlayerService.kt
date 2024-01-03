@@ -13,29 +13,18 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
      * @param position position where the tile will be placed
      */
 
-    fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>){
-        /*val game = rootService.currentGame
-        checkNotNull(game)
-        /**if there is already a tile in this position
-         * we cancel the placement of this tile in this position
-         * and the player should choose an other position to place the tile
-         */
-        if (game.board.grid.grid.get(position) != null) {
-           // cancelTilePlacement()
-            return
-        }
-        val tile = player.currentTile
-        tile.rotate(rotation)
-        game.board.grid.grid.put(position, tile)
-        game.board.grid.grid.put(position, tile)
-        player.currentTile = null
-        // for each neighbour of this tile,
-        //if there is a gem we move it to the end of the path
-        if (game.drawPile.isEmpty()) {
-            endGame()
-        } else {
-            player.currentTile = game.drawPile.removeLast()
-        }*/
+    fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>) {
+        /* Execute an appropriate refreshable call for testing purposes. This
+           should be replaced with an actual implementation when merging. */
+
+        val state = checkNotNull(rootService.currentGame)
+        val currentPlayerIndex = state.players.indexOf(state.currentPlayer)
+        val nextPlayer = state.players[(currentPlayerIndex + 1) % state.players.size]
+
+        val currentPlayer = state.currentPlayer
+        state.currentPlayer = nextPlayer
+
+        onAllRefreshables { onPlayerMove(currentPlayer, nextPlayer, move.first, position, move.second) }
     }
     /**
      * Move a gem to the end of the path starting at fromTile at the
