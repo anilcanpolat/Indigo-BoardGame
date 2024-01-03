@@ -23,7 +23,6 @@ class CreateGameTest {
         val host = RootService()
         val guest = RootService()
 
-        var gameStartCalled = false
         val gameStartSemaphore = Semaphore(0)
 
         host.addRefreshable(object: Refreshable {
@@ -31,7 +30,6 @@ class CreateGameTest {
                 assert(players.any { it.name == "Alice" }) { "player alice missing" }
                 assert(players.any { it.name == "Bob" }) { "player bob missing" }
 
-                gameStartCalled = true
                 gameStartSemaphore.release()
             }
         })
@@ -40,15 +38,14 @@ class CreateGameTest {
 
         host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
 
-        Thread.sleep(1000)
+        Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        assert(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(gameStartSemaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"
         }
 
-        assertTrue(gameStartCalled)
         checkNotNull(host.currentGame)
     }
 }
