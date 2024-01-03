@@ -1,15 +1,15 @@
 package service
 import entity.*
+
 /**
- * Class for all the actions a [IndigoPlayer] can take on their turn.
+ * Class for all the actions a [Player] can take on their turn.
  *
  * @param rootService the [RootService] connects the view with the service layer and the entity layer
  */
-class PlayerActionService( val rootService: RootService) : AbstractRefreshingService() {
+class PlayerActionService( private val rootService: RootService) : AbstractRefreshingService() {
     /**
      * place a tile on indigos board and move/award/eliminate gems if applicable
-     * @param player the current player placing the tile
-     * @param rotation rotation the player chose for the tile
+     * @param move pair of the tile to place and the chosen rotation
      * @param position position where the tile will be placed
      */
 
@@ -113,9 +113,43 @@ class PlayerActionService( val rootService: RootService) : AbstractRefreshingSer
         return TODO("Implement getBorderingGates")
     }
 
+    /**
+     * Get an array of tiles neighbouring [fromTile]. The grid position is calculated by comparing
+     * grid entries using reference equality. Passing in copies of the target tile will not work.
+     * @param fromTile Reference to an object held in the grid to get the neighbours of.
+     * @return An array holding 6 elements which may be null, if there is no neighbour at the associated edge.
+     * @throws IllegalStateException when [fromTile] is not in the grid.
+     */
     private fun getNeighboursOf(fromTile: Tile): Array<Tile?> {
-        //Implement logic to determine the neighboring tiles of the specified tile
-        return TODO("Implement getNeighboursOf")
+        val state = checkNotNull(rootService.currentGame)
+        val grid = state.board.grid.grid
+
+        val pos = checkNotNull(grid.keys.find {
+            grid[it] === fromTile
+        }) { "fromTile is not part of the grid" }
+
+        val qPos = pos.first
+        val rPos = pos.second
+
+        val offsets = arrayOf(
+            Pair(0, -1), Pair(1, -1), Pair(1, 0),
+            Pair(0, 1), Pair(-1, 1), Pair(-1, 0)
+        )
+
+        return offsets.map {
+            val qNei = qPos + it.first
+            val rNei = rPos + it.second
+            val sNei = -qNei - rNei
+
+            val distanceToCenter = listOf(qNei, rNei, sNei).map { n -> kotlin.math.abs(n) }.max()
+            val neighbour = grid.get(Pair(qNei, rNei))
+
+            if (distanceToCenter <= 4) {
+                neighbour
+            } else {
+                null
+            }
+        }.toTypedArray()
     }
 
     private fun getPlayers(): List<Player> {
