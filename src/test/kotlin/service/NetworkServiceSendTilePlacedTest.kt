@@ -3,8 +3,8 @@ package service
 import entity.GameMode
 import entity.Player
 import entity.PlayerToken
+import entity.Tile
 import kotlin.test.*
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
@@ -41,14 +41,40 @@ class NetworkServiceSendTilePlacedTest {
         }
     }
 
-    /** make sure that valid tile placement messages can be received by other players */
+    /**
+     * Make sure that calling [NetworkService.sendTilePlaced] causes [Refreshable.onPlayerMove]
+     * to be called on all participating players.
+     */
     @Test
     fun sendMessageTest() {
+        val lock = Semaphore(0)
+
+        val checkArgumentRefreshable = object : Refreshable {
+            override fun onPlayerMove(
+                player: Player,
+                nextPlayer: Player,
+                tile: Tile,
+                position: Pair<Int, Int>,
+                rotation: Int
+            ) {
+                assertEquals(player.name, "Alice")
+                assertEquals(nextPlayer.name, "Bob")
+
+                lock.release()
+            }
+        }
+
+        host.playerService.addRefreshable(checkArgumentRefreshable)
+        guest.playerService.addRefreshable(checkArgumentRefreshable)
+
         if (hostInTurn()) {
             host.networkService.sendTilePlaced(0, Pair(1, 1))
         } else {
             guest.networkService.sendTilePlaced(0, Pair(1, 1))
         }
+
+        assert(lock.tryAcquire(1, TimeUnit.SECONDS))
+        assert(lock.tryAcquire(1, TimeUnit.SECONDS))
     }
 
     /** check whether the host (Alice) or the guest (Bob) is in turn */
