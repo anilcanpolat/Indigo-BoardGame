@@ -27,7 +27,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         }
 
         //check for the illegal moves
-        if(isCurveTile(move.first.tileType) && isBlockingTwoGates(position, game.board)){
+        if(isCurveTile(move.first.tileType) && isBlockingGates(move.first, position)){
             throw Exception("It is not permitted to block two gates by putting a curve to both gates")
         }
 
@@ -46,10 +46,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
     private fun isCurveTile(tileType: TileType): Boolean {
         return tileType.toType() in listOf(2,3,4)
-    }
-
-    private fun isBlockingTwoGates(position: Pair<Int,Int>, board: Board): Boolean {
-        return TODO("Implement logic to check if placing the tile at the given position blocks two gates")
     }
 
     private fun rotate(tile:Tile,int:Int){
@@ -118,6 +114,25 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      */
     private fun getBorderingGates(fromTile: Tile, fromEdge: Int): Pair<PlayerToken, PlayerToken>? {
         val pos = checkNotNull(getTilePosition(fromTile)) { "fromTile is not stored in the grid" }
+        val index = getBorderingGateIndex(pos) ?: return null
+        val boardEdge = index / 4
+
+        // The edges 1 and 2 connect to gate 1, the edges 2 and 3 to gate 2, 5 and 0 to gate 5 and so on
+        return if (fromEdge == boardEdge || fromEdge == (boardEdge + 1) % 6) {
+            val gates = checkNotNull(rootService.currentGame).board.gates
+            gates[boardEdge]
+        } else {
+            null
+        }
+    }
+
+    /**
+     * Get the gate a tile might be bordering when placed at [pos], if it exists.
+     * The result is an index into the [Board.gates] array.
+     * @param pos tile which is possibly bordering a gate
+     * @return index into the [Board.gates] array or null if [pos] is not bordering any gates
+     */
+    private fun getBorderingGateIndex(pos: Pair<Int, Int>): Int? {
         val distance = distanceToCenter(pos)
 
         // only tiles in the outermost ring border gates
@@ -134,14 +149,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         val border = getOuterPositions()
         val index = border.indexOf(pos)
 
-        val boardEdge = index / 4
-
-        return if (fromEdge == boardEdge || fromEdge == boardEdge + 1) {
-            val gates = checkNotNull(rootService.currentGame).board.gates
-            gates[boardEdge]
-        } else {
-            null
-        }
+        return index / 4
     }
 
     /**
@@ -167,6 +175,19 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                 null
             }
         }.toTypedArray()
+    }
+
+    /**
+     * Check whether a tile connects two gates directly, leading to a blocked gate.
+     * @param fromTile tile which might be blocking a gate. The currently applied rotation is considered.
+     * @param position position the tile would be placed at
+     * @return true if the [fromTile] would block a gate when placed at [position]
+     */
+    private fun isBlockingGates(fromTile: Tile, position: Pair<Int, Int>): Boolean {
+        val idx = getBorderingGateIndex(position) ?: return false
+        val edgeB = (idx + 1) % 6
+
+        return fromTile.paths[idx] == edgeB
     }
 
     /**
