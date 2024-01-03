@@ -1,7 +1,6 @@
 package service
 
 import edu.udo.cs.sopra.ntf.GameInitMessage
-import edu.udo.cs.sopra.ntf.TilePlacedMessage
 import tools.aqua.bgw.net.client.BoardGameClient
 import tools.aqua.bgw.net.client.NetworkLogging
 import tools.aqua.bgw.net.common.annotations.GameActionReceiver

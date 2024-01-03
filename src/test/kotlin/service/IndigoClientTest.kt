@@ -96,4 +96,52 @@ class IndigoClientTest {
         check(playerJoinedCalled)
         check(onJoinGameCalled)
     }
+
+    @Test
+    fun sendTilePlacedTest() {
+        val semaphore = Semaphore(0)
+
+        val host = IndigoClient(object: MessageHandler {
+            override fun onCreateGame(resp: CreateGameResponse) {
+                semaphore.release()
+            }
+        }, "Alice")
+
+        val guest = IndigoClient(object: MessageHandler {
+            override fun onJoinGame(resp: JoinGameResponse) {
+                semaphore.release()
+            }
+
+            override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
+                check(tilePlacedMessage.rotation == 0)
+                check(tilePlacedMessage.qcoordinate == 1)
+                check(tilePlacedMessage.rcoordinate == 0)
+                semaphore.release()
+            }
+        }, "Bob")
+
+        check(host.connect()) { "cannot connect to bgw server" }
+        check(guest.connect()) { "cannot connect to bgw server"}
+
+        val sessionID = java.util.Random().nextInt().toString()
+
+        host.createGame("Indigo", sessionID, "Hello, World")
+
+        check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+            "waiting for call to onCreateGame timed out"
+        }
+
+        guest.joinGame(sessionID, "Hello, World!")
+
+        check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+            "waiting for call to joinGame timed out"
+        }
+
+        val message = TilePlacedMessage(0, 1, 0)
+        host.sendGameActionMessage(message)
+
+        check(semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
+            "waiting for call to sendGameActionMessage timed out"
+        }
+    }
 }
