@@ -1,15 +1,17 @@
-package service
+package service.networkservice
 
 import entity.GameMode
 import entity.Player
 import entity.PlayerToken
 import entity.Tile
+import service.Refreshable
+import service.RootService
 import kotlin.test.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
-/** test cases for [NetworkService.sendTilePlaced] */
-class NetworkServiceSendTilePlacedTest {
+/** test cases for [service.NetworkService.sendTilePlaced] */
+class SendTilePlacedTest {
     private var host = RootService()
     private var guest = RootService()
     private var sessionID = ""
@@ -42,7 +44,7 @@ class NetworkServiceSendTilePlacedTest {
     }
 
     /**
-     * Make sure that calling [NetworkService.sendTilePlaced] causes [Refreshable.onPlayerMove]
+     * Make sure that calling [service.NetworkService.sendTilePlaced] causes [Refreshable.onPlayerMove]
      * to be called on all participating players.
      */
     @Test

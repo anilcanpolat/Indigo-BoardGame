@@ -14,28 +14,23 @@ class IndigoClientTest {
     /** make sure that creating a game will cause [MessageHandler.onCreateGame] to be called */
     @Test
     fun createGameTest() {
-        var createGameCalled = false
-
         // bgw-net is asynchronous. Without a semaphore the test will exit
         // before the server response arrives at the client.
         val semaphore = Semaphore(0)
 
         val client = IndigoClient(object: MessageHandler {
             override fun onCreateGame(resp: CreateGameResponse) {
-                assert(resp.status == CreateGameResponseStatus.SUCCESS)
-                createGameCalled = true
+                assertEquals(resp.status, CreateGameResponseStatus.SUCCESS)
                 semaphore.release()
             }
         }, "Alice")
 
-        check(client.connect()) { "cannot connect to bgw server" }
+        assert(client.connect()) { "cannot connect to bgw server" }
         client.createGame("Indigo", "Hello World")
 
-        check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onCreateGame timed out"
         }
-
-        assert(createGameCalled)
     }
 
     /**
@@ -48,9 +43,6 @@ class IndigoClientTest {
         val hostSemaphore = Semaphore(0)
         val guestSemaphore = Semaphore(0)
 
-        var playerJoinedCalled = false
-        var onJoinGameCalled = false
-
         val sessionID = java.util.Random().nextInt().toString()
 
         val host = IndigoClient(object: MessageHandler {
@@ -59,44 +51,45 @@ class IndigoClientTest {
             }
 
             override fun onPlayerJoined(player: PlayerJoinedNotification) {
-                check(player.sender == "Bob")
-                playerJoinedCalled = true
+                assertEquals(player.sender, "Bob")
                 hostSemaphore.release()
             }
         }, "Alice")
 
         val guest = IndigoClient(object: MessageHandler {
             override fun onJoinGame(resp: JoinGameResponse) {
-                onJoinGameCalled = true
                 guestSemaphore.release()
             }
         }, "Bob")
 
-        check(host.connect()) { "cannot connect to bgw server" }
-        check(guest.connect()) { "cannot connect to bgw server"}
+        assert(host.connect()) { "cannot connect to bgw server" }
+        assert(guest.connect()) { "cannot connect to bgw server"}
 
         host.createGame("Indigo", sessionID, "Hello World")
 
         // wait until the game is created
-        check(hostSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(hostSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onCreateGame timed out"
         }
 
         guest.joinGame(sessionID, "Hello World")
 
         // wait until playerJoined and joinGame are called
-        check(hostSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(hostSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onPlayerJoined timed out"
         }
 
-        check(guestSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(guestSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onJoinGame timed out"
         }
-
-        check(playerJoinedCalled)
-        check(onJoinGameCalled)
     }
 
+    /**
+     * Make sure that [TilePlacedMessage] objects can be sent and received
+     * by the [IndigoClient]. This tests depends on the [TilePlacedMessage]
+     * workaround, because [edu.udo.cs.sopra.ntf.TilePlacedMessage] is
+     * currently broken.
+     */
     @Test
     fun sendTilePlacedTest() {
         val semaphore = Semaphore(0)
@@ -113,34 +106,34 @@ class IndigoClientTest {
             }
 
             override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
-                check(tilePlacedMessage.rotation == 0)
-                check(tilePlacedMessage.qcoordinate == 1)
-                check(tilePlacedMessage.rcoordinate == 0)
+                assertEquals(tilePlacedMessage.rotation, 0)
+                assertEquals(tilePlacedMessage.qcoordinate, 1)
+                assertEquals(tilePlacedMessage.rcoordinate, 0)
                 semaphore.release()
             }
         }, "Bob")
 
-        check(host.connect()) { "cannot connect to bgw server" }
-        check(guest.connect()) { "cannot connect to bgw server"}
+        assert(host.connect()) { "cannot connect to bgw server" }
+        assert(guest.connect()) { "cannot connect to bgw server"}
 
         val sessionID = java.util.Random().nextInt().toString()
 
         host.createGame("Indigo", sessionID, "Hello, World")
 
-        check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to onCreateGame timed out"
         }
 
         guest.joinGame(sessionID, "Hello, World!")
 
-        check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
             "waiting for call to joinGame timed out"
         }
 
         val message = TilePlacedMessage(0, 1, 0)
         host.sendGameActionMessage(message)
 
-        check(semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
+        assert(semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
             "waiting for call to sendGameActionMessage timed out"
         }
     }
