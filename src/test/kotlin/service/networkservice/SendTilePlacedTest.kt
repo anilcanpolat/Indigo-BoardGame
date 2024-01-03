@@ -48,15 +48,15 @@ class SendTilePlacedTest {
 
     /**
      * Make sure that calling [service.NetworkService.sendTilePlaced] causes [Refreshable.onPlayerMove]
-     * to be called on all participating players. This test fails because [service.PlayerActionService.playerMove]
-     * is not implemented causing [Refreshable.onPlayerMove] to never be called.
+     * to be called on all participating players. This test currently relies on a partial implementation
+     * of [service.PlayerActionService.playerMove] and the [service.TilePlacedMessage] workaround.
      */
-    @Ignore
     @Test
     fun sendMessageTest() {
         val lock = Semaphore(0)
+        var firstCall = true
 
-        val checkArgumentRefreshable = object : Refreshable {
+        host.playerService.addRefreshable(object : Refreshable {
             override fun onPlayerMove(
                 player: Player,
                 nextPlayer: Player,
@@ -64,24 +64,61 @@ class SendTilePlacedTest {
                 position: Pair<Int, Int>,
                 rotation: Int
             ) {
-                assertEquals(player.name, "Alice")
-                assertEquals(nextPlayer.name, "Bob")
+                if (firstCall) {
+                    assertEquals(player.name, "Alice")
+                    assertEquals(nextPlayer.name, "Bob")
+                    firstCall = false
+                } else {
+                    assertEquals(player.name, "Bob")
+                    assertEquals(nextPlayer.name, "Alice")
+                }
 
                 lock.release()
             }
-        }
+        })
 
-        host.playerService.addRefreshable(checkArgumentRefreshable)
-        guest.playerService.addRefreshable(checkArgumentRefreshable)
+        guest.playerService.addRefreshable(object : Refreshable {
+            override fun onPlayerMove(
+                player: Player,
+                nextPlayer: Player,
+                tile: Tile,
+                position: Pair<Int, Int>,
+                rotation: Int
+            ) {
+                if (firstCall) {
+                    assertEquals(player.name, "Bob")
+                    assertEquals(nextPlayer.name, "Alice")
+                    firstCall = false
+                } else {
+                    assertEquals(player.name, "Alice")
+                    assertEquals(nextPlayer.name, "Bob")
+                }
+
+                lock.release()
+            }
+        })
 
         if (hostInTurn()) {
-            host.networkService.sendTilePlaced(0, Pair(1, 1))
-        } else {
-            guest.networkService.sendTilePlaced(0, Pair(1, 1))
-        }
+            val tile = checkNotNull(checkNotNull(host.currentGame).currentPlayer.currentTile)
 
-        assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
-        assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+            host.playerService.playerMove(Pair(tile, 0), Pair(0, 1))
+            host.networkService.sendTilePlaced(0, Pair(0, 1))
+
+            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+
+            guest.networkService.sendTilePlaced(0, Pair(1, 0))
+            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+        } else {
+            val tile = checkNotNull(checkNotNull(guest.currentGame).currentPlayer.currentTile)
+
+            guest.playerService.playerMove(Pair(tile, 0), Pair(0, 1))
+            guest.networkService.sendTilePlaced(0, Pair(0, 1))
+
+            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+
+            host.networkService.sendTilePlaced(0, Pair(1, 0))
+            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+        }
     }
 
     /** check whether the host (Alice) or the guest (Bob) is in turn */
