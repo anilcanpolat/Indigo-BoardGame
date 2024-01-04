@@ -4,6 +4,7 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
+import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
 
@@ -21,29 +22,29 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
         font = Font(size = 25)
     )
 
-    private val p2Button = Button(
+    val p2Button = Button(
         width = 200, height = 50,
         posX = 860, posY = 250,
         text = "2 Player"
-    )
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
-    private val p3SharedButton = Button(
+    val p3SharedButton = Button(
         width = 200, height = 50,
         posX = 860, posY = 350,
         text = "3 Player (Shared Gates)"
-    )
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
-    private val p3OwnButton = Button(
+    val p3OwnButton = Button(
         width = 200, height = 50,
         posX = 860, posY = 450,
         text = "3 Player (Own Gates)"
-    )
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
-    private val p4Button = Button(
+    val p4Button = Button(
         width = 200, height = 50,
         posX = 860, posY = 550,
         text = "4 Player"
-    )
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
     val backButton = Button(width = 40, height = 40,
         posX = 1, posY = 1, visual = CompoundVisual(

@@ -31,6 +31,22 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
        }
+
+       p2Button.onMouseClicked = {
+           this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+       }
+
+       p3OwnButton.onMouseClicked = {
+           this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+       }
+
+       p3SharedButton.onMouseClicked = {
+           this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+       }
+
+       p4Button.onMouseClicked = {
+           this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+       }
     }
 
     private val selectNameAndKiScene : MenuScene = SelectNameAndKiScene().apply {
@@ -58,7 +74,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     }
 
     init {
-        this.showMenuScene(welcomeScene)
+        this.showMenuScene(selectNameAndKiScene)
     }
 
 }

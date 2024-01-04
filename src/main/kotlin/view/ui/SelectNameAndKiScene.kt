@@ -139,7 +139,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         posX = 955, posY = 790,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
-    )
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
     init {
         addComponents(
