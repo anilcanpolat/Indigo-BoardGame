@@ -11,31 +11,31 @@ import tools.aqua.bgw.visual.ImageVisual
 import kotlin.math.absoluteValue
 
 /**
- * show the game filed and all of the user UI,
+ * show the game filed and all the user UI,
  * take inputs from the User and show results
  */
 class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
     private val saveButton =  Button(
-        width = 65, height = 65,
+        width = 40, height = 40,
         posX = 150, posY = 50,
 
     ).apply {
         visual = CompoundVisual(
-            ColorVisual.GREEN,
+            ColorVisual(ColorEnum.Olivine.toRgbValue()),
             ImageVisual(path = "save.png")
         )
     }
 
     private val quitButton = Button(
-        width = 65, height = 65,
+        width = 40, height = 40,
         posX = 50, posY = 50,
     ).apply {
         visual = ImageVisual(path = "blackArrow.png")
     }
 
     private val undoButton = Button(
-        width = 65, height = 65,
+        width = 40, height = 40,
         posX = 250, posY = 50,
     ).apply {
         visual = CompoundVisual(
@@ -43,7 +43,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     }
 
     private val redoButton = Button(
-        width = 65, height = 65,
+        width = 40, height = 40,
         posX = 350, posY = 50,
     ).apply {
         visual = CompoundVisual(
@@ -69,8 +69,8 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     ).apply { rotate(30) }
 
     private val playersTile = HexagonView(
-        posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png")
-    )
+        posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png"),
+    ).apply { rotate(30) }
 
     private val routeStack = HexagonView(
         posX = 100, posY = 500, size =65, visual = CompoundVisual(
