@@ -1,9 +1,14 @@
 package view.ui
 
+import entity.Player
+import entity.PlayerToken
 import service.Refreshable
+import tools.aqua.bgw.components.ComponentView
 import tools.aqua.bgw.components.container.HexagonGrid
 import tools.aqua.bgw.components.gamecomponentviews.HexagonView
+import tools.aqua.bgw.components.layoutviews.Pane
 import tools.aqua.bgw.components.uicomponents.Button
+import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.BoardGameScene
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -77,7 +82,10 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
             ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png"))
     )
 
-
+    //It is for layout of the playerName and score boxes
+    private val playerLayout = Pane<ComponentView>(
+        posX = 1500, posY = 50 , width = 400, height = 1000
+    )
 
     init {
         //There should not be a coordinate like [4,1], [-4,-1] or [-4,-4] and others
@@ -94,10 +102,18 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
         addComponents(saveButton, quitButton,redoButton,undoButton,
-            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack)
+            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,playerLayout)
     }
 
 
+     override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
+         val playerNames = mutableListOf<Label>()
+         for (i in players){
+             val text = Label(text = i.name)
+             playerNames.add(text)
+         }
+
+    }
 
     private fun placeTiles(){
         //up
@@ -114,6 +130,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
         hexagonGrid[4,-4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(-60) } }
         //center
         hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
+
 
     }
 
