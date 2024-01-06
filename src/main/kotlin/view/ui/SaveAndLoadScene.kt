@@ -54,6 +54,12 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
         text = "4: "
     )
 
+    private val labelFive = Label(
+        posX = 715, posY = 700,
+        width = 25, height = 25,
+        text = "5: "
+    )
+
     private val saveButtonOne = Button(
         posX = 745, posY = 87.5,
         width = 450, height = 50,
@@ -74,6 +80,12 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
 
     private val saveButtonFour = Button(
         posX = 745, posY = 538.5,
+        width = 450, height = 50,
+        text = "Empty: "
+    )
+
+    private val saveButtonFive = Button(
+        posX = 745, posY = 688.5,
         width = 450, height = 50,
         text = "Empty: "
     )
@@ -99,6 +111,12 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
     private val deleteButtonFour = Button(
         posX = 1163, posY = 540,
         width = 30, height = 47.5,
+        text = "D"
+    ).apply { visual = ColorVisual(193, 74, 240)}
+
+    private val deleteButtonFive = Button(
+        posX = 1163, posY = 690,
+        width = 30, height = 45,
         text = "D"
     ).apply { visual = ColorVisual(193, 74, 240)}
 
@@ -130,6 +148,13 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
         visual = ColorVisual(135, 135, 135)
     )
 
+    private val labelDateFive = Label(
+        posX = 1205, posY = 688.5,
+        width = 60, height = 50,
+        text = "Date: ",
+        visual = ColorVisual(135, 135, 135)
+    )
+
     init {
         addComponents(
             returnFromSaveButton,
@@ -140,6 +165,8 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
             deleteButtonOne, deleteButtonTwo,
             deleteButtonThree, deleteButtonFour,
             labelDateOne, labelDateTwo,
-            labelDateThree, labelDateFour)
+            labelDateThree, labelDateFour, labelFive,
+            saveButtonFive, deleteButtonFive,
+            labelDateFive)
     }
 }

@@ -74,7 +74,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     }
 
     init {
-        this.showMenuScene(selectNameAndKiScene)
+        this.showMenuScene(saveAndLoadScene)
     }
 
 }
