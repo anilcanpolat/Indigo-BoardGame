@@ -1,8 +1,5 @@
 package entity
-
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-
 /**
  * class holding the entire state of an indigo session
  */
@@ -14,4 +11,4 @@ data class GameState(
      val drawPile: MutableList<Tile>,
      var previousState: GameState? = null,
      var nextState: GameState? = null
-)//@Contextual
+)
