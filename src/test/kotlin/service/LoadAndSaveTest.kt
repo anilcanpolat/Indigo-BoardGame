@@ -41,6 +41,7 @@
         fun loadEmptyFileTest() {
             val rootService = RootService()
             val tempFilePath = "Indigo.json"
+            File(tempFilePath).writeText("")
             val loadedGame: GameState? = rootService.load(tempFilePath)
             assertNull(loadedGame)
         }
