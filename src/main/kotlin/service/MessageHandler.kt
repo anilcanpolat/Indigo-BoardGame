@@ -1,6 +1,8 @@
 package service
 
 import edu.udo.cs.sopra.ntf.GameInitMessage
+import edu.udo.cs.sopra.ntf.TilePlacedMessage
+
 import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.CreateGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponse
