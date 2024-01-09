@@ -1,5 +1,6 @@
 package view.ui
 
+import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
@@ -14,7 +15,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * and quit the game.
  */
 class WelcomeScene : MenuScene(1920, 1080,
-    background = ImageVisual("cecihoney-background-desert-full.jpg")) {
+    background = ImageVisual("cecihoney-background-desert-full.jpg")), Refreshable {
 
     private val headLineLabel = Label(width = 750, height = 100,posX = 575, posY = 100,
         text="Indigo-Game!", font = Font(size = 100)

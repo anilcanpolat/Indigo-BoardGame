@@ -15,7 +15,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     private val welcomeScene : MenuScene = WelcomeScene().apply {
         loadGameButton.onMouseClicked = {
-            this@IndigoApplication.showMenuScene(saveAndLoadScene)
+            this@IndigoApplication.showGameScene(gameScene)
         }
 
         hotSeatModeButton.onMouseClicked = {

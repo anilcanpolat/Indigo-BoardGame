@@ -1,5 +1,6 @@
 package view.ui
 
+import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
@@ -16,7 +17,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * the amount of players selected. also gives us control over KI.
  */
 class SelectNameAndKiScene : MenuScene(1920, 1080,
-    background = ImageVisual("cecihoney-background-desert-full.jpg")) {
+    background = ImageVisual("cecihoney-background-desert-full.jpg")), Refreshable {
 
     val returnFromNameButton = Button(
         posX = 10, posY = 10,
@@ -140,6 +141,15 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
     ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+
+
+    fun setAmountOfPlayers(){
+
+    }
+
+    fun resetSceneOnReturn(){
+
+    }
 
     init {
         addComponents(
