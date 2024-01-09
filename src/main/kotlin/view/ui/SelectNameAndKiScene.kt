@@ -46,7 +46,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         prompt = "Put in Name! "
     )
 
-    private val playerDTextBox = TextField(
+    val playerDTextBox = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
         prompt = "Put in Name! "
@@ -71,7 +71,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240) }
 
-    private val kiButtonD = Button(
+    val kiButtonD = Button(
         posX = 1035, posY = 650,
         width = 50, height = 50,
         text = "KI: "
@@ -97,7 +97,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         text = "3: "
     ).apply { visual = ColorVisual(90, 74, 240) }
 
-    private val playerSequenzDButton = Button(
+    val playerSequenzDButton = Button(
         posX = 1110, posY = 650,
         width = 50, height = 50,
         text = "4: "
@@ -140,6 +140,16 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
     ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+
+    fun setAmountOfPlayers(playerToRemove: Int){
+        if (playerToRemove == 2)
+            kiButtonC.isDisabled
+            playerCTextBox.isDisabled
+    }
+
+    fun resetSceneOnReturn(){
+
+    }
 
     init {
         addComponents(

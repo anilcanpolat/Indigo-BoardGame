@@ -32,19 +32,19 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
         width = 200, height = 50,
         posX = 860, posY = 350,
         text = "3 Player (Shared Gates)"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val p3OwnButton = Button(
         width = 200, height = 50,
         posX = 860, posY = 450,
         text = "3 Player (Own Gates)"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val p4Button = Button(
         width = 200, height = 50,
         posX = 860, posY = 550,
         text = "4 Player"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val backButton = Button(width = 40, height = 40,
         posX = 1, posY = 1, visual = CompoundVisual(
