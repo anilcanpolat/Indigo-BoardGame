@@ -157,12 +157,24 @@ class RootService : AbstractRefreshingService() {
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
     fun save(path: String) {
-        if (currentGame != null) {
-            val json = Json { allowStructuredMapKeys = true  }
-            val jsonStr = json.encodeToString(currentGame)
-            println(jsonStr)
-            File(path).writeText(jsonStr)
-        }
+        val currentGame = checkNotNull(currentGame)
+
+        // The json serializer will run into problems when
+        // trying to serialize cyclic references.
+        // Restore after serialization.
+        val previousState = currentGame.previousState
+        val nextState = currentGame.nextState
+
+        currentGame.previousState = null
+        currentGame.nextState = null
+
+        val json = Json { allowStructuredMapKeys = true  }
+        val jsonStr = json.encodeToString(currentGame)
+        println(jsonStr)
+        File(path).writeText(jsonStr)
+
+        currentGame.previousState = previousState
+        currentGame.nextState = nextState
     }
 
     /**
