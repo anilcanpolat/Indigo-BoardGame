@@ -132,7 +132,7 @@ class RootService : AbstractRefreshingService() {
      */
     fun undo() {
         checkNotNull(currentGame)
-        if (currentGame?.currentPlayer?.playerType != PlayerType.REMOTE) {
+        if (!isNetworkGame()) {
             if (currentGame?.previousState != null) {
                 currentGame = currentGame?.previousState
             }
@@ -145,12 +145,21 @@ class RootService : AbstractRefreshingService() {
 
     fun redo() {
         checkNotNull(currentGame)
-        if (currentGame?.currentPlayer?.playerType != PlayerType.REMOTE) {
+        if (!isNetworkGame()) {
             if (currentGame?.nextState != null) {
                 currentGame = currentGame?.nextState
             }
         }
     }
+
+    /**
+     * Check whether the current game has any network players.
+     */
+    private fun isNetworkGame() =
+        checkNotNull(currentGame).players.any {
+            it.playerType == PlayerType.REMOTE
+        }
+
 
     /**
      * save a game at a specific location
