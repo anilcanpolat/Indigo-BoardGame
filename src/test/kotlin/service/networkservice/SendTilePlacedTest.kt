@@ -33,7 +33,7 @@ class SendTilePlacedTest {
 
         Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
-        guest.networkService.addRefreshable(object : Refreshable {
+        guest.addRefreshable(object : Refreshable {
             override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
                 lock.release()
             }

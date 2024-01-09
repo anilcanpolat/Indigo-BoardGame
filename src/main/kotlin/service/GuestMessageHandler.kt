@@ -43,7 +43,7 @@ class GuestMessageHandler(private val networkService: NetworkService,
 
         setGameState(state)
 
-        networkService.onAllRefreshables { onGameStart(players, gates.toList()) }
+        networkService.rootService.onAllRefreshables { onGameStart(players, gates.toList()) }
     }
 
     override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {

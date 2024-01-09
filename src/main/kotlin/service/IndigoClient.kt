@@ -16,6 +16,7 @@ import tools.aqua.bgw.core.BoardGameApplication.Companion.runOnGUIThread
  * Callbacks are forwarded to an instance of [[MessageHandler]] and only
  * ever run in the current GUI thread, making it safe to change GUI state
  * in response to any of the callbacks in [[MessageHandler]].
+ * @property eventHandler object to forward all responses to
  */
 class IndigoClient(
     private val eventHandler: MessageHandler,

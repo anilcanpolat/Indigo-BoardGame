@@ -24,7 +24,7 @@ class JoinGameTest {
         val sessionID = java.util.Random().nextInt().toString()
         val gameStartSemaphore = Semaphore(0)
 
-        guest.networkService.addRefreshable(object: Refreshable {
+        guest.addRefreshable(object: Refreshable {
             override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
                 assert(players.any { it.name == "Alice" }) { "player alice missing" }
                 assert(players.any { it.name == "Bob" }) { "player bob missing" }
@@ -54,7 +54,7 @@ class JoinGameTest {
             val sessionID = java.util.Random().nextInt().toString()
             val semaphore = Semaphore(0)
 
-            guest.networkService.addRefreshable(object: Refreshable {
+            guest.addRefreshable(object: Refreshable {
                 override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
                     assert(players.any { it.name == "Alice" }) { "player alice missing" }
                     assert(players.any { it.name == "Bob" }) { "player bob missing" }
@@ -122,7 +122,7 @@ class JoinGameTest {
         host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
         Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
-        guest.networkService.addRefreshable(object : Refreshable {
+        guest.addRefreshable(object : Refreshable {
             override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
                 gameStartSemaphore.release()
             }
