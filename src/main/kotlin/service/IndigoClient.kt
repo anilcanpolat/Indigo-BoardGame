@@ -26,19 +26,19 @@ class IndigoClient(
 ): BoardGameClient(playerName, host, secret, NetworkLogging.VERBOSE) {
     override fun onCreateGameResponse(response: CreateGameResponse) {
         runOnGUIThread(Runnable {
-            eventHandler.onCreateGame(response)
+            eventHandler.onCreateGame(this, response)
         })
     }
 
     override fun onJoinGameResponse(response: JoinGameResponse) {
         runOnGUIThread(Runnable {
-            eventHandler.onJoinGame(response)
+            eventHandler.onJoinGame(this, response)
         })
     }
 
     override fun onPlayerJoined(notification: PlayerJoinedNotification) {
         runOnGUIThread(Runnable {
-            eventHandler.onPlayerJoined(notification)
+            eventHandler.onPlayerJoined(this, notification)
         })
     }
 
@@ -46,7 +46,7 @@ class IndigoClient(
     @SuppressWarnings("unused")
     private fun onGameInitMessage(msg: GameInitMessage, sender: String) {
         runOnGUIThread(Runnable {
-            eventHandler.onInitMessage(msg, sender)
+            eventHandler.onInitMessage(this, msg, sender)
         })
     }
 
@@ -54,7 +54,7 @@ class IndigoClient(
     @SuppressWarnings("unused")
     private fun onTilePlacedMessage(msg: TilePlacedMessage, sender: String) {
         runOnGUIThread(Runnable {
-            eventHandler.onTilePlaced(msg, sender)
+            eventHandler.onTilePlaced(this, msg, sender)
         })
     }
 }

@@ -12,9 +12,10 @@ import kotlin.math.absoluteValue
  * all events to other parts of the service layer it does not need to implement [AbstractRefreshingService]
  * itself, all relevant callbacks will be invoked from either [RootService] or [PlayerActionService].
  * @property rootService reference to the root service used for state access and game initialization
+ * @property indigoClient object handling the sending and receiving of messages as well as the connection state
  */
-class NetworkService(val rootService: RootService) {
-    var indigoClient: IndigoClient? = null
+class NetworkService(private val rootService: RootService) {
+    private var indigoClient: IndigoClient? = null
 
     /**
      * Create a new game as the host. Once enough players have joined, the [RootService.startGame]
@@ -29,7 +30,7 @@ class NetworkService(val rootService: RootService) {
      * @throws NetworkServiceException when the connection fails or the game cannot be created
      */
     fun createGame(sessionID: String, name: String, gameMode: entity.GameMode) {
-        val handler = HostMessageHandler(this, name, gameMode)
+        val handler = HostMessageHandler(rootService, name, gameMode)
         indigoClient = IndigoClient(handler, name)
 
         val client = checkNotNull(indigoClient)
@@ -51,7 +52,7 @@ class NetworkService(val rootService: RootService) {
      * @throws NetworkServiceException when the connection fails or joining the game fails
      */
     fun joinGame(sessionID: String, name: String) {
-        val handler = GuestMessageHandler(this, name)
+        val handler = GuestMessageHandler(rootService, name)
         indigoClient = IndigoClient(handler, name)
 
         val client = checkNotNull(indigoClient)
