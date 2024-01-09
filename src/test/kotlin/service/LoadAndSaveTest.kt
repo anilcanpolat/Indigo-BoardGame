@@ -28,8 +28,7 @@
             assertTrue(savedFile.exists())
 
             val loadedGame: GameState? = rootService.load(tempFilePath)
-            loadedGame?.equals(rootService.currentGame)
-           // assertTrue(loadedGame == rootService.currentGame)
+            assertEquals(loadedGame, rootService.currentGame)
         }
 
         /**loadEmptyFileTest will :

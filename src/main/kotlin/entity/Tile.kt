@@ -25,6 +25,18 @@ data class Tile(
             paths[i] = p[i]
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Tile
+
+        if (!paths.contentEquals(other.paths)) { return false }
+        if (!gems.contentEquals(other.gems)) { return false }
+
+        return tileType == other.tileType && rotation == other.rotation
+    }
 }
 
 private fun pathsForTileType(tileType: TileType): Array<Int?> {
