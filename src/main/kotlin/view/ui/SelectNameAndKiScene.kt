@@ -1,5 +1,8 @@
 package view.ui
 
+import entity.PlayerConfig
+import entity.PlayerType
+import service.RootService
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
@@ -15,7 +18,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * required for the game to start. only shows properties that are required for
  * the amount of players selected. also gives us control over KI.
  */
-class SelectNameAndKiScene : MenuScene(1920, 1080,
+class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {
 
     val returnFromNameButton = Button(
@@ -53,19 +56,19 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     )
 
     // KI Buttons
-    private val kiButtonA = Button(
+    val kiButtonA = Button(
         posX = 1035, posY = 200,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240) }
 
-    private val kiButtonB = Button(
+    val kiButtonB = Button(
         posX = 1035, posY = 350,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240) }
 
-    private val kiButtonC = Button(
+    val kiButtonC = Button(
         posX = 1035, posY = 500,
         width = 50, height = 50,
         text = "KI: "
@@ -187,6 +190,12 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         playerBTextBox.text = ""
         playerCTextBox.text = ""
         playerDTextBox.text = ""
+    }
+
+    fun playerConfigList(playerCount: Int, type: Int): MutableList<PlayerConfig>{
+        val age = 0
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
+        return typeList
     }
 
     init {

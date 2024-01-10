@@ -1,9 +1,10 @@
 package view
 
+import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
 import view.ui.*
-import java.awt.Menu
+
 
 /**
  * Create scenes and give some buttons there functionality.
@@ -11,11 +12,15 @@ import java.awt.Menu
  */
 class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
+    private val rootService = RootService()
+
+    private var useKi = 0
+
     private val gameScene : GameScene = GameScene()
 
     private val welcomeScene : MenuScene = WelcomeScene().apply {
         loadGameButton.onMouseClicked = {
-            this@IndigoApplication.showMenuScene(saveAndLoadScene)
+            this@IndigoApplication.showGameScene(gameScene)
         }
 
         hotSeatModeButton.onMouseClicked = {
@@ -60,10 +65,26 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
     }
 
-    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene().apply {
+    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
             this@IndigoApplication.showMenuScene(chosePlayerCountScene)
+        }
+
+        kiButtonA.onMouseClicked = {
+            useKi = 1
+        }
+
+        kiButtonB.onMouseClicked = {
+            useKi = 2
+        }
+
+        kiButtonC.onMouseClicked = {
+            useKi = 3
+        }
+
+        kiButtonD.onMouseClicked = {
+            useKi = 4
         }
     }
 

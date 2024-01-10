@@ -1,6 +1,7 @@
 package view.ui
 
 
+import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
@@ -12,7 +13,7 @@ import tools.aqua.bgw.visual.ImageVisual
 /**
  * creates the endgame scene of the Indigo game
  */
-class EndgameScene : MenuScene(700, 1080){
+class EndgameScene : MenuScene(1920, 1080), Refreshable{
 
     private val gold = Label(width = 30, height = 50,
         posX = 10, posY = 100).apply{

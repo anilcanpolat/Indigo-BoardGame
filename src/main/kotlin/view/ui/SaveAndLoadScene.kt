@@ -1,5 +1,6 @@
 package view.ui
 
+import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
@@ -18,7 +19,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * that is saved in the respective button
  */
 class SaveAndLoadScene : MenuScene(1920, 1080,
-    background = ImageVisual("cecihoney-background-desert-full.jpg")) {
+    background = ImageVisual("cecihoney-background-desert-full.jpg")), Refreshable {
 
     val returnFromSaveButton = Button(
         posX = 10, posY = 10,
