@@ -31,6 +31,12 @@ class PlayerMoveTest {
 
         state.players[0].currentTile = Tile(TileType.STRAIGHTS_ONLY)
         state.players[1].currentTile = Tile(TileType.STRAIGHTS_ONLY)
+
+        state.drawPile.clear()
+
+        (0..48).forEach {
+            state.drawPile.add(Tile(TileType.STRAIGHTS_ONLY))
+        }
     }
 
     /** assert that [Refreshable.onPlayerMove] is called with the correct arguments */
@@ -74,12 +80,7 @@ class PlayerMoveTest {
     @Test
     fun simpleGemMoveTest() {
         playerService.playerMove(Pair(currentTile(), 0), Pair(1, 0))
-
-        val placedTile = checkNotNull(gameState().board.grid.grid[Pair(1, 0)]) {
-            "tile was not inserted into the grid"
-        }
-
-        assertContains(placedTile.gems, Gem.EMERALD)
+        assertContains(getTileAt(Pair(1, 0)).gems, Gem.EMERALD)
     }
 
     /** assert that a saphire is moved from the center tile after all other emerald are removed from it */
@@ -95,20 +96,51 @@ class PlayerMoveTest {
         }
 
         positions.subList(0, 5).forEach {
-            val placedTile = checkNotNull(gameState().board.grid.grid[it]) {
-                "tile at position (" + it.first + " " + it.second + ") was not inserted into the grid"
-            }
-
-            assertContains(placedTile.gems, Gem.EMERALD)
+            assertContains(getTileAt(it).gems, Gem.EMERALD)
         }
 
         val lastPos = positions.last()
+        assertContains(getTileAt(lastPos).gems, Gem.SAPHIRE)
+    }
 
-        val saphireTile = checkNotNull(gameState().board.grid.grid[lastPos]) {
-            "tile at position (" + lastPos.first + " " + lastPos.second + ") was not inserted into the grid"
+    /** assert that gems move over multiple tiles after a connecting piece is placed */
+    @Test
+    fun moveGemOverMultipleTilesTest() {
+        playerService.playerMove(Pair(currentTile(), 0), Pair(-2, 2))
+        playerService.playerMove(Pair(currentTile(), 0), Pair(-1, 1))
+
+        assertContains(getTileAt(Pair(-2, 2)).gems, Gem.EMERALD)
+    }
+
+    /** assert that placing a tile next to an outer treasure tile will move the Amber on it */
+    @Test
+    fun testOuterTreasureTiles() {
+        playerService.playerMove(Pair(currentTile(), 0), Pair(-3, 3))
+        assertContains(getTileAt(Pair(-3, 3)).gems, Gem.AMBER)
+    }
+
+    /**
+     * assert that placing a straight path between the outer and inner treasure will cause
+     * two gems to be eliminated from the board
+     */
+    @Test
+    fun testGemEliminationTest() {
+        val positions = listOf(
+            Pair(-3, 3), Pair(-1, 1), Pair(-2, 2)
+        )
+
+        positions.forEach {
+            playerService.playerMove(Pair(currentTile(), 0), it)
         }
 
-        assertContains(saphireTile.gems, Gem.SAPHIRE)
+        positions.forEach {
+            getTileAt(it).gems.all { gem -> gem == null }
+        }
+
+        getTileAt(Pair(-4, 4)).gems.all { it == null }
+
+        assertEquals(getTileAt(Pair(0, 0)).gems.count { it != null }, 5)
+        assertContains(getTileAt(Pair(0, 0)).gems, Gem.SAPHIRE)
     }
 
     /** utility to get the current game state */
@@ -122,5 +154,10 @@ class PlayerMoveTest {
     /** get the tile the current player is holding */
     private fun currentTile(): Tile = checkNotNull(gameState().currentPlayer.currentTile) {
         "a player should always be holding a tile after initialization"
+    }
+
+    /** get the tile placed at a given board position */
+    private fun getTileAt(pos: Pair<Int, Int>): Tile = checkNotNull(gameState().board.grid.grid[pos]) {
+        "no tile was placed at (" + pos.first + " " + pos.second + ")"
     }
 }
