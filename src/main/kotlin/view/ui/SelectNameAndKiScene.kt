@@ -1,5 +1,8 @@
 package view.ui
 
+import entity.PlayerConfig
+import entity.PlayerType
+import service.RootService
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
@@ -15,7 +18,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * required for the game to start. only shows properties that are required for
  * the amount of players selected. also gives us control over KI.
  */
-class SelectNameAndKiScene : MenuScene(1920, 1080,
+class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {
 
     val returnFromNameButton = Button(
@@ -28,45 +31,29 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     )
 
     //textfields for player names
-    private val playerATextBox : TextField = TextField(
+    private val playerATextBox = TextField(
         posX = 760, posY = 200,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    ).apply {
-        onKeyTyped = {
-            startGameButton.isDisabled = !checkIfBlank()
-        }
-    }
+    )
 
-    private val playerBTextBox : TextField = TextField(
+    private val playerBTextBox = TextField(
         posX = 760, posY = 350,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    ).apply {
-        onKeyTyped = {
-            startGameButton.isDisabled = !checkIfBlank()
-        }
-    }
+    )
 
-    private val playerCTextBox : TextField = TextField(
+    private val playerCTextBox = TextField(
         posX = 760, posY = 500,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    ).apply {
-        onKeyTyped = {
-            startGameButton.isDisabled = !checkIfBlank()
-        }
-    }
+    )
 
-    private val playerDTextBox : TextField = TextField(
+    val playerDTextBox = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    ).apply {
-        onKeyTyped = {
-            startGameButton.isDisabled = !checkIfBlank()
-        }
-    }
+    )
 
     // KI Buttons
     val kiButtonA = Button(
@@ -113,7 +100,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         text = "3: "
     ).apply { visual = ColorVisual(90, 74, 240) }
 
-    private val playerSequenzDButton = Button(
+    val playerSequenzDButton = Button(
         posX = 1110, posY = 650,
         width = 50, height = 50,
         text = "4: "
@@ -155,8 +142,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         posX = 955, posY = 790,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
-    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
-    isDisabled = true}
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
     fun setAmountOfPlayers(playerToRemove: Int){
         if (playerToRemove == 2) {
@@ -204,32 +190,12 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         playerBTextBox.text = ""
         playerCTextBox.text = ""
         playerDTextBox.text = ""
-
-        startGameButton.isDisabled = false
     }
 
-    private fun checkIfBlank() : Boolean {
-        var checkBlank = false
-        if(!playerDTextBox.isVisible){
-            checkBlank = (playerATextBox.text.isNotBlank() &&
-                         playerBTextBox.text.isNotBlank() &&
-                         playerCTextBox.text.isNotBlank())
-
-        }
-
-        if(!playerDTextBox.isVisible && !playerCTextBox.isVisible){
-            checkBlank = (playerATextBox.text.isNotBlank() &&
-                         playerBTextBox.text.isNotBlank())
-        }
-
-        if(playerDTextBox.isVisible) {
-            checkBlank = (playerATextBox.text.isNotBlank() &&
-                    playerBTextBox.text.isNotBlank() &&
-                    playerCTextBox.text.isNotBlank() &&
-                    playerDTextBox.text.isNotBlank())
-        }
-
-        return checkBlank
+    fun playerConfigList(playerCount: Int, type: Int): MutableList<PlayerConfig>{
+        val age = 0
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
+        return typeList
     }
 
     init {
