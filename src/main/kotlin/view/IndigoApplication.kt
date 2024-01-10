@@ -37,7 +37,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
        p2Button.onMouseClicked = {
            selectNameAndKiSceneObj.apply {
-               setAmountOfPlayers(2)
+               selectNameAndKiSceneObj.setAmountOfPlayers(2)
            }
            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
        }
