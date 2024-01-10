@@ -28,44 +28,60 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     )
 
     //textfields for player names
-    private val playerATextBox = TextField(
+    private val playerATextBox : TextField = TextField(
         posX = 760, posY = 200,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
-    private val playerBTextBox = TextField(
+    private val playerBTextBox : TextField = TextField(
         posX = 760, posY = 350,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
-    private val playerCTextBox = TextField(
+    private val playerCTextBox : TextField = TextField(
         posX = 760, posY = 500,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
-    val playerDTextBox = TextField(
+    private val playerDTextBox : TextField = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     // KI Buttons
-    private val kiButtonA = Button(
+    val kiButtonA = Button(
         posX = 1035, posY = 200,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240) }
 
-    private val kiButtonB = Button(
+    val kiButtonB = Button(
         posX = 1035, posY = 350,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240) }
 
-    private val kiButtonC = Button(
+    val kiButtonC = Button(
         posX = 1035, posY = 500,
         width = 50, height = 50,
         text = "KI: "
@@ -97,7 +113,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         text = "3: "
     ).apply { visual = ColorVisual(90, 74, 240) }
 
-    val playerSequenzDButton = Button(
+    private val playerSequenzDButton = Button(
         posX = 1110, posY = 650,
         width = 50, height = 50,
         text = "4: "
@@ -139,7 +155,8 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         posX = 955, posY = 790,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
-    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
+    isDisabled = true}
 
     fun setAmountOfPlayers(playerToRemove: Int){
         if (playerToRemove == 2) {
@@ -187,6 +204,32 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         playerBTextBox.text = ""
         playerCTextBox.text = ""
         playerDTextBox.text = ""
+
+        startGameButton.isDisabled = false
+    }
+
+    private fun checkIfBlank() : Boolean {
+        var checkBlank = false
+        if(!playerDTextBox.isVisible){
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                         playerBTextBox.text.isNotBlank() &&
+                         playerCTextBox.text.isNotBlank())
+
+        }
+
+        if(!playerDTextBox.isVisible && !playerCTextBox.isVisible){
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                         playerBTextBox.text.isNotBlank())
+        }
+
+        if(playerDTextBox.isVisible) {
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank() &&
+                    playerCTextBox.text.isNotBlank() &&
+                    playerDTextBox.text.isNotBlank())
+        }
+
+        return checkBlank
     }
 
     init {

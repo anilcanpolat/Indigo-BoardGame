@@ -3,7 +3,7 @@ package view
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
 import view.ui.*
-import java.awt.Menu
+
 
 /**
  * Create scenes and give some buttons there functionality.
