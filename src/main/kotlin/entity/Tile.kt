@@ -8,7 +8,7 @@ data class Tile(
     val tileType: TileType,
     var rotation: Int = 0,
     val paths: Array<Int?> = Array(6){null},
-    val gems: Array<Int?> = Array(6){null}
+    val gems: Array<Gem?> = Array(6){null}
 ) {
     /**
      * construct a new [Tile] object with the paths
