@@ -142,13 +142,51 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
     fun setAmountOfPlayers(playerToRemove: Int){
-        if (playerToRemove == 2)
-            kiButtonC.isDisabled
-            playerCTextBox.isDisabled
+        if (playerToRemove == 2) {
+            kiButtonC.isDisabled = true
+            kiButtonC.isVisible = false
+            playerCTextBox.isDisabled = true
+            playerCTextBox.isVisible = false
+            playerSequenzCButton.isDisabled = true
+            playerSequenzCButton.isVisible = false
+
+            kiButtonD.isDisabled = true
+            kiButtonD.isVisible = false
+            playerDTextBox.isDisabled = true
+            playerDTextBox.isVisible = false
+            playerSequenzDButton.isDisabled = true
+            playerSequenzDButton.isVisible = false
+        }
+        else if (playerToRemove == 1)
+        {
+            kiButtonD.isDisabled = true
+            kiButtonD.isVisible = false
+            playerDTextBox.isDisabled = true
+            playerDTextBox.isVisible = false
+            playerSequenzDButton.isDisabled = true
+            playerSequenzDButton.isVisible = false
+        }
     }
 
     fun resetSceneOnReturn(){
+        kiButtonC.isDisabled = false
+        kiButtonC.isVisible = true
+        playerCTextBox.isDisabled = false
+        playerCTextBox.isVisible = true
+        playerSequenzCButton.isDisabled = false
+        playerSequenzCButton.isVisible = true
 
+        kiButtonD.isDisabled = false
+        kiButtonD.isVisible = true
+        playerDTextBox.isDisabled = false
+        playerDTextBox.isVisible = true
+        playerSequenzDButton.isDisabled = false
+        playerSequenzDButton.isVisible = true
+
+        playerATextBox.text = ""
+        playerBTextBox.text = ""
+        playerCTextBox.text = ""
+        playerDTextBox.text = ""
     }
 
     init {

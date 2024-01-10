@@ -27,26 +27,31 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
         }
     }
 
-    private val selectNameAndKiSceneObj: SelectNameAndKiScene = SelectNameAndKiScene()
 
-    private val chosePlayerCountScene : MenuScene = ChosePlayerCountScene().apply {
+    private val chosePlayerCountScene : ChosePlayerCountScene = ChosePlayerCountScene().apply {
 
         backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
        }
 
        p2Button.onMouseClicked = {
-           selectNameAndKiSceneObj.apply {
-               selectNameAndKiSceneObj.setAmountOfPlayers(2)
+           selectNameAndKiScene.apply {
+               setAmountOfPlayers(2)
            }
            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
        }
 
        p3OwnButton.onMouseClicked = {
+           selectNameAndKiScene.apply {
+               setAmountOfPlayers(1)
+           }
            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
        }
 
        p3SharedButton.onMouseClicked = {
+           selectNameAndKiScene.apply {
+               setAmountOfPlayers(1)
+           }
            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
        }
 
@@ -55,19 +60,20 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
     }
 
-    private val selectNameAndKiScene : MenuScene = SelectNameAndKiScene().apply {
+    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene().apply {
         returnFromNameButton.onMouseClicked = {
+            resetSceneOnReturn()
             this@IndigoApplication.showMenuScene(chosePlayerCountScene)
         }
     }
 
-    private val saveAndLoadScene : MenuScene = SaveAndLoadScene().apply {
+    private val saveAndLoadScene : SaveAndLoadScene = SaveAndLoadScene().apply {
         returnFromSaveButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
         }
     }
 
-    private val endGameScene : MenuScene = EndgameScene().apply {
+    private val endGameScene : EndgameScene = EndgameScene().apply {
         quitButton.onMouseClicked = {
             exit()
         }
