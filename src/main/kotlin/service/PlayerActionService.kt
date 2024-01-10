@@ -33,6 +33,22 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         rotate(move.first,move.second)
         game.board.grid.grid.put(position, move.first)
+        val neighbours = getNeighboursOf(move.first)
+        for(neighbour in neighbours){
+            if(neighbour == null){
+                continue
+            }
+            else{
+                neighbour.gems.forEach {edge  ->
+                    if (edge != null){
+                        //ich muss noch gem in  methode moveGemToEnd richtig aufrufen
+                       // moveGemToEnd(neighbour,edge,gem)
+
+                    }
+                }
+            }
+
+        }
         // for each neighbour of this tile,
         //if there is a gem we move it to the end of the path
         //moveGemToEnd(game.currentPlayer.currentTile)
@@ -42,6 +58,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         } else {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
         }
+        onAllRefreshables {onPlayerMove(game.currentPlayer,game.nextState!!.currentPlayer,move.first,position,move.second)}
     }
 
     private fun isCurveTile(tileType: TileType): Boolean {
