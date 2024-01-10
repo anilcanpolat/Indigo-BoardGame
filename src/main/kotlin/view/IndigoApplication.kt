@@ -27,7 +27,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
         }
     }
 
-
+    private val selectNameAndKiSceneObj: SelectNameAndKiScene = SelectNameAndKiScene()
 
     private val chosePlayerCountScene : MenuScene = ChosePlayerCountScene().apply {
 
@@ -36,7 +36,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
 
        p2Button.onMouseClicked = {
-           selectNameAndKiScene.setAmountOfPlayers(2)
+           selectNameAndKiSceneObj.apply {
+               setAmountOfPlayers(2)
+           }
            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
        }
 
