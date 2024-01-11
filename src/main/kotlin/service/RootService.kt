@@ -162,39 +162,73 @@ class RootService : AbstractRefreshingService() {
 
 
     /**
-     * save a game at a specific location
+     * Save the current game state to some location on the disk.
+     * @param path path where the saved gamestate will be stored
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
     fun save(path: String) {
-        val currentGame = checkNotNull(currentGame)
+        val stateList: MutableList<SerializableGameState> = mutableListOf()
+        var fstGameState = currentGame
 
-        // The json serializer will run into problems when
-        // trying to serialize cyclic references.
-        // Restore after serialization.
-        val previousState = currentGame.previousState
-        val nextState = currentGame.nextState
+        while (fstGameState?.previousState != null) {
+            fstGameState = fstGameState.previousState
+        }
 
-        currentGame.previousState = null
-        currentGame.nextState = null
+        var currentGameIndex = -1
+        var currentIndex = 0
 
-        val json = Json { allowStructuredMapKeys = true  }
-        val jsonStr = json.encodeToString(currentGame)
-        println(jsonStr)
-        File(path).writeText(jsonStr)
+        while (fstGameState != null) {
+            stateList.add(SerializableGameState(fstGameState))
+            fstGameState = fstGameState.nextState
 
-        currentGame.previousState = previousState
-        currentGame.nextState = nextState
+            if (fstGameState === checkNotNull(currentGame)) {
+                currentGameIndex = currentIndex
+            }
+
+            currentIndex += 1
+        }
+
+        val saveState = SaveState(stateList.toList(), currentGameIndex)
+
+        val json = Json { allowStructuredMapKeys = true }
+        val file = File(path)
+
+        file.writeText(json.encodeToString(saveState))
     }
 
     /**
-     * load a game from a specific location
+     * Load a previously saved game from the disk. This will replace the [currentGame]
+     * and call [Refreshable.onStateChange] on all attached [Refreshable] objects.
+     * @param path path to the saved game state
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-    fun load(path: String): GameState? {
+    fun load(path: String) {
         val json = Json { allowStructuredMapKeys = true }
         val jsonStr = File(path).readText()
-        if (jsonStr.isEmpty())  return (null)
-        else   return json.decodeFromString<GameState>(jsonStr)
+
+        val state: SaveState = json.decodeFromString(jsonStr)
+        var newGameState: GameState? = null
+        var currentIndex = 0
+
+        state.states.forEach {
+            val s = GameState(it.currentPlayer, it.board, it.players, it.drawPile, newGameState)
+
+            if (newGameState != null) {
+                newGameState!!.nextState = s
+            }
+
+            newGameState = s
+
+            if (currentIndex == state.currentState) {
+                currentGame = s
+            }
+
+            currentIndex += 1
+        }
+
+        if (currentGame != null) {
+            onAllRefreshables { onStateChange(currentGame!!) }
+        }
     }
 
 }
