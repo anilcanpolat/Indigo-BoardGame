@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 /**
@@ -64,10 +65,20 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
 
         //calculate all possible moves
         val possibleMoves = mutableListOf<Pair<Pair<Int,Int>, Int>>()
-        game.board.grid.grid.forEach {position, _ ->
-            if(!game.board.grid.grid.containsKey(position)) {
-                for (rotation in 0 until 6) {
-                    possibleMoves.add(position to rotation)
+
+        for (row in -4..4) {
+            for (col in -4..4) {
+                if ((row + col).absoluteValue >= 5 ) {
+                    continue
+                }
+
+                val position = Pair(col, row)
+
+                //if there is no tile in this pos, add all rotations to possible moves
+                if (isValidTilePlacement(position, game)) {
+                    for(rotation in 0 until 6) {
+                        possibleMoves.add(position to rotation)
+                    }
                 }
             }
         }
@@ -79,4 +90,95 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
 
     }
 
+    /**
+    * Calculates the most strategic move for the current player based on the current game state and the current tile.
+    * This function analyzes all possible moves from the current state, evaluates them using a heuristic scoring system,
+    * and selects the move with the highest score. If no strategically advantageous move is found,
+    * it defaults to selecting a random move.
+    */
+    fun properMove(game: GameState, currentTile: Tile): Pair<Pair<Int, Int>, Int> {
+
+        var bestScore = Int.MIN_VALUE
+        var bestMove: Pair<Pair<Int, Int>, Int>? = null
+
+        //Generate all possible moves
+        val possibleMoves = findAllPossibleMoves(game,currentTile)
+
+        for(move in possibleMoves) {
+            //apply on temp gamestate
+            val tempGameState = applyMove(game.copy(),move)
+
+            val score = calculateHeuristicScore(tempGameState)
+
+            if(score > bestScore) {
+                bestScore = score
+                bestMove = move
+            }
+        }
+        return bestMove ?:calculateNextMove(game,currentTile)
+    }
+
+    private fun calculateHeuristicScore(gameState: GameState): Int {
+        var score = 0
+
+        /**
+        //Entfernung der Gems zu Toren
+        score += calculateProximityScore(gameState)
+
+        //Werte der Steine
+        score += calculateStoneValueScore(gameState)
+
+        //Gegner blockieren
+        score += calculateBlockingScore
+
+        //Zustand des Spielbretts
+        score += calculateBoardStateScore(gameState)
+        */
+
+        //additional factors
+
+        return score
+    }
+
+    private fun findAllPossibleMoves(game: GameState, currentTile: Tile): List<Pair<Pair<Int, Int>, Int>> {
+        val possibleMoves = mutableListOf<Pair<Pair<Int, Int>, Int>>()
+
+        // Iterate through each position on the board
+        for (row in -4..4) {
+            for (col in -4..4) {
+                val position = Pair(col, row)
+
+                // Check if the position is valid (e.g., not a fixed treasure tile) and empty
+                if (isValidTilePlacement(position, game)) {
+                    // Add all possible rotations (0 to 5) for this position
+                    for (rotation in 0 until 6) {
+                        possibleMoves.add(Pair(position, rotation))
+                    }
+                }
+            }
+        }
+
+        return possibleMoves
+    }
+
+    private fun isValidTilePlacement(position: Pair<Int, Int>, game: GameState): Boolean {
+        // Check if the position is empty and not a treasure tile
+        return game.board.grid.grid[position] == null && !isTreasureTile(position)
+    }
+
+    private fun isTreasureTile(position: Pair<Int, Int>): Boolean {
+        // Define positions of treasure tiles
+        val treasureTilePositions = setOf(Pair(0, -4), Pair(0, 4), Pair(-4, 4), Pair(-4, 0), Pair(4, 0), Pair(4, -4), Pair(0, 0))
+        return position in treasureTilePositions
+    }
+
+    private fun applyMove(gameState: GameState, move: Pair<Pair<Int, Int>, Int>): GameState {
+        // TODO: Implement logic to apply a move to the game state
+        return gameState
+    }
+
+    private fun calculateNextMove(game: GameState, currentTile: Tile): Pair<Pair<Int, Int>, Int> {
+        // TODO: Implement calculateNextMove
+        return Pair(Pair(0, 0), 0)
+    }
 }
