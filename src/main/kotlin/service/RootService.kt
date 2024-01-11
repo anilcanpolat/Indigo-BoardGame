@@ -162,11 +162,11 @@ class RootService : AbstractRefreshingService() {
 
 
     /**
-     * Save the current game state to some location on the disk.
-     * @param path path where the saved gamestate will be stored
+     * Save the current game state to some instance of [File].
+     * @param file file to store the current gamestate in
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-    fun save(path: String) {
+    fun save(file: File) {
         val stateList: MutableList<SerializableGameState> = mutableListOf()
         var fstGameState = currentGame
 
@@ -179,32 +179,37 @@ class RootService : AbstractRefreshingService() {
 
         while (fstGameState != null) {
             stateList.add(SerializableGameState(fstGameState))
-            fstGameState = fstGameState.nextState
 
             if (fstGameState === checkNotNull(currentGame)) {
                 currentGameIndex = currentIndex
             }
 
+            fstGameState = fstGameState.nextState
             currentIndex += 1
         }
 
         val saveState = SaveState(stateList.toList(), currentGameIndex)
 
         val json = Json { allowStructuredMapKeys = true }
-        val file = File(path)
-
         file.writeText(json.encodeToString(saveState))
     }
 
     /**
-     * Load a previously saved game from the disk. This will replace the [currentGame]
-     * and call [Refreshable.onStateChange] on all attached [Refreshable] objects.
-     * @param path path to the saved game state
+     * Save the current game state to some location on the disk.
+     * @param path path where the saved gamestate will be stored
+     */
+    fun save(path: String) {
+        save(File(path))
+    }
+
+    /**
+     * Restore the gamestate from some instance of [File].
+     * @param file file to restore the gamestate from
      */
     @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-    fun load(path: String) {
+    fun load(file: File) {
         val json = Json { allowStructuredMapKeys = true }
-        val jsonStr = File(path).readText()
+        val jsonStr = file.readText()
 
         val state: SaveState = json.decodeFromString(jsonStr)
         var newGameState: GameState? = null
@@ -229,6 +234,15 @@ class RootService : AbstractRefreshingService() {
         if (currentGame != null) {
             onAllRefreshables { onStateChange(currentGame!!) }
         }
+    }
+
+    /**
+     * Load a previously saved game from the disk. This will replace the [currentGame]
+     * and call [Refreshable.onStateChange] on all attached [Refreshable] objects.
+     * @param path path to the saved game state
+     */
+    fun load(path: String) {
+        load(File(path))
     }
 
 }
