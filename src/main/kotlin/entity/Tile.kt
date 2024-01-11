@@ -24,6 +24,9 @@ data class Tile(
         }
     }
 
+    /** create a deepCopy of the current [Tile] instance */
+    fun deepCopy(): Tile = Tile(tileType, rotation, paths.copyOf(), gems.copyOf())
+
     override fun equals(other: Any?): Boolean {
         if (other !is Tile) {
             return false

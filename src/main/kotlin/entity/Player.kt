@@ -10,4 +10,8 @@ data class Player(
     val playerToken: PlayerToken,
     var currentTile: Tile? = null,
     val collectedGems: MutableList<Gem> = mutableListOf()
-)
+) {
+    /** create a deepCopy of the current [Player] instance */
+    fun deepCopy(): Player =
+        Player(name, age, playerType, playerToken, currentTile?.deepCopy(), collectedGems.toMutableList())
+}
