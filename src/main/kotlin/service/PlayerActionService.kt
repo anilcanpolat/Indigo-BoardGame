@@ -164,8 +164,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      */
     private fun getBorderingGates(fromTile: Tile, fromEdge: Int): Pair<PlayerToken, PlayerToken>? {
         val pos = checkNotNull(getTilePosition(fromTile)) { "fromTile is not stored in the grid" }
-        val index = getBorderingGateIndex(pos) ?: return null
-        val boardEdge = index / 4
+        val boardEdge = getBorderingGateIndex(pos) ?: return null
 
         // The edges 1 and 2 connect to gate 1, the edges 2 and 3 to gate 2, 5 and 0 to gate 5 and so on
         return if (fromEdge == boardEdge || fromEdge == (boardEdge + 1) % 6) {
@@ -252,8 +251,11 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             val old = cur
             visited.add(old)
 
-            cur = neighbouringPositions(cur).first {
-                distanceToCenter(it) == 4 && !visited.contains(it)
+            // .first fails at index 23 because all neighbours are already in visited
+            if (it < 23) {
+                cur = neighbouringPositions(cur).first {
+                    distanceToCenter(it) == 4 && !visited.contains(it)
+                }
             }
 
             old
