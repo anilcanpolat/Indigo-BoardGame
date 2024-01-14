@@ -3,8 +3,10 @@ package service
 import entity.GameMode
 import entity.Player
 import entity.PlayerToken
+import kotlinx.coroutines.runBlocking
 import kotlin.test.*
 import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
 
 /** test cases for [NetworkService.createGame] */
 class NetworkServiceCreateGameTest {
@@ -33,10 +35,14 @@ class NetworkServiceCreateGameTest {
         val sessionID = java.util.Random().nextInt().toString()
 
         host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+
         Thread.sleep(1000)
 
         guest.networkService.joinGame(sessionID, "Bob")
-        gameStartSemaphore.acquire()
+
+        check(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+            "waiting for call to onGameStart timed out"
+        }
 
         check(gameStartCalled)
         checkNotNull(host.currentGame)

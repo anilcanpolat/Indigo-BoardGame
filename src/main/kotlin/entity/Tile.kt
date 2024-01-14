@@ -23,6 +23,26 @@ data class Tile(
             paths[i] = p[i]
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Tile) {
+            return false
+        }
+
+        val tile: Tile = other
+
+        if (this.tileType != tile.tileType || this.rotation != tile.rotation) {
+            return false
+        }
+
+        if (!this.gems.contentEquals(tile.gems) || !this.paths.contentEquals(tile.paths)) {
+            return false
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int = tileType.hashCode() * rotation.hashCode()
 }
 
 private fun pathsForTileType(tileType: TileType): Array<Int?> {

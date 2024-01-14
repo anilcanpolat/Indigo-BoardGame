@@ -8,7 +8,7 @@ import tools.aqua.bgw.net.common.response.CreateGameResponseStatus
 /** class handling bgw-net messages when running as the host */
 class HostMessageHandler(private val networkService: NetworkService,
                          name: String,
-                         private val mode: entity.GameMode): MessageHandler, AbstractRefreshingService() {
+                         private val mode: entity.GameMode): MessageHandler {
     private val playerList = mutableListOf(entity.PlayerConfig(name, 0, entity.PlayerType.PERSON))
 
     override fun onCreateGame(resp: CreateGameResponse) {
