@@ -10,6 +10,15 @@ data class Tile(
     val paths: Array<Int?> = Array(6){null},
     val gems: Array<Gem?> = Array(6){null}
 ) {
+    companion object {
+        /**
+         * A list of all border treasure tiles with their respective positions and already applied rotations.
+         * This list is used at multiple points in code, it should not be mutated. Use deepCopy()
+         * when you need a permanent mutable Tile object contained in this list.
+         */
+        val allBorderTreasureTiles: List<Pair<Pair<Int, Int>, Tile>> = calcAllBorderTreasureTiles()
+    }
+
     /**
      * construct a new [Tile] object with the paths
      * already set to the correct initial
@@ -120,3 +129,21 @@ private fun gemsForTileType(tileType: TileType): Array<Gem?> =
 
         else -> Array(6) { null }
     }
+
+private fun calcAllBorderTreasureTiles(): List<Pair<Pair<Int, Int>, Tile>> {
+    val rotationValue = listOf(
+        Pair(Pair(4, 0), 0),
+        Pair(Pair(0, 4), 1),
+        Pair(Pair(-4, 4), 2),
+        Pair(Pair(-4, 0), 3),
+        Pair(Pair(0, -4), 4),
+        Pair(Pair(4, -4), 5)
+    )
+
+    return rotationValue.map {
+        val tile = Tile(TileType.TREASURE_CORNER)
+        tile.rotate(it.second)
+
+        Pair(it.first, tile)
+    }
+}

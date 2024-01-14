@@ -45,27 +45,11 @@ class RootService : AbstractRefreshingService() {
         }
 
         val treasureTiles = hashMapOf(
-            Pair(Pair(0, 0), Tile(TileType.TREASURE_CENTER)),
-            Pair(Pair(-4, 4), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(0, 4), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(-4, 0), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(4, -4), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(4, 0), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(0, -4), Tile(TileType.TREASURE_CORNER))
+            Pair(Pair(0, 0), Tile(TileType.TREASURE_CENTER))
         )
 
-        // The corner tiles have to be rotated, so that the gem is facing in the right direction
-        val rotationValue = hashMapOf(
-            Pair(Pair(4, 0), 0),
-            Pair(Pair(0, 4), 1),
-            Pair(Pair(-4, 4), 2),
-            Pair(Pair(-4, 0), 3),
-            Pair(Pair(0, -4), 4),
-            Pair(Pair(4, -4), 5)
-        )
-
-        rotationValue.forEach {
-            treasureTiles[it.key]!!.rotate(it.value)
+        Tile.allBorderTreasureTiles.forEach {
+            treasureTiles[it.first] = it.second.deepCopy()
         }
 
         val grid = TileGrid(treasureTiles)

@@ -29,14 +29,12 @@ class GuestMessageHandler(private val networkService: NetworkService,
         }
 
         val treasureTiles = hashMapOf(
-            Pair(Pair(0, 0), Tile(entity.TileType.TREASURE_CENTER)),
-            Pair(Pair(-4, 4), Tile(entity.TileType.TREASURE_CORNER)),
-            Pair(Pair(0, 4), Tile(entity.TileType.TREASURE_CORNER)),
-            Pair(Pair(-4, 0), Tile(entity.TileType.TREASURE_CORNER)),
-            Pair(Pair(4, -4), Tile(entity.TileType.TREASURE_CORNER)),
-            Pair(Pair(4, 0), Tile(entity.TileType.TREASURE_CORNER)),
-            Pair(Pair(0, -4), Tile(entity.TileType.TREASURE_CORNER))
+            Pair(Pair(0, 0), Tile(entity.TileType.TREASURE_CENTER))
         )
+
+        Tile.allBorderTreasureTiles.forEach {
+            treasureTiles[it.first] = it.second.deepCopy()
+        }
 
         val gates = translateMode(initMessage.gameMode).gateConfiguration()
         val state = entity.GameState(players[0], entity.Board(gates, entity.TileGrid(treasureTiles)), players, tiles)
