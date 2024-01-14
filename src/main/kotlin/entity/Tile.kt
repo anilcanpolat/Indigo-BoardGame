@@ -37,11 +37,11 @@ data class Tile(
     fun rotate(value: Int) {
         rotation = (rotation + value) % 6
 
-        for (i in 0..value) {
+        for (i in 0 until value) {
             val lstGem = gems[5]
             val lstPth = paths[5]
 
-            for (j in 0..4) {
+            for (j in (0..4).reversed()) {
                 gems[j + 1] = gems[j]
                 paths[j + 1] = paths[j]
             }
@@ -50,7 +50,9 @@ data class Tile(
             paths[0] = lstPth
 
             for (j in 0..5) {
-                paths[j] = paths[j]?.inc()
+                if (paths[j] != null) {
+                    paths[j] = (paths[j]!! + 1) % 6
+                }
             }
         }
     }
@@ -109,7 +111,7 @@ private fun gemsForTileType(tileType: TileType): Array<Gem?> =
         }
 
         TileType.TREASURE_CORNER -> Array(6) {
-            if (it == 3) {
+            if (it == 5) {
                 Gem.AMBER
             } else {
                 null
