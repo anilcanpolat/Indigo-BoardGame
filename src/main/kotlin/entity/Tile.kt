@@ -22,10 +22,38 @@ data class Tile(
         for (i in 0..5) {
             paths[i] = p[i]
         }
+
+        val g = gemsForTileType(tileType)
+
+        for (i in 0..5) {
+            gems[i] = g[i]
+        }
     }
 
     /** create a deepCopy of the current [Tile] instance */
     fun deepCopy(): Tile = Tile(tileType, rotation, paths.copyOf(), gems.copyOf())
+
+    /** rotate the tile by [value] steps clockwise */
+    fun rotate(value: Int) {
+        rotation = (rotation + value) % 6
+
+        for (i in 0..value) {
+            val lstGem = gems[5]
+            val lstPth = paths[5]
+
+            for (j in 0..4) {
+                gems[j + 1] = gems[j]
+                paths[j + 1] = paths[j]
+            }
+
+            gems[0] = lstGem
+            paths[0] = lstPth
+
+            for (j in 0..5) {
+                paths[j] = paths[j]?.inc()
+            }
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other !is Tile) {
@@ -69,3 +97,24 @@ private fun pathsForTileType(tileType: TileType): Array<Int?> {
         }
     }
 }
+
+private fun gemsForTileType(tileType: TileType): Array<Gem?> =
+    when(tileType) {
+        TileType.TREASURE_CENTER -> Array(6) {
+            if (it >= 5) {
+                Gem.SAPHIRE
+            } else {
+                Gem.EMERALD
+            }
+        }
+
+        TileType.TREASURE_CORNER -> Array(6) {
+            if (it == 3) {
+                Gem.AMBER
+            } else {
+                null
+            }
+        }
+
+        else -> Array(6) { null }
+    }
