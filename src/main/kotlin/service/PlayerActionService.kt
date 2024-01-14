@@ -117,7 +117,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                 throw IllegalStateException("Path leads to a tile with no connecting path")
             } else {
                 // Move the gem one step and repeat
-                neighbourTile.gems[newEdge] = gem.ordinal
+                neighbourTile.gems[newEdge] = gem
                 moveGemToEnd(neighbourTile, newEdge, gem)
             }
         }
