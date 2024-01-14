@@ -15,59 +15,76 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * @param position position where the tile will be placed
      */
 
-    fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>){
-        val game = rootService.currentGame
-        checkNotNull(game)
-        /**if there is already a tile in this position
-         * we cancel the placement of this tile in this position
-         * and the player should choose another position to place the tile
-         */
-        if (game.board.grid.grid.get(position) != null) {
-            throw Exception("there is already a tile in this position.Choose an other position to place the tile")
-        }
+    fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>) {
+        val game = checkNotNull(rootService.currentGame)
+
+        // create a copy so that using undo/redo works
+        val gameCopy = game.deepCopy()
+        gameCopy.nextState = game
+
+        // prevent double placement of tiles
+        check(game.board.grid.grid[position] == null) { "attempted to place a tile at an occupied position" }
 
         //check for the illegal moves
-        if(isCurveTile(move.first.tileType) && isBlockingGates(move.first, position)){
-            throw Exception("It is not permitted to block two gates by putting a curve to both gates")
+        check(!isBlockingGates(move.first, position)) {
+            "It is not permitted to block two gates by putting a curve to both gates"
         }
 
-        rotate(move.first,move.second)
-        game.board.grid.grid.put(position, move.first)
-        val neighbours = getNeighboursOf(move.first)
-        for(neighbour in neighbours){
-            if(neighbour == null){
-                continue
-            }
-            else{
-                neighbour.gems.forEach {edge  ->
-                    if (edge != null){
-                        //ich muss noch gem in  methode moveGemToEnd richtig aufrufen
-                       // moveGemToEnd(neighbour,edge,gem)
+        game.board.grid.grid[position] = move.first
 
-                    }
+        val neighbours = getNeighboursOf(move.first)
+
+        for (i in 0..5) {
+            val currentNeighbour = neighbours[i] ?: continue
+
+            if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
+                val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
+
+                val gem = if (emeraldIndex != -1) {
+                    currentNeighbour.gems[emeraldIndex] = null
+                    Gem.EMERALD
+                } else {
+                    val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
+                    check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
+
+                    currentNeighbour.gems[saphireIndex] = null
+                    Gem.SAPHIRE
+                }
+
+                val path = moveGemToEnd(currentNeighbour, (i + 3) % 6, gem)
+                onAllRefreshables { onGemMove(path) }
+            } else {
+                val gem = currentNeighbour.gems[(i + 3) % 6]
+
+                if (gem != null) {
+                    val path = moveGemToEnd(currentNeighbour, (i + 3) % 6, gem)
+                    onAllRefreshables { onGemMove(path) }
                 }
             }
+        }
 
-        }
-        // for each neighbour of this tile,
-        //if there is a gem we move it to the end of the path
-        //moveGemToEnd(game.currentPlayer.currentTile)
+        val nextPlayerIndex = (game.players.indexOf(game.currentPlayer) + 1) % game.players.size
+        val nextPlayer = game.players[nextPlayerIndex]
+
+        onAllRefreshables { onPlayerMove(game.currentPlayer, nextPlayer, move.first, position, move.second) }
+
         game.currentPlayer.currentTile = null
-        if (game.drawPile.isEmpty()) {
-            endGame()
-        } else {
+
+        if (game.drawPile.isNotEmpty()) {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
+        } else {
+            onAllRefreshables { onGameFinished(game.players) }
         }
-        onAllRefreshables {onPlayerMove(game.currentPlayer,game.nextState!!.currentPlayer,move.first,position,move.second)}
+
+        game.currentPlayer = nextPlayer
+
+        game.previousState = gameCopy
+        game.nextState = null
+        gameCopy.nextState = game
     }
 
     private fun isCurveTile(tileType: TileType): Boolean {
         return tileType.toType() in listOf(2,3,4)
-    }
-
-    private fun rotate(tile:Tile,int:Int){
-        //Increment the rotation of the tile by the specified number of steps(int)
-        tile.rotation = (tile.rotation + int) % 6
     }
 
     private fun endGame(){
@@ -84,21 +101,26 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * @param fromTile tile the gem is currently placed on
      * @param fromEdge number of the edge the gem currently lays on
      * @param gem the gem to move
+     * @return a list of all positions and edges the gem was on
      */
 
 
-    fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem) {
+    private fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem): List<Pair<Pair<Int, Int>, Int>> {
         //check bordering gates, give points to the owners of the gates
         val gates = getBorderingGates(fromTile, fromEdge)
+        val currentPosition = checkNotNull(getTilePosition(fromTile)) { "fromTile not placed on the grid" }
+
         if (gates != null) {
             getPlayers().forEach { player: Player ->
                 if (player.playerToken == gates.first || player.playerToken == gates.second) {
                     player.collectedGems.add(gem)
                 }
             }
-            //remove the gem
+
             fromTile.gems[fromEdge] = null
-            return
+            onAllRefreshables { onGemRemoved(currentPosition, fromEdge) }
+
+            return listOf(Pair(currentPosition, fromEdge))
         }
 
         val neighbours = getNeighboursOf(fromTile)
@@ -106,21 +128,32 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         neighbours[fromEdge]?.let { neighbourTile ->
             // Check for collision of gems
             if (neighbourTile.gems[(fromEdge + 3) % 6] != null) {
+                val neighbourPosition = checkNotNull(getTilePosition(neighbourTile))
+
                 fromTile.gems[fromEdge] = null
                 neighbourTile.gems[(fromEdge + 3) % 6] = null
-                return
+
+                onAllRefreshables { onGemRemoved(currentPosition, fromEdge) }
+                onAllRefreshables { onGemRemoved(neighbourPosition, (fromEdge + 3) % 6) }
+
+                return listOf(Pair(currentPosition, fromEdge))
             }
 
             // Find the new edge for the gem to move to
             val newEdge = neighbourTile.paths[(fromEdge + 3) % 6]
+
             if (newEdge == null) {
                 throw IllegalStateException("Path leads to a tile with no connecting path")
             } else {
                 // Move the gem one step and repeat
                 neighbourTile.gems[newEdge] = gem
-                moveGemToEnd(neighbourTile, newEdge, gem)
+                fromTile.gems[fromEdge] = null
+
+                return listOf(Pair(currentPosition, fromEdge)) + moveGemToEnd(neighbourTile, newEdge, gem)
             }
         }
+
+        return listOf(Pair(currentPosition, fromEdge))
     }
 
     /**
