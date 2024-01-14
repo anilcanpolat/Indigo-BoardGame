@@ -54,6 +54,20 @@ class RootService : AbstractRefreshingService() {
             Pair(Pair(0, -4), Tile(TileType.TREASURE_CORNER))
         )
 
+        // The corner tiles have to be rotated, so that the gem is facing in the right direction
+        val rotationValue = hashMapOf(
+            Pair(Pair(4, 0), 0),
+            Pair(Pair(0, 4), 1),
+            Pair(Pair(-4, 4), 2),
+            Pair(Pair(-4, 0), 3),
+            Pair(Pair(0, -4), 4),
+            Pair(Pair(4, -4), 5)
+        )
+
+        rotationValue.forEach {
+            treasureTiles[it.key]!!.rotate(it.value)
+        }
+
         val grid = TileGrid(treasureTiles)
         val gates = gameMode.gateConfiguration()
         val board = Board(gates, grid)
