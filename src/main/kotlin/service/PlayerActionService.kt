@@ -36,28 +36,39 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
+            val connectingEdge = (i + 3) % 6
 
             if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
 
                 val gem = if (emeraldIndex != -1) {
-                    currentNeighbour.gems[emeraldIndex] = null
+                    // swap the emerald with the gem at the current position. Positions on the center
+                    // tile are irrelevant, but [moveGemToEnd] requires them to be set correctly.
+                    currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
+                        currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
+                    }
+
                     Gem.EMERALD
                 } else {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
-                    currentNeighbour.gems[saphireIndex] = null
+                    // swap the saphire with the gem at the current position. Positions on the center
+                    // tile are irrelevant, but [moveGemToEnd] requires them to be set correctly.
+                    currentNeighbour.gems[saphireIndex] = currentNeighbour.gems[connectingEdge].also {
+                        currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[saphireIndex]
+                    }
+
                     Gem.SAPHIRE
                 }
 
-                val path = moveGemToEnd(currentNeighbour, (i + 3) % 6, gem)
+                val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
                 onAllRefreshables { onGemMove(path) }
             } else {
-                val gem = currentNeighbour.gems[(i + 3) % 6]
+                val gem = currentNeighbour.gems[connectingEdge]
 
                 if (gem != null) {
-                    val path = moveGemToEnd(currentNeighbour, (i + 3) % 6, gem)
+                    val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
                     onAllRefreshables { onGemMove(path) }
                 }
             }
