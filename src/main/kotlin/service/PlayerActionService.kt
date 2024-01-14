@@ -94,18 +94,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         gameCopy.nextState = game
     }
 
-    private fun isCurveTile(tileType: TileType): Boolean {
-        return tileType.toType() in listOf(2,3,4)
-    }
-
-    private fun endGame(){
-            val game = rootService.currentGame
-            checkNotNull(game) { "Noch kein Spiel gestartet." }
-            onAllRefreshables { onGameFinished(game.players) }
-        }
-
-
-
     /**
      * Move a gem to the end of the path starting at fromTile at the
      * edge specified by fromEdge.
@@ -227,7 +215,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         return neighbouringPositions(pos).map {
             val distance = distanceToCenter(it)
-            val neighbour = grid.get(it)
+            val neighbour = grid[it]
 
             if (distance <= 4) {
                 neighbour
