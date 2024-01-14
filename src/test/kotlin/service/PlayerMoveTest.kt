@@ -164,13 +164,13 @@ class PlayerMoveTest {
         gameState().currentPlayer.currentTile = Tile(TileType.CORNERS_ONLY)
         playerService.playerMove(Pair(currentTile(), 0), Pair(0, -3))
 
-        assertEquals(getTileAt(Pair(0, -3)).gems[1], Gem.AMBER, "amber should have been moved to edge number 1")
+        assertEquals(getTileAt(Pair(0, -3)).gems[5], Gem.AMBER, "amber should have been moved to edge number 5")
 
         gameState().currentPlayer.currentTile = Tile(TileType.STRAIGHTS_ONLY)
-        playerService.playerMove(Pair(currentTile(), 0), Pair(+1, -4))
+        playerService.playerMove(Pair(currentTile(), 0), Pair(-1, -3))
 
         assert(getTileAt(Pair(0, -3)).gems.all { it == null }) { "gems should have been moved off the tile" }
-        assert(getTileAt(Pair(+1, -4)).gems.all { it == null }) { "gems should have been moved off the tile" }
+        assert(getTileAt(Pair(-1, -3)).gems.all { it == null }) { "gems should have been moved off the tile" }
 
         val awardedToken = gameState().board.gates[0]
 
@@ -203,7 +203,7 @@ class PlayerMoveTest {
         currentPlayer().currentTile = Tile(TileType.CORNERS_ONLY)
 
         assertFails("blocking gates using a tile should not be possible") {
-            playerService.playerMove(Pair(currentTile(), 0), Pair(+1, -4))
+            playerService.playerMove(Pair(currentTile(), 0), Pair(-1, -3))
         }
     }
 
