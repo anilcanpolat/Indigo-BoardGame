@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -56,9 +57,10 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
      * Calculates the next move for the AI player based on the current game state.
      * This involves evaluating all possible moves and then selecting one at random.
      *
-     * @return A Pair of Tile and Int, representing the chosen tile and its rotation.
+     * @return A Pair, where the first element is a Pair of coordinates representing the position on the board
+     * for the chosen tile, and the second element is an Int representing the rotation of the tile.
      */
-    fun calculateNextMove(): Pair<Tile, Int> {
+    fun calculateNextMove(): Pair<Pair<Int, Int>, Int> {
         val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
 
         val currentTile = game.drawPile.first()
@@ -86,58 +88,136 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         //select a random move
         val selectedMove = possibleMoves.random()
 
-        return Pair(currentTile, selectedMove.second)
+        //position and rotation
+        return Pair(selectedMove.first, selectedMove.second)
 
     }
 
     /**
-    * Calculates the most strategic move for the current player based on the current game state and the current tile.
-    * This function analyzes all possible moves from the current state, evaluates them using a heuristic scoring system,
-    * and selects the move with the highest score. If no strategically advantageous move is found,
-    * it defaults to selecting a random move.
-    */
-    fun properMove(game: GameState, currentTile: Tile): Pair<Pair<Int, Int>, Int> {
-
+     * Calculates the most strategic move for the current player based on the current game state and the current tile.
+     * This function analyzes all possible moves from the current state, evaluates them using a heuristic scoring system,
+     * and selects the move with the highest score. If no strategically advantageous move is found,
+     * it defaults to selecting a random move.
+     *
+     * @return A Pair, where the first element is a Pair of the current Tile and an Int representing the rotation of the tile,
+     * and the second element is a Pair of coordinates representing the position on the board for the chosen tile.
+     */
+    fun properMoveForAI(game: GameState, currentTile: Tile): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
         var bestScore = Int.MIN_VALUE
         var bestMove: Pair<Pair<Int, Int>, Int>? = null
 
-        //Generate all possible moves
-        val possibleMoves = findAllPossibleMoves(game,currentTile)
 
-        for(move in possibleMoves) {
-            //apply on temp gamestate
-            val tempGameState = applyMove(game.copy(),move)
+        val aiPlayer = game.players.firstOrNull { it.playerType == PlayerType.COMPUTER }
+        //AI player token set to white if there is no COMPUTER/AI in the game
+        val aiPlayerToken: PlayerToken = aiPlayer?.playerToken ?: PlayerToken.WHITE
 
-            val score = calculateHeuristicScore(tempGameState)
+        if (aiPlayer != null) {
+            // Generate all possible moves
+            val possibleMoves = findAllPossibleMoves(game, currentTile)
 
-            if(score > bestScore) {
-                bestScore = score
-                bestMove = move
+            for (move in possibleMoves) {
+                // Apply the move on a temporary game state
+                val tempGameState = applyMove(game.copy(), move)
+
+                // Calculate the heuristic score considering the AI player's token
+                val score = calculateHeuristicScore(tempGameState, aiPlayerToken)
+
+                if (score > bestScore) {
+                    bestScore = score
+                    bestMove = move
+                }
             }
         }
-        return bestMove ?:calculateNextMove(game,currentTile)
+
+        // No best move found for AI, fallback to a random move
+        if (bestMove == null) {
+            val fallbackMove = calculateNextMove()
+            // Add the currentTile to the return value
+            return Pair(Pair(currentTile, fallbackMove.second), fallbackMove.first)
+        }
+
+        return Pair(Pair(currentTile, bestMove.second), bestMove.first)
     }
 
-    private fun calculateHeuristicScore(gameState: GameState): Int {
+    private fun calculateHeuristicScore(gameState: GameState, aiPlayerToken: PlayerToken): Int {
+
         var score = 0
 
-        /**
-        //Entfernung der Gems zu Toren
-        score += calculateProximityScore(gameState)
 
-        //Werte der Steine
+        //Distance of the gems to the gates
+        score += calculateProximityScore(gameState, aiPlayerToken)
+
+        /**
+        //Values of the gems
         score += calculateStoneValueScore(gameState)
 
-        //Gegner blockieren
+        //Blocking the enemy
         score += calculateBlockingScore
 
-        //Zustand des Spielbretts
+        //Condition of the board
         score += calculateBoardStateScore(gameState)
         */
 
         //additional factors
 
         return score
+    }
+
+    private val MAX_SCORE = 1000
+
+    private fun calculateProximityScore(game: GameState, aiPlayerToken: PlayerToken): Int {
+        val OWN_GATE_MULTIPLIER = 2
+        var score = 0
+        val gemsWithPositions = getGemsWithPositions(game)
+
+        for ((gem, position) in gemsWithPositions) {
+            val nearestGateDistance = findNearestGateDistance(position, game.board.gates)
+            val nearestGate = findNearestGate(game.board, position)
+
+            if (nearestGateDistance != null && (nearestGate?.first == aiPlayerToken || nearestGate?.second == aiPlayerToken)) {
+                var gateScore = MAX_SCORE - nearestGateDistance
+                gateScore *= OWN_GATE_MULTIPLIER
+                score += gateScore
+            }
+        }
+
+        return score
+    }
+
+    private fun findNearestGate(board: Board, gemPosition: Pair<Int, Int>): Pair<PlayerToken, PlayerToken>? {
+        // TODO: Implement logic to find the nearest gate based on gemPosition
+        return null
+    }
+
+    private fun findNearestGateDistance(gemPosition: Pair<Int, Int>, gates: Array<Pair<PlayerToken, PlayerToken>>): Int? {
+        // Use the logic to calculate the distance from gemPosition to each gate
+        // TODO:  Return the minimum distance or null if no path to a gate is found.
+        var minDistance: Int? = null
+
+        for (gateIndex in gates.indices) {
+            val gatePosition = getGatePosition(gates[gateIndex])
+            val distance =
+                calculatePathDistance(gemPosition, gatePosition)
+
+            if (distance != null && (minDistance == null || distance < minDistance)) {
+                minDistance = distance
+            }
+        }
+
+        return minDistance
+    }
+
+    private fun getGatePosition(gatePair: Pair<PlayerToken, PlayerToken>): Pair<Int, Int> {
+        // TODO: Logic to extract the gate position from the gate pair.
+        return Pair(gatePair.first.ordinal, gatePair.second.ordinal)
+    }
+
+    private fun calculatePathDistance(startPos: Pair<Int, Int>, endPos: Pair<Int, Int>): Int {
+        // Convert axial coordinates to relative distance
+        val dx = endPos.first - startPos.first
+        val dy = endPos.second - startPos.second
+        val dz = -dx - dy
+        return maxOf(abs(dx), abs(dy), abs(dz))
     }
 
     private fun findAllPossibleMoves(game: GameState, currentTile: Tile): List<Pair<Pair<Int, Int>, Int>> {
@@ -172,13 +252,18 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return position in treasureTilePositions
     }
 
+    private fun getGemsWithPositions(game: GameState): List<Pair<Gem, Pair<Int, Int>>> {
+        // TODO: Implement logic to get gems with positions from the game state
+        return emptyList()
+    }
     private fun applyMove(gameState: GameState, move: Pair<Pair<Int, Int>, Int>): GameState {
         // TODO: Implement logic to apply a move to the game state
         return gameState
     }
 
-    private fun calculateNextMove(game: GameState, currentTile: Tile): Pair<Pair<Int, Int>, Int> {
-        // TODO: Implement calculateNextMove
-        return Pair(Pair(0, 0), 0)
+    fun getAiPlayerTokens(players: List<Player>): List<PlayerToken> {
+        return players.filter { it.playerType == PlayerType.COMPUTER }
+            .map { it.playerToken }
     }
+
 }
