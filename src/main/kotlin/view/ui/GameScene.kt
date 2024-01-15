@@ -88,8 +88,9 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
 
     //It is for layout of the playerName and score
+    //Player 1 Box
     private val player1Pane = Pane<ComponentView>(
-        width = 300, height = 200
+        width = 300, height =   200
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
     private val player1Text = Label(text = "Player1", posX = 10 ,
@@ -107,21 +108,71 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
         visual = CompoundVisual(ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png")),
         size = 65).apply { rotate(30) }
 
-
+    //Player 2 Box
     private val player2Pane = Pane<ComponentView>(
         width = 300, height = 200
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    private val player2Text = Label(text = "Player2", posX = 10 ,
+        font = Font(size = 30), width = 200,
+        alignment = Alignment.CENTER_LEFT )
+    private val player2Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+        width = 70, height = 70, posX = 200, posY = 20
+    )
+    private val player2ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
+        width = 200, alignment = Alignment.CENTER_LEFT)
+    private val player2Score = Label(text = "0",
+        posX = 100, posY = 50, font = Font(size = 30), alignment = Alignment.CENTER_LEFT)
+    private val player2Tile = HexagonView(
+        posX = 10, posY = 70,
+        visual = CompoundVisual(ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png")),
+        size = 65).apply { rotate(30) }
+
+    //Player3 Box
     private val player3Pane = Pane<ComponentView>(
         width = 300, height = 200
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    private val player3Text = Label(text = "Player3", posX = 10 ,
+        font = Font(size = 30), width = 200,
+        alignment = Alignment.CENTER_LEFT )
+    private val player3Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+        width = 70, height = 70, posX = 200, posY = 20
+    )
+    private val player3ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
+        width = 200, alignment = Alignment.CENTER_LEFT)
+    private val player3Score = Label(text = "0",
+        posX = 100, posY = 50, font = Font(size = 30), alignment = Alignment.CENTER_LEFT)
+    private val player3Tile = HexagonView(
+        posX = 10, posY = 70,
+        visual = CompoundVisual(ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png")),
+        size = 65).apply { rotate(30) }
+
+    //Player 4 Box
     private val player4Pane = Pane<ComponentView>(
        width = 300, height = 200
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    private val player4Text = Label(text = "Player4", posX = 10 ,
+        font = Font(size = 30), width = 200,
+        alignment = Alignment.CENTER_LEFT )
+    private val player4Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+        width = 70, height = 70, posX = 200, posY = 20
+    )
+    private val player4ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
+        width = 200, alignment = Alignment.CENTER_LEFT)
+    private val player4Score = Label(text = "0",
+        posX = 100, posY = 50, font = Font(size = 30), alignment = Alignment.CENTER_LEFT)
+    private val player4Tile = HexagonView(
+        posX = 10, posY = 70,
+        visual = CompoundVisual(ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png")),
+        size = 65).apply { rotate(30) }
+
     private val gridPane = GridPane<ComponentView>(posX = 1750, posY = 500 , columns = 1, rows = 4, spacing = 20)
 
 
     init {
         player1Pane.addAll(player1Text, player1Color, player1ScoreText, player1Score,player1Tile)
+        player2Pane.addAll(player2Text, player2Color, player2ScoreText, player2Score,player2Tile)
+        player3Pane.addAll(player3Text, player3Color, player3ScoreText, player3Score,player3Tile)
+        player4Pane.addAll(player4Text, player4Color, player4ScoreText, player4Score,player4Tile)
         gridPane[0,0]= player1Pane
         gridPane[0,1] = player2Pane
         gridPane[0,2] = player3Pane
@@ -139,6 +190,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
                 hexagonGrid[col, row] = hexagon
             }
         }
+        //For the images of TreasureTiles
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
         addComponents(saveButton, quitButton,redoButton,undoButton,
