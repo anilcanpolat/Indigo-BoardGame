@@ -96,7 +96,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     private val player1Text = Label(text = "Player1", posX = 10 ,
         font = Font(size = 30), width = 200,
         alignment = Alignment.CENTER_LEFT )
-    private val player1Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+    private val player1Token = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
         width = 70, height = 70, posX = 200, posY = 20
     )
     private val player1ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
@@ -115,7 +115,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     private val player2Text = Label(text = "Player2", posX = 10 ,
         font = Font(size = 30), width = 200,
         alignment = Alignment.CENTER_LEFT )
-    private val player2Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+    private val player2Token = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
         width = 70, height = 70, posX = 200, posY = 20
     )
     private val player2ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
@@ -134,7 +134,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     private val player3Text = Label(text = "Player3", posX = 10 ,
         font = Font(size = 30), width = 200,
         alignment = Alignment.CENTER_LEFT )
-    private val player3Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+    private val player3Token = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
         width = 70, height = 70, posX = 200, posY = 20
     )
     private val player3ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
@@ -153,7 +153,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     private val player4Text = Label(text = "Player4", posX = 10 ,
         font = Font(size = 30), width = 200,
         alignment = Alignment.CENTER_LEFT )
-    private val player4Color = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
+    private val player4Token = Label(visual = ImageVisual(path = "BigPlayerColorFour.png"),
         width = 70, height = 70, posX = 200, posY = 20
     )
     private val player4ScoreText = Label(text = "Score:", posX = 10, posY = 50, font = Font(size=30),
@@ -167,12 +167,16 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
     private val gridPane = GridPane<ComponentView>(posX = 1750, posY = 500 , columns = 1, rows = 4, spacing = 20)
 
+    //Lists of player labels
+    private val playerNameList = listOf(player1Text, player2Text, player3Text, player4Text)
+    private val playerTokenList = listOf(player1Token, player2Token, player3Token,player4Token)
+
 
     init {
-        player1Pane.addAll(player1Text, player1Color, player1ScoreText, player1Score,player1Tile)
-        player2Pane.addAll(player2Text, player2Color, player2ScoreText, player2Score,player2Tile)
-        player3Pane.addAll(player3Text, player3Color, player3ScoreText, player3Score,player3Tile)
-        player4Pane.addAll(player4Text, player4Color, player4ScoreText, player4Score,player4Tile)
+        player1Pane.addAll(player1Text, player1Token, player1ScoreText, player1Score,player1Tile)
+        player2Pane.addAll(player2Text, player2Token, player2ScoreText, player2Score,player2Tile)
+        player3Pane.addAll(player3Text, player3Token, player3ScoreText, player3Score,player3Tile)
+        player4Pane.addAll(player4Text, player4Token, player4ScoreText, player4Score,player4Tile)
         gridPane[0,0]= player1Pane
         gridPane[0,1] = player2Pane
         gridPane[0,2] = player3Pane
@@ -199,9 +203,22 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
 
      override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
+        when(players.size){
+            2 -> for (i in 2..3){
+                gridPane[0,i]!!.isDisabled = true
+                gridPane[0,i]!!.isVisible = false
+                }
 
-
-    }
+            3-> {
+                gridPane[0,3]!!.isDisabled = true
+                gridPane[0,3]!!.isVisible = false
+            }
+        }
+         for (i in 0..players.size){
+             playerNameList[i].text= players[i].name
+             playerTokenList[i].visual = ImageVisual(path = "PlayerColor"+ players[i].playerToken.toString() +".png")
+         }
+     }
 
     private fun placeTiles(){
         //up
