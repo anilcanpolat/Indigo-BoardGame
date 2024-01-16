@@ -195,6 +195,46 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     fun playerConfigList(playerCount: Int, type: Int): MutableList<PlayerConfig>{
         val age = 0
         val typeList: MutableList<PlayerConfig> = mutableListOf()
+
+        var p1Name = ""
+        var p2Name = ""
+        var p3Name = ""
+        var p4Name = ""
+
+        var p1Type: PlayerType = PlayerType.PERSON
+        var p2Type: PlayerType = PlayerType.PERSON
+        var p3Type: PlayerType = PlayerType.PERSON
+        var p4Type: PlayerType = PlayerType.PERSON
+
+        if(playerCount == 2){
+            p1Name = playerATextBox.text
+            p2Name = playerBTextBox.text
+        }
+        else if(playerCount == 3){
+            p1Name = playerATextBox.text
+            p2Name = playerBTextBox.text
+            p3Name = playerCTextBox.text
+        }
+        else if(playerCount == 4){
+            p1Name = playerATextBox.text
+            p2Name = playerBTextBox.text
+            p3Name = playerCTextBox.text
+            p4Name = playerDTextBox.text
+        }
+
+        if(type == 1){
+            p1Type = PlayerType.COMPUTER
+        }
+        if(type == 2){
+            p2Type = PlayerType.COMPUTER
+        }
+        if(type == 3){
+            p3Type = PlayerType.COMPUTER
+        }
+        if(type == 4){
+            p4Type = PlayerType.COMPUTER
+        }
+
         return typeList
     }
 
