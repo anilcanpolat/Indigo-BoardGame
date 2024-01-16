@@ -1,7 +1,5 @@
 package service
 import entity.*
-import entity.PlayerConfig
-import entity.PlayerType
 import kotlin.test.*
 import org.junit.jupiter.api.assertThrows
 /**
@@ -9,10 +7,7 @@ import org.junit.jupiter.api.assertThrows
  *
  */
 class RedoTest {
-    /**
-     * Tests the redo function of RootService.
-     */
-
+    /** Tests the redo function of RootService.*/
     @Test
     fun testRedo() {
         val rootService = RootService()
@@ -30,8 +25,5 @@ class RedoTest {
         rootService.redo()
         assertEquals(rootService.currentGame!!.previousState,gamestate)
         assertEquals(rootService.currentGame!!,nextstate)
-
-
-
     }
 }

@@ -9,10 +9,7 @@ import entity.*
  *
  */
 class StartNewGameTest {
-    /**
-     * Tests the startNewGame function of RootService.
-     */
-
+    /** Tests the startNewGame function of RootService. */
     @Test
     fun teststartNewGame() {
         val rootService = RootService()
@@ -28,9 +25,5 @@ class StartNewGameTest {
         // Assert that all players have unique tokens
         val distinctTokens = rootService.currentGame?.players?.map { it.playerToken }?.distinct()
         assertEquals(2, distinctTokens?.size)
-
-
     }
-
-
 }
