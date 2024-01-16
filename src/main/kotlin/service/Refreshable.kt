@@ -28,9 +28,11 @@ interface Refreshable {
     fun onPlayerMove(player: Player,nextPlayer: Player,tile: Tile,position:Pair<Int,Int>,rotation:Int) {}
 
     /**
-     * perform refreshes after gem is moved
+     * perform refreshes after a gem is moved
+     * @param positionList A list of pairs holding a tile position and the tiles edge which each represent
+     *                     a position the gem was on while moving to it's final position.
      */
-    fun onGemMove (positionList:List<Pair<Pair<Int,Int>,Int>>,edge:Int) {}
+    fun onGemMove (positionList: List<Pair<Pair<Int,Int>, Int>>) {}
 
     /**
      * perform refreshes after GameState has changed

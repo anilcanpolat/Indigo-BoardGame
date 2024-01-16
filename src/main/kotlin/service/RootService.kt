@@ -45,14 +45,12 @@ class RootService : AbstractRefreshingService() {
         }
 
         val treasureTiles = hashMapOf(
-            Pair(Pair(0, 0), Tile(TileType.TREASURE_CENTER)),
-            Pair(Pair(-4, 4), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(0, 4), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(-4, 0), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(4, -4), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(4, 0), Tile(TileType.TREASURE_CORNER)),
-            Pair(Pair(0, -4), Tile(TileType.TREASURE_CORNER))
+            Pair(Pair(0, 0), Tile(TileType.TREASURE_CENTER))
         )
+
+        Tile.allBorderTreasureTiles.forEach {
+            treasureTiles[it.first] = it.second.deepCopy()
+        }
 
         val grid = TileGrid(treasureTiles)
         val gates = gameMode.gateConfiguration()
