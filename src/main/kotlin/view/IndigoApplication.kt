@@ -1,5 +1,6 @@
 package view
 
+import entity.*
 import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
@@ -14,13 +15,24 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     private val rootService = RootService()
 
-    private var useKi = 0
+    private var useKiA = false
+    private var useKiB = false
+    private var useKiC = false
+    private var useKiD = false
+
+    private var hotSeat = true
+
+    private var gameMode = 0
 
     private val gameScene : GameScene = GameScene()
 
     private val welcomeScene : MenuScene = WelcomeScene().apply {
         loadGameButton.onMouseClicked = {
             this@IndigoApplication.showGameScene(gameScene)
+        }
+
+        hostButton.onMouseClicked = {
+            hotSeat = false
         }
 
         hotSeatModeButton.onMouseClicked = {
@@ -37,9 +49,11 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
         backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
+            hotSeat = false
        }
 
        p2Button.onMouseClicked = {
+           gameMode = 1
            selectNameAndKiScene.apply {
                setAmountOfPlayers(2)
            }
@@ -47,6 +61,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
 
        p3OwnButton.onMouseClicked = {
+           gameMode = 2
            selectNameAndKiScene.apply {
                setAmountOfPlayers(1)
            }
@@ -54,6 +69,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
 
        p3SharedButton.onMouseClicked = {
+           gameMode = 3
            selectNameAndKiScene.apply {
                setAmountOfPlayers(1)
            }
@@ -61,6 +77,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
        }
 
        p4Button.onMouseClicked = {
+           gameMode = 4
            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
        }
     }
@@ -68,23 +85,50 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
+            useKiA = false
+            useKiB = false
+            useKiC = false
+            useKiD = false
+            gameMode = 0
             this@IndigoApplication.showMenuScene(chosePlayerCountScene)
         }
 
         kiButtonA.onMouseClicked = {
-            useKi = 1
+            useKiA = true
         }
 
         kiButtonB.onMouseClicked = {
-            useKi = 2
+            useKiB = true
         }
 
         kiButtonC.onMouseClicked = {
-            useKi = 3
+            useKiC = true
         }
 
         kiButtonD.onMouseClicked = {
-            useKi = 4
+            useKiD = true
+        }
+
+        startGameButton.onMouseClicked = {
+            if (hotSeat)
+            {
+                if(gameMode == 1) {
+                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                        GameMode.TWO_PLAYERS)
+                }
+                else if(gameMode == 2) {
+                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                        GameMode.THREE_PLAYERS)
+                }
+                else if(gameMode == 3) {
+                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                        GameMode.THREE_PLAYERS_SHARED_GATES)
+                }
+                else if(gameMode == 4) {
+                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                        GameMode.FOUR_PLAYERS)
+                }
+            }
         }
     }
 

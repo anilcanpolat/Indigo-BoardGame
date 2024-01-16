@@ -138,7 +138,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     )
 
 
-    private val startGameButton = Button(
+    val startGameButton = Button(
         posX = 955, posY = 790,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
@@ -192,8 +192,11 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         playerDTextBox.text = ""
     }
 
-    fun playerConfigList(playerCount: Int, type: Int): MutableList<PlayerConfig>{
-        val age = 0
+    fun playerConfigList(playerCount: Int,
+                         kiA: Boolean,
+                         kiB: Boolean,
+                         kiC: Boolean,
+                         kiD: Boolean): MutableList<PlayerConfig>{
         val typeList: MutableList<PlayerConfig> = mutableListOf()
 
         var p1Name = ""
@@ -206,11 +209,11 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         var p3Type: PlayerType = PlayerType.PERSON
         var p4Type: PlayerType = PlayerType.PERSON
 
-        if(playerCount == 2){
+        if(playerCount == 1){
             p1Name = playerATextBox.text
             p2Name = playerBTextBox.text
         }
-        else if(playerCount == 3){
+        else if(playerCount == 2 || playerCount == 3){
             p1Name = playerATextBox.text
             p2Name = playerBTextBox.text
             p3Name = playerCTextBox.text
@@ -222,18 +225,28 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
             p4Name = playerDTextBox.text
         }
 
-        if(type == 1){
+        if(kiA){
             p1Type = PlayerType.COMPUTER
         }
-        if(type == 2){
+        if(kiB){
             p2Type = PlayerType.COMPUTER
         }
-        if(type == 3){
+        if(kiC){
             p3Type = PlayerType.COMPUTER
         }
-        if(type == 4){
+        if(kiD){
             p4Type = PlayerType.COMPUTER
         }
+
+        val p1 = PlayerConfig(p1Name, 0, p1Type)
+        val p2 = PlayerConfig(p2Name, 0, p2Type)
+        val p3 = PlayerConfig(p3Name, 0, p3Type)
+        val p4 = PlayerConfig(p4Name, 0, p4Type)
+
+        typeList.add(p1)
+        typeList.add(p2)
+        typeList.add(p3)
+        typeList.add(p4)
 
         return typeList
     }

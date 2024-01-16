@@ -27,7 +27,7 @@ class WelcomeScene : MenuScene(1920, 1080,
         text = "Online-Game"
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
-    private val hostButton = Button(
+    val hostButton = Button(
         posX = 860, posY = 310,
         width = 200, height = 50,
         text = "Play as Host: "
