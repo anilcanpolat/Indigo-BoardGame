@@ -7,7 +7,7 @@ import kotlin.math.absoluteValue
  * Type wrapping network interactions with remote players.
  * @param rootService reference to the root service used for state access and game initialization
  */
-class NetworkService(val rootService: RootService) {
+class NetworkService(val rootService: RootService): AbstractRefreshingService() {
     var indigoClient: IndigoClient? = null
 
     /**

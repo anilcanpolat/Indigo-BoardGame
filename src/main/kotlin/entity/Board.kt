@@ -6,5 +6,9 @@ package entity
  */
 data class Board(
     val gates: Array<Pair<PlayerToken, PlayerToken>>,
-    val grid: TileGrid,
-)
+    val grid: TileGrid
+) {
+    /** create a deepCopy of the current [Board] instance */
+    fun deepCopy(): Board
+        = Board(gates.map { it.copy() }.toTypedArray(), grid.deepCopy())
+}
