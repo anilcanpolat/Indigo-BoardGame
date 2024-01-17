@@ -160,6 +160,31 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         text = "Start!", font = Font(50)
     ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
+    //functions
+    private fun checkIfBlank() : Boolean {
+        var checkBlank = false
+        if(!playerDTextBox.isVisible){
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank() &&
+                    playerCTextBox.text.isNotBlank())
+
+        }
+
+        if(!playerDTextBox.isVisible && !playerCTextBox.isVisible){
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank())
+        }
+
+        if(playerDTextBox.isVisible) {
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank() &&
+                    playerCTextBox.text.isNotBlank() &&
+                    playerDTextBox.text.isNotBlank())
+        }
+
+        return checkBlank
+    }
+
     fun setAmountOfPlayers(playerToRemove: Int){
         if (playerToRemove == 2) {
             kiButtonC.isDisabled = true
