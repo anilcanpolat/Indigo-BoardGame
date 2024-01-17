@@ -35,25 +35,41 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 760, posY = 200,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     private val playerBTextBox = TextField(
         posX = 760, posY = 350,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     private val playerCTextBox = TextField(
         posX = 760, posY = 500,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     val playerDTextBox = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     // KI Buttons
     val kiButtonA = Button(
