@@ -158,7 +158,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 955, posY = 790,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
-    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
+    isDisabled = true}
 
     //functions
     private fun checkIfBlank() : Boolean {
@@ -231,6 +232,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         playerBTextBox.text = ""
         playerCTextBox.text = ""
         playerDTextBox.text = ""
+
+        startGameButton.isDisabled = true
     }
 
     fun playerConfigList(playerCount: Int,
@@ -250,20 +253,22 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         var p3Type: PlayerType = PlayerType.PERSON
         var p4Type: PlayerType = PlayerType.PERSON
 
-        if(playerCount == 1){
-            p1Name = playerATextBox.text
-            p2Name = playerBTextBox.text
-        }
-        else if(playerCount == 2 || playerCount == 3){
-            p1Name = playerATextBox.text
-            p2Name = playerBTextBox.text
-            p3Name = playerCTextBox.text
-        }
-        else if(playerCount == 4){
-            p1Name = playerATextBox.text
-            p2Name = playerBTextBox.text
-            p3Name = playerCTextBox.text
-            p4Name = playerDTextBox.text
+        when (playerCount) {
+            1 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+            }
+            2, 3 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+            }
+            4 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+                p4Name = playerDTextBox.text
+            }
         }
 
         if(kiA){
