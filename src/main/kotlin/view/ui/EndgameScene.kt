@@ -1,6 +1,7 @@
 package view.ui
 
 
+import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
@@ -12,7 +13,7 @@ import tools.aqua.bgw.visual.ImageVisual
 /**
  * creates the endgame scene of the Indigo game
  */
-class EndgameScene : MenuScene(700, 1080){
+class EndgameScene : MenuScene(1920, 1080), Refreshable{
 
     private val gold = Label(width = 30, height = 50,
         posX = 10, posY = 100).apply{
@@ -39,7 +40,7 @@ class EndgameScene : MenuScene(700, 1080){
         posX = 15, posY = 550, text = "4.", font = Font(size = 35)
     )
 
-    private val quitButton = Button(
+    val quitButton = Button(
         width = 150, height = 50,
         posX = 150, posY = 700,
         text = "Quit"
@@ -47,7 +48,7 @@ class EndgameScene : MenuScene(700, 1080){
         visual = ColorVisual(221, 136, 136)
     }
 
-    private val startGameButton = Button(
+    val startGameButton = Button(
         width = 150, height = 50,
         posX = 400, posY = 700,
         text = "New Game"
@@ -55,10 +56,23 @@ class EndgameScene : MenuScene(700, 1080){
         visual = ColorVisual(136, 221, 136)
     }
 
+    private val winnerOne = Label(width = 30, height = 50,
+        posX = 10, posY = 100, text = "winner 1")
+
+    private val winnerTwo = Label(width = 30, height = 50,
+        posX = 10, posY = 250, text = "winner 2")
+
+    private val winnerThree = Label(width = 30, height = 50,
+        posX = 10, posY = 400, text = "winner 3")
+
+    private val winnerFour = Label(width = 30, height = 50,
+        posX = 10, posY = 550, text = "winner 4")
+
     init {
         opacity = 0.5
 
-        addComponents(gold, silver, bronze, fourthPlace, quitButton, startGameButton)
+        addComponents(gold, silver, bronze, fourthPlace, quitButton, startGameButton,
+            winnerOne, winnerTwo, winnerThree, winnerFour)
     }
 
 }
