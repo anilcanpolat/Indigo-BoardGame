@@ -1,15 +1,20 @@
-package service
+package service.networkservice
 
-import java.util.concurrent.Semaphore
 import entity.GameMode
 import entity.Player
 import entity.PlayerToken
-import kotlin.test.*
-import kotlinx.coroutines.runBlocking
-import java.util.concurrent.TimeUnit
 
-/** test cases for [NetworkService.joinGame] */
-class NetworkServiceJoinGameTest {
+import service.Refreshable
+import service.RootService
+
+import kotlin.test.*
+
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.Semaphore
+
+
+/** test cases for [service.NetworkService.joinGame] */
+class JoinGameTest {
     /** make sure that [Refreshable.onGameStart] is called in a guest when the host starts the game */
     @Test
     fun joinGameTest() {
@@ -21,19 +26,19 @@ class NetworkServiceJoinGameTest {
 
         guest.networkService.addRefreshable(object: Refreshable {
             override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
-                check(players.any { it.name == "Alice" })
-                check(players.any { it.name == "Bob" })
+                assert(players.any { it.name == "Alice" }) { "player alice missing" }
+                assert(players.any { it.name == "Bob" }) { "player bob missing" }
 
                 gameStartSemaphore.release()
             }
         })
 
         host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
-        Thread.sleep(1000)
+        Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        check(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(gameStartSemaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"
         }
     }
@@ -51,15 +56,15 @@ class NetworkServiceJoinGameTest {
 
             guest.networkService.addRefreshable(object: Refreshable {
                 override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
-                    check(players.any { it.name == "Alice" })
-                    check(players.any { it.name == "Bob" })
+                    assert(players.any { it.name == "Alice" }) { "player alice missing" }
+                    assert(players.any { it.name == "Bob" }) { "player bob missing" }
 
                     if (mode == GameMode.THREE_PLAYERS || mode == GameMode.THREE_PLAYERS_SHARED_GATES) {
-                        check(players.any { it.name == "Charlie" })
+                        assert(players.any { it.name == "Charlie" }) { "player charlie missing" }
                     }
 
                     if (mode == GameMode.FOUR_PLAYERS) {
-                        check(players.any { it.name == "Dave" })
+                        assert(players.any { it.name == "Dave" }) { "player dave missing" }
                     }
 
                     var numberShared = 0
@@ -74,10 +79,10 @@ class NetworkServiceJoinGameTest {
                     }
 
                     when (mode) {
-                        GameMode.TWO_PLAYERS -> check(numberOwned == 6)
-                        GameMode.THREE_PLAYERS -> check(numberOwned == 6)
-                        GameMode.THREE_PLAYERS_SHARED_GATES -> check(numberOwned == 3 && numberShared == 3)
-                        GameMode.FOUR_PLAYERS -> check(numberShared == 6)
+                        GameMode.TWO_PLAYERS -> assertEquals(numberOwned, 6)
+                        GameMode.THREE_PLAYERS -> assertEquals(numberOwned, 6)
+                        GameMode.THREE_PLAYERS_SHARED_GATES -> assertEquals(Pair(numberOwned, numberShared), Pair(3, 3))
+                        GameMode.FOUR_PLAYERS -> assertEquals(numberShared, 6)
                     }
 
                     semaphore.release()
@@ -85,7 +90,7 @@ class NetworkServiceJoinGameTest {
             })
 
             host.networkService.createGame(sessionID, "Alice", mode)
-            Thread.sleep(1000)
+            Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
             guest.networkService.joinGame(sessionID, "Bob")
 
@@ -97,14 +102,14 @@ class NetworkServiceJoinGameTest {
                 RootService().networkService.joinGame(sessionID, "Dave")
             }
 
-            check(semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+            assert(semaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
                 "waiting for call to onGameStart timed out"
             }
         }
     }
 
     /**
-     * Make sure that [NetworkService.joinGame] constructs a valid [entity.GameState]
+     * Make sure that [service.NetworkService.joinGame] constructs a valid [entity.GameState]
      * that is equivalent to the hosts [entity.GameState]
      */
     @Test
@@ -115,7 +120,7 @@ class NetworkServiceJoinGameTest {
         val gameStartSemaphore = Semaphore(0)
 
         host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
-        Thread.sleep(1000)
+        Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
         guest.networkService.addRefreshable(object : Refreshable {
             override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
@@ -125,21 +130,21 @@ class NetworkServiceJoinGameTest {
 
         guest.networkService.joinGame(sessionID, "Bob")
 
-        check(gameStartSemaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+        assert(gameStartSemaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"
         }
 
         val hostState = checkNotNull(host.currentGame)
         val guestState = checkNotNull(guest.currentGame)
 
-        check(hostState.drawPile == guestState.drawPile)
-        check(hostState.board.gates.contentEquals(guestState.board.gates))
-        check(hostState.board.grid == guestState.board.grid)
+        assertEquals(hostState.drawPile, guestState.drawPile)
+        assertContentEquals(hostState.board.gates, guestState.board.gates)
+        assertEquals(hostState.board.grid, guestState.board.grid)
 
-        check(hostState.currentPlayer.let { p ->
+        assert(hostState.currentPlayer.let { p ->
             guestState.currentPlayer.let { q ->
                 p.name == q.name && p.playerToken == q.playerToken && p.currentTile == q.currentTile
             }
-        })
+        }) { "constructed players differ" }
     }
 }

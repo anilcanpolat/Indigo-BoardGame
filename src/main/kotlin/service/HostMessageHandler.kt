@@ -30,7 +30,7 @@ class HostMessageHandler(private val networkService: NetworkService,
 
     override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
         val rotation = tilePlacedMessage.rotation
-        val position = Pair(tilePlacedMessage.qCoordinate, tilePlacedMessage.rCoordinate)
+        val position = Pair(tilePlacedMessage.qcoordinate, tilePlacedMessage.rcoordinate)
         val currentPlayer = getGameState().currentPlayer
 
         val tile = checkNotNull(currentPlayer.currentTile) {
