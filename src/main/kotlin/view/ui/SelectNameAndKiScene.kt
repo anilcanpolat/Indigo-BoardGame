@@ -76,25 +76,57 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 1035, posY = 200,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+         onMouseClicked = {
+             kiA = setKILevel(kiLevelA)
+             kiLevelA++
+             println("DrugsAreBad")
+        }
+    }
 
     val kiButtonB = Button(
         posX = 1035, posY = 350,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+        onMouseClicked = {
+            kiB = setKILevel(kiLevelB)
+            kiLevelB++
+        }
+    }
 
     val kiButtonC = Button(
         posX = 1035, posY = 500,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+        onMouseClicked = {
+            kiC = setKILevel(kiLevelC)
+            kiLevelC
+        }
+    }
 
     val kiButtonD = Button(
         posX = 1035, posY = 650,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+        onMouseClicked = {
+            kiD = setKILevel(kiLevelD)
+            kiLevelD
+        }
+    }
+
+    //var for level of Ki
+    private var kiLevelA = 0
+    private var kiLevelB = 0
+    private var kiLevelC = 0
+    private var kiLevelD = 0
+
+    private var kiA : Boolean = false
+    private var kiB : Boolean = false
+    private var kiC : Boolean = false
+    private var kiD : Boolean = false
 
 
     //SequenzButtons
@@ -102,25 +134,53 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 1110, posY = 200,
         width = 50, height = 50,
         text = "1: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+    onMouseClicked = {
+            playerAPos = cycleThroughPlayerSequence(playerAPos)
+            text = playerAPos.toString()
+        }
+    }
 
     private val playerSequenzBButton = Button(
         posX = 1110, posY = 350,
         width = 50, height = 50,
         text = "2: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+        onMouseClicked = {
+            playerBPos = cycleThroughPlayerSequence(playerBPos)
+            text = playerBPos.toString()
+        }
+    }
 
     private val playerSequenzCButton = Button(
         posX = 1110, posY = 500,
         width = 50, height = 50,
         text = "3: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+        onMouseClicked = {
+            playerCPos = cycleThroughPlayerSequence(playerCPos)
+            text = playerCPos.toString()
+        }
+    }
 
-    val playerSequenzDButton = Button(
+    private val playerSequenzDButton = Button(
         posX = 1110, posY = 650,
         width = 50, height = 50,
         text = "4: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+        onMouseClicked = {
+            playerDPos = cycleThroughPlayerSequence(playerDPos)
+            text = playerDPos.toString()
+        }
+    }
+
+    //var for sequence
+    private var overAllPos = 0
+    private var playerAPos = 0
+    private var playerBPos = 0
+    private var playerCPos = 0
+    private var playerDPos = 0
+
 
     //Ki Speed stuff
     private val labelKiSpeedPartA = Label(
@@ -161,6 +221,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
     isDisabled = true}
 
+
     //functions
     private fun checkIfBlank() : Boolean {
         var checkBlank = false
@@ -185,6 +246,31 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
 
         return checkBlank
     }
+
+    private fun setKILevel(level : Int) : Boolean{
+        var isKi = false
+        when (level % 3){
+            0 -> { isKi = false}
+            1 -> { isKi = true
+                    playerDTextBox.text = "[G4]RandomKi"}
+            2 -> { isKi = true
+                    playerDTextBox.text = "[G4]MurderProKiLevel500"}
+        }
+        return isKi
+    }
+
+    private fun cycleThroughPlayerSequence(pos : Int) : Int{
+        var posToReturn = 0
+        if(pos == 0){
+            overAllPos++
+            posToReturn = overAllPos
+        } else{
+            overAllPos--
+            posToReturn = 0
+        }
+        return posToReturn
+    }
+
 
     fun setAmountOfPlayers(playerToRemove: Int){
         if (playerToRemove == 2) {

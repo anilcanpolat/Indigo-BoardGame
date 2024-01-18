@@ -95,6 +95,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
         kiButtonA.onMouseClicked = {
             useKiA = true
+            println("drugsAreGood")
         }
 
         kiButtonB.onMouseClicked = {
