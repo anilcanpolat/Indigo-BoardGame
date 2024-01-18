@@ -64,44 +64,22 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return Pair(selectedMove.first, selectedMove.second)
     }
 
-/*
-    /**
-     * Generates and executes a random move for the AI player using the given tile.
-     * It randomly selects both a valid board position (not already occupied and not at (0, 0))
-     * and a rotation for the tile. The move is then executed via the PlayerService.
-     *
-     * The function continues to generate random positions until it finds one that is not already occupied.
-     * Once a valid position and rotation are determined, the move is executed.
-     *
-     * @param tile The Tile to be placed by the AI player.
-     */
-    fun randomMove(tile: Tile) {
-
-        val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
-
-        var randomX: Int
-        var randomY: Int
-
-        do {
-            randomX = Random.nextInt(-4, 5).takeUnless { it == 0 } ?: Random.nextInt(-4, 5)
-            randomY = Random.nextInt(-4, 5).takeUnless { it == 0 } ?: Random.nextInt(-4, 5)
-        } while (game.board.grid.grid[Pair(randomX, randomY)] != null)
-
-        val randomRotation = Random.nextInt(0, 7)
-        // We have a valid position and a random rotation, call the playerMove function
-        val newMove = Pair(tile, randomRotation)
-        val newPosition = Pair(randomX, randomY)
-        ps.playerMove(newMove, newPosition)
-    }
-    */
-
     // Constants for heuristic values
-    val GEM_VALUE = 5  // Example value, adjust based on your game's balance
+    val GEM_VALUE = 5  // Example value, gonna adjust it later
     val GEM_DIFFERENCE_VALUE = 10
     val GEM_ON_TILE_VALUE = 3
     val MAX_PROXIMITY_SCORE = 10 // Max score for a gem being next to a gate
 
-    /*fun minimax(gameState: GameState, depth: Int, alpha: Int, beta: Int, maximizingPlayer: Boolean): Int {
+    /**
+     * The minimax function for evaluating the best move in the game.
+     * @param gameState The current state of the game.
+     * @param depth The depth of the search.
+     * @param alpha Alpha value for alpha-beta pruning.
+     * @param beta Beta value for alpha-beta pruning.
+     * @param maximizingPlayer A flag to determine if the current move is by a maximizing player.
+     * @return The evaluation score of the game state.
+     */
+    fun minimax(gameState: GameState, depth: Int, alpha: Int, beta: Int, maximizingPlayer: Boolean): Int {
         if (depth == 0 || isGameOver(gameState)) {
             return staticEvaluationOfPosition(gameState)
         }
@@ -117,7 +95,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
                 val eval = minimax(child, depth - 1, newAlpha, newBeta, false)
                 maxEval = maxOf(maxEval, eval)
                 newAlpha = maxOf(newAlpha, eval)
-                if (newBeta <= newAlpha) break
+                if (newBeta <= newAlpha) break  // Alpha-beta pruning
             }
 
             return maxEval
@@ -129,108 +107,27 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
                 val eval = minimax(child, depth - 1, newAlpha, newBeta, true)
                 minEval = minOf(minEval, eval)
                 newBeta = minOf(newBeta, eval)
-                if (newBeta <= newAlpha) break
+                if (newBeta <= newAlpha) break // Alpha-beta pruning
             }
-
             return minEval
         }
-    }*/
+    }
 
+    /**
+     * Checks if the game is over.
+     * @param gameState The current state of the game.
+     * @return True if the game is over, otherwise False.
+     */
     private fun isGameOver(gameState: GameState): Boolean {
-        // Implement logic to check if the game is over
-        return true
+        return gameState.drawPile.isEmpty()
     }
 
-    private fun staticEvaluationOfPosition(gameState: GameState): Int {
-        var score = 0
-
-        val aiPlayer = gameState.players.firstOrNull { it.playerType == PlayerType.COMPUTER }
-        val humanPlayers = gameState.players.filter { it.playerType == PlayerType.PERSON }
-
-        aiPlayer?.let { ai ->
-            // Existing scoring logic
-            score += ai.collectedGems.size * GEM_VALUE
-            ai.currentTile?.let { currentTile ->
-                score += evaluateTilePotential(currentTile)
-            }
-            humanPlayers.forEach { human ->
-                score += (ai.collectedGems.size - human.collectedGems.size) * GEM_DIFFERENCE_VALUE
-            }
-
-            // Additional consideration: Score based on gem proximity to the AI's gates
-
-            //score += evaluateGemProximityToGates(gameState, ai)
-        }
-
-        return score
-    }
-
-    private fun evaluateMaterial(player: Player): Int {
-        var materialScore = 0
-
-        // Evaluate the player's collected gems
-        materialScore += player.collectedGems.size * GEM_VALUE
-
-        // Evaluate the current tile held by the player
-        player.currentTile?.let { tile ->
-            materialScore += evaluateTilePotential(tile)
-        }
-
-        return materialScore
-    }
-
-    private fun evaluateTilePotential(tile: Tile): Int {
-        var tileScore = 0
-
-        // Assign points based on the type of tile
-        tileScore = when (tile.tileType) {
-            TileType.CORNERS_ONLY -> 10
-            TileType.STRAIGHT_NOCROSS -> 8
-            TileType.CURVES_TO_CORNER -> 12
-            TileType.STRAIGHTS_ONLY -> 7
-            TileType.LONG_CURVES -> 9
-            TileType.TREASURE_CORNER -> 20
-            TileType.TREASURE_CENTER -> 25
-            // Adjust these values based on your game's strategy
-        }
-
-        // Consider additional factors, like gems on the tile
-        tileScore += tile.gems.filterNotNull().size * GEM_ON_TILE_VALUE
-
-        return tileScore
-    }
-/*
-    private fun evaluateGemProximityToGates(gameState: GameState, aiPlayer: Player): Int {
-        var proximityScore = 0
-        val aiGates = getAIGates(aiPlayer) // Implement this method based on AI's gates
-
-        // Define the fixed positions of specific gems
-        val centerPosition = Pair(0, 0) // The center position with saphires and emeralds
-        val cornerPositions = listOf(
-            Pair(-4, 4), Pair(-4, 0), Pair(0, -4),
-            Pair(4, -4), Pair(4, 0), Pair(0, 4)
-        ) // The corner positions with ambers
-
-        // Calculate scores for the gems in the center
-        proximityScore += Gem.SAPHIRE.score() * calculateDistanceToClosestGate(centerPosition, aiGates)
-        proximityScore += Gem.EMERALD.score() * 5 * calculateDistanceToClosestGate(centerPosition, aiGates) // 5 emeralds
-
-        // Calculate scores for the gems in the corners
-        for (corner in cornerPositions) {
-            proximityScore += Gem.AMBER.score() * 6 * calculateDistanceToClosestGate(corner, aiGates) // 6 ambers in total
-        }
-
-        // Adjust scores if necessary, depending on whether closer should give more points or less
-        // ...
-
-        return proximityScore
-    }*/
-
-    private fun getAIGates(aiPlayer: Player): List<Pair<Int, Int>> {
-        return listOf() // Placeholder return, implement actual logic
-    }
-
-/*    private fun generateChildrenOfGameState(gameState: GameState): List<GameState> {
+    /**
+     * Generates all possible future game states from the current state.
+     * @param gameState The current state of the game.
+     * @return A list of possible future game states.
+     */
+    private fun generateChildrenOfGameState(gameState: GameState): List<GameState> {
         val children = mutableListOf<GameState>()
 
         // Assuming the AI is the current player
@@ -250,16 +147,125 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
                 childState.board.grid.grid[position] = rotatedTile
 
                 // Perform any additional game state updates necessary after placing a tile
-                // For example, handle the next player's turn, move gems if applicable, etc.
-                // updateGameStateAfterMove(childState, position, rotatedTile)
 
                 // Add the new child state to the list
                 children.add(childState)
             }
         }
         return children
-    }*/
+    }
 
+    /**
+     * Performs a static evaluation of the given game state.
+     * @param gameState The game state to evaluate.
+     * @return The score of the game state.
+     */
+    private fun staticEvaluationOfPosition(gameState: GameState): Int {
+        var score = 0
+
+        val aiPlayer = gameState.players.firstOrNull { it.playerType == PlayerType.COMPUTER }
+        val humanPlayers = gameState.players.filter { it.playerType == PlayerType.PERSON }
+
+        aiPlayer?.let { ai ->
+            // Existing scoring logic
+            score += ai.collectedGems.size * GEM_VALUE
+
+            humanPlayers.forEach { human ->
+                score += (ai.collectedGems.size - human.collectedGems.size) * GEM_DIFFERENCE_VALUE
+            }
+
+            // Additional consideration: Score based on gem proximity to the AI's gates
+
+            score += evaluateGemProximityToGates(gameState, ai)
+        }
+
+        return score
+    }
+
+    /**
+     * Evaluates the proximity of specific gems to the gates controlled by the AI player.
+     * This function is used in the heuristic evaluation of the game state.
+     * @param gameState The current game state.
+     * @param aiPlayer The AI player whose gate proximity is being evaluated.
+     * @return The total proximity score based on the AI's gates and gem positions.
+     */
+    private fun evaluateGemProximityToGates(gameState: GameState, aiPlayer: Player): Int {
+        var proximityScore = 0
+        val aiGates = getAIGates(aiPlayer, gameState.board) // Implement this method based on AI's gates
+
+        // Define the fixed positions of specific gems
+        val centerPosition = Pair(0, 0) // The center position with saphires and emeralds
+        val cornerPositions = listOf(
+            Pair(-4, 4), Pair(-4, 0), Pair(0, -4),
+            Pair(4, -4), Pair(4, 0), Pair(0, 4)
+        ) // The corner positions with ambers
+
+        // Calculate scores for the gems in the center
+        //proximityScore += Gem.SAPHIRE.score() * calculateDistanceToClosestGate(centerPosition, aiGates)
+        //proximityScore += Gem.EMERALD.score() * 5 * calculateDistanceToClosestGate(centerPosition, aiGates) // 5 emeralds
+
+        // Calculate scores for the gems in the corners
+        for (corner in cornerPositions) {
+            //proximityScore += Gem.AMBER.score() * 6 * calculateDistanceToClosestGate(corner, aiGates) // 6 ambers in total
+        }
+
+        return proximityScore
+    }
+
+    /**
+     * Retrieves a list of gate indices controlled by the AI player.
+     * @param aiPlayer The AI player whose gates are to be identified.
+     * @param board The game board with gate information.
+     * @return A list of gate indices controlled by the AI player.
+     */
+    private fun getAIGates(aiPlayer: Player, board: Board): List<Int> {
+        val aiGates = mutableListOf<Int>()
+
+        // Find gates associated with the AI player's token
+        board.gates.forEachIndexed { index, gatePair ->
+            if (gatePair.first == aiPlayer.playerToken || gatePair.second == aiPlayer.playerToken) {
+                aiGates.add(index)  // Add the index representing the gate's position
+            }
+        }
+        return aiGates
+    }
+
+    /**
+     * Calculates the minimum distance from a position to the closest AI-controlled gate.
+     * @param position The position (coordinates) from which to calculate the distance.
+     * @param aiGates A list of AI-controlled gates' coordinates.
+     * @return The minimum distance to the closest AI-controlled gate.
+     */
+    private fun calculateDistanceToClosestGate(position: Pair<Int, Int>, aiGates: List<Pair<Int, Int>>): Int {
+        val positionCube = hexToCube(position)  // Convert hex to cube coordinates for distance calculation
+
+        // Find the minimum distance to any of the AI-controlled gates
+        return aiGates
+            .map { hexToCube(it) }
+            .minOfOrNull { gateCube -> cubeDistance(positionCube, gateCube) } ?: Int.MAX_VALUE
+    }
+
+    /**
+     * Converts hexagonal grid coordinates to cube coordinates.
+     * @param hex The hexagonal grid coordinates.
+     * @return The equivalent cube coordinates.
+     */
+    private fun hexToCube(hex: Pair<Int, Int>): Triple<Int, Int, Int> {
+        val (x, y) = hex
+        val z = -x - y  // Cube coordinate z is derived to ensure x + y + z = 0
+        return Triple(x, y, z)
+    }
+
+    /**
+     * Calculates the distance between two points in cube coordinates.
+     * @param a The first set of cube coordinates.
+     * @param b The second set of cube coordinates.
+     * @return The distance between the two points in cube coordinates.
+     */
+    private fun cubeDistance(a: Triple<Int, Int, Int>, b: Triple<Int, Int, Int>): Int {
+        // The maximum of the absolute differences of the coordinates gives the distance
+        return maxOf(abs(a.first - b.first), abs(a.second - b.second), abs(a.third - b.third))
+    }
 
     /**
      * Calculates the most strategic move for the current player based on the current game state and the current tile.
