@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.21"
+    kotlin("plugin.serialization")version "1.8.21"
     application
     jacoco
     id("io.gitlab.arturbosch.detekt") version "1.18.0-RC3"
@@ -30,6 +31,14 @@ application {
 }
 
 dependencies {
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
+    implementation("org.danbrough.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.danbrough.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation(kotlin("test-junit5"))
     implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9")
     implementation(group = "tools.aqua", name = "bgw-net-common", version = "0.9")

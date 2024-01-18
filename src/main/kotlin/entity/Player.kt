@@ -1,8 +1,11 @@
 package entity
+import kotlinx.serialization.Serializable
 
+@Serializable
 /**
  * Class wrapping the state associated with a single player.
  */
+
 data class Player(
     val name: String,
     val age: Int,
