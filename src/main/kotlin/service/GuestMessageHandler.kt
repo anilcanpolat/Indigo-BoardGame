@@ -1,6 +1,7 @@
 package service
 
 import edu.udo.cs.sopra.ntf.*
+import entity.PlayerConfig
 import entity.Tile
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
@@ -9,10 +10,11 @@ import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 /**
  * Class handling bgw-net messages when running as a guest.
  * @property rootService reference to the [RootService] for state access and invoking methods on instances of [Refreshable]
- * @property name Name of the guest. Must be unique in the session.
+ * @property config Config of the guest. The name must be unique in the session.
  */
 class GuestMessageHandler(private val rootService: RootService,
-                          private val name: String): MessageHandler {
+                          private val config: PlayerConfig
+): MessageHandler {
     override fun onJoinGame(client: IndigoClient, resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
@@ -26,7 +28,7 @@ class GuestMessageHandler(private val rootService: RootService,
 
         val players = initMessage.players.map {
             val firstTile = tiles.removeFirst()
-            val player = translatePlayer(it, name == it.name)
+            val player = translatePlayer(it, config.name == it.name)
 
             player.currentTile = firstTile
             player
@@ -84,7 +86,7 @@ class GuestMessageHandler(private val rootService: RootService,
         }
 
     private fun translatePlayer(player: Player, isSelf: Boolean = false): entity.Player {
-        val type = if (isSelf) entity.PlayerType.PERSON else entity.PlayerType.REMOTE
+        val type = if (isSelf) config.type else entity.PlayerType.REMOTE
         val token = translateToken(player.color)
 
         return entity.Player(player.name, 0, type, token)

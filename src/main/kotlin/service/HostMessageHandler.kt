@@ -1,6 +1,7 @@
 package service
 
 import edu.udo.cs.sopra.ntf.*
+import entity.PlayerConfig
 import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.CreateGameResponse
 import tools.aqua.bgw.net.common.response.CreateGameResponseStatus
@@ -8,13 +9,13 @@ import tools.aqua.bgw.net.common.response.CreateGameResponseStatus
 /**
  * Class handling bgw-net messages when running as the host.
  * @property rootService Reference to the [RootService] to access state and callback functionality.
- * @property name Name of the host player. Must be unique in the entire session.
+ * @property config Config of the host player. Names must be unique in the entire session.
  * @property mode The [GameMode] to host. Dictates how many players may join the session.
  */
 class HostMessageHandler(private val rootService: RootService,
-                         private val name: String,
+                         private val config: PlayerConfig,
                          private val mode: entity.GameMode): MessageHandler {
-    private val playerList = mutableListOf(entity.PlayerConfig(name, 0, entity.PlayerType.PERSON))
+    private val playerList = mutableListOf(config)
 
     override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
         if (resp.status != CreateGameResponseStatus.SUCCESS) {
@@ -23,7 +24,7 @@ class HostMessageHandler(private val rootService: RootService,
     }
 
     override fun onPlayerJoined(client: IndigoClient, player: PlayerJoinedNotification) {
-        playerList.add(entity.PlayerConfig(player.sender, 0, entity.PlayerType.REMOTE))
+        playerList.add(PlayerConfig(player.sender, 0, entity.PlayerType.REMOTE))
 
         if (playerList.size == playerCountInMode(mode)) {
             rootService.startGame(playerList, mode)

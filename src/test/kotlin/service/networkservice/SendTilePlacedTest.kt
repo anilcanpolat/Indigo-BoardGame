@@ -29,7 +29,7 @@ class SendTilePlacedTest {
         sessionID = java.util.Random().nextInt().toString()
         val lock = Semaphore(0)
 
-        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        host.networkService.createGame(sessionID, NetworkConfig.ALICE, GameMode.TWO_PLAYERS)
 
         Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
@@ -39,7 +39,7 @@ class SendTilePlacedTest {
             }
         })
 
-        guest.networkService.joinGame(sessionID, "Bob")
+        guest.networkService.joinGame(sessionID, NetworkConfig.BOB)
 
         check(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"
@@ -48,8 +48,7 @@ class SendTilePlacedTest {
 
     /**
      * Make sure that calling [service.NetworkService.sendTilePlaced] causes [Refreshable.onPlayerMove]
-     * to be called on all participating players. This test currently relies on a partial implementation
-     * of [service.PlayerActionService.playerMove] and the [service.TilePlacedMessage] workaround.
+     * to be called on all participating players.
      */
     @Test
     fun sendMessageTest() {
