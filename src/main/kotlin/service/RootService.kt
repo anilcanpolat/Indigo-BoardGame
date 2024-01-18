@@ -63,6 +63,8 @@ class RootService : AbstractRefreshingService() {
         currentGame = GameState(playerList[0], board, playerList, tiles)
 
         onAllRefreshables { onGameStart(playerList, gates.toList()) }
+
+        playerService.processAllAIMoves()
     }
 
     /**

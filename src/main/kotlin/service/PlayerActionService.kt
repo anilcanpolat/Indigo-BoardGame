@@ -1,5 +1,7 @@
 package service
 import entity.*
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 /**
  * Class for all the actions a [Player] can take on their turn.
@@ -31,6 +33,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         game.board.grid.grid[position] = move.first
 
         val neighbours = getNeighboursOf(move.first)
+        val isAI = game.currentPlayer.playerType == PlayerType.COMPUTER
 
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
@@ -90,6 +93,43 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         game.previousState = gameCopy
         game.nextState = null
         gameCopy.nextState = game
+
+        if (!isAI) {
+            processAllAIMoves()
+        }
+    }
+
+    /**
+     * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
+     */
+    fun processAllAIMoves() {
+        while (true) {
+            val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
+            val player = state.currentPlayer
+
+            if (player.playerType != PlayerType.REMOTE) { break }
+
+            // currently only random ai works, because I implemented it myself
+            val move = calculateRandomAIMove()
+            playerMove(move.first, move.second)
+        }
+    }
+
+    private fun calculateRandomAIMove(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+        val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
+        val tile = checkNotNull(state.currentPlayer.currentTile) { "players should be holding tiles in an active game" }
+
+        var q: Int
+        var r: Int
+        var rotate: Int
+
+        do {
+            q = Random.nextInt(-4, 5)
+            r = Random.nextInt(-4, 5)
+            rotate = Random.nextInt(0, 6)
+        } while (!CommonMethods.isValidMove(state, tile, rotate, Pair(q, r)))
+
+        return Pair(Pair(tile, rotate), Pair(q, r))
     }
 
     /**
@@ -100,8 +140,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * @param gem the gem to move
      * @return a list of all positions and edges the gem was on
      */
-
-
     private fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem): List<Pair<Pair<Int, Int>, Int>> {
         //check bordering gates, give points to the owners of the gates
         val gates = getBorderingGates(fromTile, fromEdge)
