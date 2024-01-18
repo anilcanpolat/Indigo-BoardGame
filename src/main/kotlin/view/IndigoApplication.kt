@@ -155,7 +155,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     }
 
     init {
-        this.showGameScene(gameScene)
+        this.showMenuScene(welcomeScene)
     }
 
 }
