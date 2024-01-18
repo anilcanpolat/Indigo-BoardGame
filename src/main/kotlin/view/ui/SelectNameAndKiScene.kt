@@ -287,7 +287,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         return posToReturn
     }
 
-
+    /**
+     * a function to set the Scenes for the amount of players selected by the player.
+     * this means we only show buttons required and hide the others.
+     */
     fun setAmountOfPlayers(playerToRemove: Int){
         if (playerToRemove == 2) {
             kiButtonC.isDisabled = true
@@ -315,6 +318,9 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         }
     }
 
+    /**
+     * function to reset this Scene when pressing the return button.
+     */
     fun resetSceneOnReturn(){
         kiButtonC.isDisabled = false
         kiButtonC.isVisible = true
@@ -338,6 +344,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         startGameButton.isDisabled = true
     }
 
+    /**
+     *  playerConfig is created and used to give data to service layer when
+     *  the start game Button is pressed.
+     */
     fun playerConfigList(playerCount: Int,
                          kiA: Boolean,
                          kiB: Boolean,
