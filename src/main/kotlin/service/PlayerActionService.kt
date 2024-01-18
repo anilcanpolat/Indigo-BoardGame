@@ -1,7 +1,5 @@
 package service
 import entity.*
-import java.util.HashSet
-import kotlin.math.abs
 
 /**
  * Class for all the actions a [Player] can take on their turn.
@@ -163,7 +161,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      */
     private fun getBorderingGates(fromTile: Tile, fromEdge: Int): Pair<PlayerToken, PlayerToken>? {
         val pos = checkNotNull(getTilePosition(fromTile)) { "fromTile is not stored in the grid" }
-        val boardEdge = getBorderingGateIndex(pos) ?: return null
+        val boardEdge = CommonMethods.borderingGateNumber(pos) ?: return null
 
         // The edges 1 and 2 connect to gate 1, the edges 2 and 3 to gate 2, 5 and 0 to gate 5 and so on
         return if (fromEdge == boardEdge || fromEdge == (boardEdge + 1) % 6) {
@@ -172,32 +170,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         } else {
             null
         }
-    }
-
-    /**
-     * Get the gate a tile might be bordering when placed at [pos], if it exists.
-     * The result is an index into the [Board.gates] array.
-     * @param pos tile which is possibly bordering a gate
-     * @return index into the [Board.gates] array or null if [pos] is not bordering any gates
-     */
-    private fun getBorderingGateIndex(pos: Pair<Int, Int>): Int? {
-        val distance = distanceToCenter(pos)
-
-        // only tiles in the outermost ring border gates
-        if (distance != 4) {
-            return null
-        }
-
-        // treasure tiles do not have bordering gates (or none that have to be considered)
-        if (isTreasureTilePosition(pos)) {
-            return null
-        }
-
-        // only tiles bordering a gate remain
-        val border = getOuterPositions()
-        val index = border.indexOf(pos)
-
-        return index / 4
     }
 
     /**
@@ -213,8 +185,8 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         val pos = checkNotNull(getTilePosition(fromTile)) { "fromTile is not part of the grid" }
 
-        return neighbouringPositions(pos).map {
-            val distance = distanceToCenter(it)
+        return CommonMethods.neighbouringPositions(pos).map {
+            val distance = CommonMethods.distanceToCenter(it)
             val neighbour = grid[it]
 
             if (distance <= 4) {
@@ -232,58 +204,10 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * @return true if the [fromTile] would block a gate when placed at [position]
      */
     private fun isBlockingGates(fromTile: Tile, position: Pair<Int, Int>): Boolean {
-        val idx = getBorderingGateIndex(position) ?: return false
+        val idx = CommonMethods.borderingGateNumber(position) ?: return false
         val edgeB = (idx + 1) % 6
 
         return fromTile.paths[idx] == edgeB
-    }
-
-    /**
-     * get a list of all positions of the outer hexagon ring in clockwise
-     * order starting at the topmost treasure tile (0,-4)
-     */
-    private fun getOuterPositions(): List<Pair<Int, Int>> {
-        var cur = Pair(0, -4)
-        val visited: HashSet<Pair<Int, Int>> = HashSet(24)
-
-        return (0..23).map {
-            val old = cur
-            visited.add(old)
-
-            // .first fails at index 23 because all neighbours are already in visited
-            if (it < 23) {
-                cur = neighbouringPositions(cur).first {
-                    distanceToCenter(it) == 4 && !visited.contains(it)
-                }
-            }
-
-            old
-        }
-    }
-
-    /**
-     * Get an array of all position bordering [pos].
-     * @param pos position to get neighbours of
-     * @returns array of 6 positions bordering [pos]
-     */
-    private fun neighbouringPositions(pos: Pair<Int, Int>): Array<Pair<Int, Int>> =
-        arrayOf(
-            Pair(0, -1), Pair(1, -1), Pair(1, 0),
-            Pair(0, 1), Pair(-1, 1), Pair(-1, 0)
-        ).map {
-            val qNei = pos.first + it.first
-            val rNei = pos.second + it.second
-
-            Pair(qNei, rNei)
-        }.toTypedArray()
-
-    /** Check whether a treasure tile lies at a given position. */
-    private fun isTreasureTilePosition(pos: Pair<Int, Int>): Boolean {
-        val sCoordinate = -pos.first - pos.second
-        val distance = distanceToCenter(pos)
-        val hasZero = pos.first == 0 || pos.second == 0 || sCoordinate == 0
-
-        return distance == 0 || (distance == 4 && hasZero)
     }
 
     /**
@@ -300,14 +224,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             grid[it] === tile
         }
     }
-
-    /**
-     * Calculate the distance of some position to the center point (0, 0).
-     * @param pos position in axial coordinates
-     * @return distance to the center point (a positive or zero integer value)
-     */
-    private fun distanceToCenter(pos: Pair<Int, Int>): Int =
-        listOf(pos.first, pos.second, -pos.first - pos.second).map { abs(it) }.max()
 
     private fun getPlayers(): List<Player> {
         val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
