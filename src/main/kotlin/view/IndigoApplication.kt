@@ -24,7 +24,11 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     private var gameMode = 0
 
-    private val gameScene : GameScene = GameScene()
+    private val gameScene : GameScene = GameScene(rootService).apply {
+        quitButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+    }
 
     private val welcomeScene : MenuScene = WelcomeScene().apply {
         loadGameButton.onMouseClicked = {

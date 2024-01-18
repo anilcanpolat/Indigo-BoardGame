@@ -3,6 +3,7 @@ package view.ui
 import entity.Player
 import entity.PlayerToken
 import service.Refreshable
+import service.RootService
 import tools.aqua.bgw.components.ComponentView
 import tools.aqua.bgw.components.container.HexagonGrid
 import tools.aqua.bgw.components.gamecomponentviews.HexagonView
@@ -22,20 +23,18 @@ import kotlin.math.absoluteValue
  * show the game filed and all the user UI,
  * take inputs from the User and show results
  */
-class GameScene : BoardGameScene(1920, 1080),Refreshable {
+class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080),Refreshable {
+
 
     private val saveButton =  Button(
         width = 40, height = 40,
-        posX = 150, posY = 50,
-
-    ).apply {
-        visual = CompoundVisual(
+        posX = 150, posY = 50,visual = CompoundVisual(
             ColorVisual(ColorEnum.Olivine.toRgbValue()),
-            ImageVisual(path = "save.png")
-        )
+            ImageVisual(path = "save.png"))
+    ).apply {onMouseClicked = {rootService.save("src/main/resources")}
     }
 
-    private val quitButton = Button(
+    val quitButton = Button(
         width = 40, height = 40,
         posX = 50, posY = 50,
     ).apply {
@@ -44,18 +43,15 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
     private val undoButton = Button(
         width = 40, height = 40,
-        posX = 250, posY = 50,
-    ).apply {
-        visual = CompoundVisual(
-            ImageVisual(path = "undo.png"))
-    }
+        posX = 250, posY = 50, visual = CompoundVisual(ImageVisual(path = "undo.png"))
+    ).apply { onMouseClicked = {rootService.undo()} }
+
 
     private val redoButton = Button(
         width = 40, height = 40,
-        posX = 350, posY = 50,
-    ).apply {
-        visual = CompoundVisual(
+        posX = 350, posY = 50,visual = CompoundVisual(
             ImageVisual(path = "redo.png"))
+    ).apply {onMouseClicked = {rootService.redo()}
     }
 
     private val routeStack = HexagonView(
@@ -170,6 +166,7 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
     //Lists of player labels
     private val playerNameList = listOf(player1Text, player2Text, player3Text, player4Text)
     private val playerTokenList = listOf(player1Token, player2Token, player3Token,player4Token)
+    private val playerTileList = listOf(player1Tile, player2Tile, player3Tile, player4Tile)
 
 
     init {
@@ -200,9 +197,12 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
         addComponents(saveButton, quitButton,redoButton,undoButton,
             hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,gridPane)
     }
+    //Clone the list to reach the players after onGameStart
+    private var playerList = listOf<Player>()
 
 
      override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
+         playerList = players
         when(players.size){
             2 -> for (i in 2..3){
                 gridPane[0,i]!!.isDisabled = true
@@ -217,7 +217,9 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
          for (i in 0..players.size){
              playerNameList[i].text= players[i].name
              playerTokenList[i].visual = ImageVisual(path = "PlayerColor"+ players[i].playerToken.toString() +".png")
+
          }
+
      }
 
     private fun placeTiles(){
@@ -238,5 +240,10 @@ class GameScene : BoardGameScene(1920, 1080),Refreshable {
 
 
     }
+
+    /*
+    fun pathConst(name : String){
+        //This should return the path of the wanted image
+    }*/
 
 }
