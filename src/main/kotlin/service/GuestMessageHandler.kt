@@ -57,7 +57,11 @@ class GuestMessageHandler(private val rootService: RootService,
             "current player does not hold a tile"
         }
 
-        rootService.playerService.playerMove(Pair(tile, rotation), position)
+        if (CommonMethods.isValidMove(getGameState(), tile, rotation, position)) {
+            rootService.playerService.playerMove(Pair(tile, rotation), position)
+        } else {
+            println("Error: Received invalid move by a remote player")
+        }
     }
 
     private fun getGameState(): entity.GameState = checkNotNull(rootService.currentGame)
