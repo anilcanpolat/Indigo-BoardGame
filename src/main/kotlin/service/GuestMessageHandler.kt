@@ -6,10 +6,14 @@ import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
 
-/** class handling bgw-net messages when running as a guest */
-class GuestMessageHandler(private val networkService: NetworkService,
+/**
+ * Class handling bgw-net messages when running as a guest.
+ * @property rootService reference to the [RootService] for state access and invoking methods on instances of [Refreshable]
+ * @property name Name of the guest. Must be unique in the session.
+ */
+class GuestMessageHandler(private val rootService: RootService,
                           private val name: String): MessageHandler {
-    override fun onJoinGame(resp: JoinGameResponse) {
+    override fun onJoinGame(client: IndigoClient, resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
         }
@@ -17,7 +21,7 @@ class GuestMessageHandler(private val networkService: NetworkService,
         println("Successfully joined game")
     }
 
-    override fun onInitMessage(initMessage: GameInitMessage, sender: String) {
+    override fun onInitMessage(client: IndigoClient, initMessage: GameInitMessage, sender: String) {
         val tiles = initMessage.tileList.map { Tile(translateTileType(it)) }.toMutableList()
 
         val players = initMessage.players.map {
@@ -41,10 +45,10 @@ class GuestMessageHandler(private val networkService: NetworkService,
 
         setGameState(state)
 
-        networkService.onAllRefreshables { onGameStart(players, gates.toList()) }
+        rootService.onAllRefreshables { onGameStart(players, gates.toList()) }
     }
 
-    override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
+    override fun onTilePlaced(client: IndigoClient, tilePlacedMessage: TilePlacedMessage, sender: String) {
         val currentPlayer = getGameState().currentPlayer
         val rotation = tilePlacedMessage.rotation
         val position = Pair(tilePlacedMessage.qcoordinate, tilePlacedMessage.rcoordinate)
@@ -53,13 +57,13 @@ class GuestMessageHandler(private val networkService: NetworkService,
             "current player does not hold a tile"
         }
 
-        networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
+        rootService.playerService.playerMove(Pair(tile, rotation), position)
     }
 
-    private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)
+    private fun getGameState(): entity.GameState = checkNotNull(rootService.currentGame)
 
     private fun setGameState(state: entity.GameState) {
-        networkService.rootService.currentGame = state
+        rootService.currentGame = state
     }
 
     private fun translateMode(mode: GameMode): entity.GameMode =

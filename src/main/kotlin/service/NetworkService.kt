@@ -4,21 +4,33 @@ import edu.udo.cs.sopra.ntf.TilePlacedMessage
 import kotlin.math.absoluteValue
 
 /**
- * Type wrapping network interactions with remote players.
- * @param rootService reference to the root service used for state access and game initialization
+ * Type abstracting away network interactions required to play Indigo online. The [NetworkService]
+ * allows creating and joining games, as well as notifying participating players of actions of
+ * the local player. Incoming messages are decoded by the [NetworkService] and delegated to
+ * the appropriate components of the service layer, e.g. incoming tile placement messages
+ * will cause [PlayerActionService.playerMove] to be called. Because the [NetworkService] delegates
+ * all events to other parts of the service layer it does not need to implement [AbstractRefreshingService]
+ * itself, all relevant callbacks will be invoked from either [RootService] or [PlayerActionService].
+ * @property rootService reference to the root service used for state access and game initialization
+ * @property indigoClient object handling the sending and receiving of messages as well as the connection state
  */
-class NetworkService(val rootService: RootService): AbstractRefreshingService() {
-    var indigoClient: IndigoClient? = null
+class NetworkService(private val rootService: RootService) {
+    private var indigoClient: IndigoClient? = null
 
     /**
-     * Create a new game as the host. Once enough players have joined, the [[RootService.startGame]]
-     * method will be called to initialize the game.
-     * @param sessionID id used by all other players to join the game
-     * @param name name of the host player
-     * @param gameMode The gamemode played in the session. This will decide how many players can join before starting.
+     * Create a new game as the host. Once enough players have joined, the [RootService.startGame]
+     * method will be called to initialize the game. [Refreshable.onGameStart] will be called on all
+     * instances of [Refreshable] registered on the [RootService].
+     * @param sessionID ID used by all other players to join the game.
+     *                  It's best to choose some a string to avoid collisions with other running games.
+     * @param name Name of the player used throughout the session. The current protocol does not support
+     *             two players with the same name. Choose carefully.
+     * @param gameMode The [entity.GameMode] played in the session. This value dictates how many
+     *                 players may join before the game is started.
+     * @throws NetworkServiceException when the connection fails or the game cannot be created
      */
     fun createGame(sessionID: String, name: String, gameMode: entity.GameMode) {
-        val handler = HostMessageHandler(this, name, gameMode)
+        val handler = HostMessageHandler(rootService, name, gameMode)
         indigoClient = IndigoClient(handler, name)
 
         val client = checkNotNull(indigoClient)
@@ -32,13 +44,15 @@ class NetworkService(val rootService: RootService): AbstractRefreshingService() 
 
     /**
      * Join into an existing session. Once the host starts the game, the [entity.GameState] maintained in
-     * [RootService] will be set directly. Then [NetworkService] will call [Refreshable.onGameStart].
-     * @param sessionID id of the session to join
-     * @param name name the player will use throughout the session
+     * [RootService] will be set directly and [Refreshable.onGameStart] will be invoked on all instances
+     * of [Refreshable] added to the [RootService].
+     * @param sessionID ID of the session to join. This value should be chosen at random to avoid collisions.
+     * @param name Name of the player used throughout the session. The current protocol does not support
+     *             two players with the same name. Choose carefully.
      * @throws NetworkServiceException when the connection fails or joining the game fails
      */
     fun joinGame(sessionID: String, name: String) {
-        val handler = GuestMessageHandler(this, name)
+        val handler = GuestMessageHandler(rootService, name)
         indigoClient = IndigoClient(handler, name)
 
         val client = checkNotNull(indigoClient)

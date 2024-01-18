@@ -23,7 +23,7 @@ class IndigoClientTest {
         val semaphore = Semaphore(0)
 
         val client = IndigoClient(object: MessageHandler {
-            override fun onCreateGame(resp: CreateGameResponse) {
+            override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
                 assertEquals(resp.status, CreateGameResponseStatus.SUCCESS)
                 semaphore.release()
             }
@@ -50,18 +50,18 @@ class IndigoClientTest {
         val sessionID = java.util.Random().nextInt().toString()
 
         val host = IndigoClient(object: MessageHandler {
-            override fun onCreateGame(resp: CreateGameResponse) {
+            override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
                 hostSemaphore.release()
             }
 
-            override fun onPlayerJoined(player: PlayerJoinedNotification) {
+            override fun onPlayerJoined(client: IndigoClient, player: PlayerJoinedNotification) {
                 assertEquals(player.sender, "Bob")
                 hostSemaphore.release()
             }
         }, "Alice")
 
         val guest = IndigoClient(object: MessageHandler {
-            override fun onJoinGame(resp: JoinGameResponse) {
+            override fun onJoinGame(client: IndigoClient, resp: JoinGameResponse) {
                 guestSemaphore.release()
             }
         }, "Bob")
@@ -99,17 +99,17 @@ class IndigoClientTest {
         val semaphore = Semaphore(0)
 
         val host = IndigoClient(object: MessageHandler {
-            override fun onCreateGame(resp: CreateGameResponse) {
+            override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
                 semaphore.release()
             }
         }, "Alice")
 
         val guest = IndigoClient(object: MessageHandler {
-            override fun onJoinGame(resp: JoinGameResponse) {
+            override fun onJoinGame(client: IndigoClient, resp: JoinGameResponse) {
                 semaphore.release()
             }
 
-            override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
+            override fun onTilePlaced(client: IndigoClient, tilePlacedMessage: TilePlacedMessage, sender: String) {
                 assertEquals(tilePlacedMessage.rotation, 0)
                 assertEquals(tilePlacedMessage.qcoordinate, 1)
                 assertEquals(tilePlacedMessage.rcoordinate, 0)

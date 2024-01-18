@@ -16,6 +16,7 @@ import tools.aqua.bgw.core.BoardGameApplication.Companion.runOnGUIThread
  * Callbacks are forwarded to an instance of [[MessageHandler]] and only
  * ever run in the current GUI thread, making it safe to change GUI state
  * in response to any of the callbacks in [[MessageHandler]].
+ * @property eventHandler object to forward all responses to
  */
 class IndigoClient(
     private val eventHandler: MessageHandler,
@@ -25,19 +26,19 @@ class IndigoClient(
 ): BoardGameClient(playerName, host, secret, NetworkLogging.VERBOSE) {
     override fun onCreateGameResponse(response: CreateGameResponse) {
         runOnGUIThread(Runnable {
-            eventHandler.onCreateGame(response)
+            eventHandler.onCreateGame(this, response)
         })
     }
 
     override fun onJoinGameResponse(response: JoinGameResponse) {
         runOnGUIThread(Runnable {
-            eventHandler.onJoinGame(response)
+            eventHandler.onJoinGame(this, response)
         })
     }
 
     override fun onPlayerJoined(notification: PlayerJoinedNotification) {
         runOnGUIThread(Runnable {
-            eventHandler.onPlayerJoined(notification)
+            eventHandler.onPlayerJoined(this, notification)
         })
     }
 
@@ -45,7 +46,7 @@ class IndigoClient(
     @SuppressWarnings("unused")
     private fun onGameInitMessage(msg: GameInitMessage, sender: String) {
         runOnGUIThread(Runnable {
-            eventHandler.onInitMessage(msg, sender)
+            eventHandler.onInitMessage(this, msg, sender)
         })
     }
 
@@ -53,7 +54,7 @@ class IndigoClient(
     @SuppressWarnings("unused")
     private fun onTilePlacedMessage(msg: TilePlacedMessage, sender: String) {
         runOnGUIThread(Runnable {
-            eventHandler.onTilePlaced(msg, sender)
+            eventHandler.onTilePlaced(this, msg, sender)
         })
     }
 }

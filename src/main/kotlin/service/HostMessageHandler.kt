@@ -5,30 +5,35 @@ import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.CreateGameResponse
 import tools.aqua.bgw.net.common.response.CreateGameResponseStatus
 
-/** class handling bgw-net messages when running as the host */
-class HostMessageHandler(private val networkService: NetworkService,
-                         name: String,
+/**
+ * Class handling bgw-net messages when running as the host.
+ * @property rootService Reference to the [RootService] to access state and callback functionality.
+ * @property name Name of the host player. Must be unique in the entire session.
+ * @property mode The [GameMode] to host. Dictates how many players may join the session.
+ */
+class HostMessageHandler(private val rootService: RootService,
+                         private val name: String,
                          private val mode: entity.GameMode): MessageHandler {
     private val playerList = mutableListOf(entity.PlayerConfig(name, 0, entity.PlayerType.PERSON))
 
-    override fun onCreateGame(resp: CreateGameResponse) {
+    override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
         if (resp.status != CreateGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotCreateGame)
         }
     }
 
-    override fun onPlayerJoined(player: PlayerJoinedNotification) {
+    override fun onPlayerJoined(client: IndigoClient, player: PlayerJoinedNotification) {
         playerList.add(entity.PlayerConfig(player.sender, 0, entity.PlayerType.REMOTE))
 
         if (playerList.size == playerCountInMode(mode)) {
-            networkService.rootService.startGame(playerList, mode)
+            rootService.startGame(playerList, mode)
 
             val msg = convertGameState()
-            networkService.indigoClient!!.sendGameActionMessage(msg)
+            client.sendGameActionMessage(msg)
         }
     }
 
-    override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
+    override fun onTilePlaced(client: IndigoClient, tilePlacedMessage: TilePlacedMessage, sender: String) {
         val rotation = tilePlacedMessage.rotation
         val position = Pair(tilePlacedMessage.qcoordinate, tilePlacedMessage.rcoordinate)
         val currentPlayer = getGameState().currentPlayer
@@ -37,10 +42,10 @@ class HostMessageHandler(private val networkService: NetworkService,
             "the current player does not hold a tile"
         }
 
-        networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
+        rootService.playerService.playerMove(Pair(tile, rotation), position)
     }
 
-    private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)
+    private fun getGameState(): entity.GameState = checkNotNull(rootService.currentGame)
 
     private fun convertGameState(): GameInitMessage {
         val state = getGameState()
