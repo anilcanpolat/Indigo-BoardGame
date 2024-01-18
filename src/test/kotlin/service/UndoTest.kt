@@ -22,13 +22,20 @@ class UndoTest {
         assertThrows<IllegalStateException> {
             rootService.undo()
         }
+
         rootService.startGame(listOf(player1, player2),GameMode.TWO_PLAYERS)
-        //nur um Testen ,habe ich previousstate=currentGame genommen statt ganz neue implementierung zu machen (um previous !=null)
-        rootService.currentGame!!.previousState = rootService.currentGame
-        val previousstate= rootService.currentGame!!.previousState
-        val gamestate=rootService.currentGame
+
+        val gameState = checkNotNull(rootService.currentGame)
+        val prevState = gameState.deepCopy()
+
+        gameState.previousState = prevState
+        prevState.nextState = gameState
+
         rootService.undo()
-        assertEquals(rootService.currentGame!!.nextState,gamestate)
-        assertEquals(rootService.currentGame!!,previousstate)
+
+        val currentState = checkNotNull(rootService.currentGame)
+
+        assertEquals(currentState, prevState)
+        assertEquals(currentState.nextState, gameState)
     }
 }
