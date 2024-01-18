@@ -3,7 +3,7 @@ package service
 import entity.*
 import kotlin.math.abs
 import kotlin.math.absoluteValue
-import kotlin.random.Random
+import kotlinx.coroutines.*
 
 /**
  * AIService is responsible for managing the artificial intelligence aspects of the game.
@@ -64,11 +64,68 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return Pair(selectedMove.first, selectedMove.second)
     }
 
-    // Constants for heuristic values
-    val GEM_VALUE = 5  // Example value, gonna adjust it later
+    // Constants for heuristic values, these are all example values and gonna change them later
+    val GEM_VALUE = 5
     val GEM_DIFFERENCE_VALUE = 10
-    val GEM_ON_TILE_VALUE = 3
-    val MAX_PROXIMITY_SCORE = 10 // Max score for a gem being next to a gate
+    val GEM_PROXIMITY_WEIGHT = 2
+
+    /**
+     * Calculates the best move for the AI player using the minimax algorithm within a given time frame.
+     * If the calculation takes longer than the specified timeout, a random move is chosen.
+     * @return A Pair of coordinates and rotation for the chosen move.
+     */
+    suspend fun calculateBestMoveWithTimeout(): Pair<Pair<Int, Int>, Int> {
+        val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
+        val currentTile = game.drawPile.first()
+        val possibleMoves = findAllPossibleMoves(game, currentTile)
+
+        return withTimeoutOrNull(10_000) { // 10 seconds timeout
+            calculateBestMove()
+        } ?: possibleMoves.random() // Fallback to a random move
+    }
+
+    /**
+     * Calculates the best move for the AI player using the minimax algorithm.
+     * @return A Pair, where the first element is a Pair of coordinates representing the position on the board
+     * for the chosen tile, and the second element is an Int representing the rotation of the tile.
+     */
+    fun calculateBestMove(): Pair<Pair<Int, Int>, Int> {
+        val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
+        val currentTile = game.drawPile.first()
+
+        // Generate all possible moves for the current state
+        val possibleMoves = findAllPossibleMoves(game, currentTile)
+
+        var bestMove: Pair<Pair<Int, Int>, Int>? = null
+        var bestScore = Int.MIN_VALUE
+
+        // Iterate through all possible moves and use minimax to evaluate them
+        for (move in possibleMoves) {
+            // Create a new game state for this move
+            val newState = game.deepCopy().apply {
+                currentPlayer.currentTile?.let { tile ->
+                    tile.rotation = move.second
+                    board.grid.grid[move.first] = tile
+                }
+            }
+
+            // Evaluate the move using the minimax algorithm
+            val moveScore = minimax(newState,
+                depth = 3,   //Depth can be changed later
+                alpha = Int.MIN_VALUE,
+                beta = Int.MAX_VALUE,
+                maximizingPlayer = true)
+
+            // Update best move if this move has a better score
+            if (moveScore > bestScore) {
+                bestScore = moveScore
+                bestMove = move
+            }
+        }
+
+        // Return the best move found or a random move if no best move was identified
+        return bestMove ?: possibleMoves.random()
+    }
 
     /**
      * The minimax function for evaluating the best move in the game.
@@ -156,9 +213,9 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
     }
 
     /**
-     * Performs a static evaluation of the given game state.
+     * Performs a static evaluation of the given game state using weighted heuristics.
      * @param gameState The game state to evaluate.
-     * @return The score of the game state.
+     * @return The weighted score of the game state.
      */
     private fun staticEvaluationOfPosition(gameState: GameState): Int {
         var score = 0
@@ -167,16 +224,19 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         val humanPlayers = gameState.players.filter { it.playerType == PlayerType.PERSON }
 
         aiPlayer?.let { ai ->
-            // Existing scoring logic
-            score += ai.collectedGems.size * GEM_VALUE
+            // Base score from the number of collected gems
+            val gemScore = ai.collectedGems.size * GEM_VALUE
 
-            humanPlayers.forEach { human ->
-                score += (ai.collectedGems.size - human.collectedGems.size) * GEM_DIFFERENCE_VALUE
+            // Score based on the difference in the number of gems between AI and human players
+            val gemDifferenceScore = humanPlayers.sumOf { human ->
+                (ai.collectedGems.size - human.collectedGems.size) * GEM_DIFFERENCE_VALUE
             }
 
-            // Additional consideration: Score based on gem proximity to the AI's gates
+            // Score based on gem proximity to AI's gates, weighted by importance
+            val gemProximityScore = evaluateGemProximityToGates(gameState, ai) * GEM_PROXIMITY_WEIGHT
 
-            score += evaluateGemProximityToGates(gameState, ai)
+            // Combine all heuristic scores into the total score, adjusting weights as necessary
+            score += gemScore + gemDifferenceScore + gemProximityScore
         }
 
         return score
@@ -201,33 +261,45 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         ) // The corner positions with ambers
 
         // Calculate scores for the gems in the center
-        //proximityScore += Gem.SAPHIRE.score() * calculateDistanceToClosestGate(centerPosition, aiGates)
-        //proximityScore += Gem.EMERALD.score() * 5 * calculateDistanceToClosestGate(centerPosition, aiGates) // 5 emeralds
+        proximityScore += Gem.SAPHIRE.score() * calculateDistanceToClosestGate(centerPosition, aiGates)
+        // 5 emeralds
+        proximityScore += Gem.EMERALD.score() * 5 * calculateDistanceToClosestGate(centerPosition, aiGates)
 
         // Calculate scores for the gems in the corners
         for (corner in cornerPositions) {
-            //proximityScore += Gem.AMBER.score() * 6 * calculateDistanceToClosestGate(corner, aiGates) // 6 ambers in total
+            // 6 ambers in total
+            //proximityScore += Gem.AMBER.score() * 6 * calculateDistanceToClosestGate(corner, aiGates)
         }
 
         return proximityScore
     }
 
+    // Gate coordinates assigned to the gates
+    val gateNumberToCoordinatesMap = mapOf(
+        1 to listOf(Pair(1, -5), Pair(2, -5), Pair(3, -5), Pair(4, -5)), // Coordinates for gate 1
+        2 to listOf(Pair(5, -4), Pair(5, -3), Pair(5, -2), Pair(5, -1)), // Coordinates for gate 2
+        3 to listOf(Pair(4, 1), Pair(3, 2), Pair(2, 3), Pair(1, 4)), // Coordinates for gate 3
+        4 to listOf(Pair(-4, -5), Pair(-3, 5), Pair(-2, 5), Pair(-1, 5)), // Coordinates for gate 4
+        5 to listOf(Pair(-5, 1), Pair(-5, 2), Pair(-5, 3), Pair(-5, 4)), // Coordinates for gate 5
+        6 to listOf(Pair(-1, -4), Pair(-2, -3), Pair(-3, -2), Pair(-4, -1)), // Coordinates for gate 6
+    )
+
     /**
-     * Retrieves a list of gate indices controlled by the AI player.
+     * Retrieves a list of gate coordinates controlled by the AI player.
      * @param aiPlayer The AI player whose gates are to be identified.
      * @param board The game board with gate information.
-     * @return A list of gate indices controlled by the AI player.
+     * @return A list of gate coordinates controlled by the AI player.
      */
-    private fun getAIGates(aiPlayer: Player, board: Board): List<Int> {
-        val aiGates = mutableListOf<Int>()
-
-        // Find gates associated with the AI player's token
-        board.gates.forEachIndexed { index, gatePair ->
-            if (gatePair.first == aiPlayer.playerToken || gatePair.second == aiPlayer.playerToken) {
-                aiGates.add(index)  // Add the index representing the gate's position
+    private fun getAIGates(aiPlayer: Player, board: Board): List<Pair<Int, Int>> {
+        val aiGateNumbers = board.gates
+            .mapIndexedNotNull { index, pair ->
+                if (pair.first == aiPlayer.playerToken || pair.second == aiPlayer.playerToken) index + 1 else null
             }
+
+        // Flatten the list of lists into a single list of coordinates.
+        return aiGateNumbers.flatMap { gateNumber ->
+            gateNumberToCoordinatesMap[gateNumber] ?: emptyList()
         }
-        return aiGates
     }
 
     /**
@@ -269,11 +341,13 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
 
     /**
      * Calculates the most strategic move for the current player based on the current game state and the current tile.
-     * This function analyzes all possible moves from the current state, evaluates them using a heuristic scoring system,
+     * This function analyzes all possible moves from the current state,
+     * evaluates them using a heuristic scoring system,
      * and selects the move with the highest score. If no strategically advantageous move is found,
      * it defaults to selecting a random move.
      *
-     * @return A Pair, where the first element is a Pair of the current Tile and an Int representing the rotation of the tile,
+     * @return A Pair,
+     * where the first element is a Pair of the current Tile and an Int representing the rotation of the tile,
      * and the second element is a Pair of coordinates representing the position on the board for the chosen tile.
      */
     fun properMoveForAI(game: GameState, currentTile: Tile): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
@@ -299,7 +373,11 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
                 // Use minimax to calculate the score considering the AI player's token.
                 // The depth, alpha, and beta values would need to be chosen based on how
                 // deep you want the AI to calculate. These are often game-specific.
-                val score = minimax(tempGameState, depth = 4, alpha = Int.MIN_VALUE, beta = Int.MAX_VALUE, maximizingPlayer = true)
+                val score = minimax(tempGameState,
+                depth = 4,  //Depth can be changed later
+                alpha = Int.MIN_VALUE,
+                beta = Int.MAX_VALUE,
+                maximizingPlayer = true)
 */
                 if (score > bestScore) {
                     bestScore = score
