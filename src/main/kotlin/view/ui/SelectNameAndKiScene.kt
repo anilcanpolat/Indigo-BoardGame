@@ -30,7 +30,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         )
     )
 
-    //textfields for player names
+    //textfield for player names
     private val playerATextBox = TextField(
         posX = 760, posY = 200,
         width = 250, height = 50,
@@ -61,7 +61,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         }
     }
 
-    val playerDTextBox = TextField(
+    private val playerDTextBox = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
         prompt = "Put in Name! "
@@ -72,37 +72,39 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     }
 
     // KI Buttons
-    val kiButtonA = Button(
+    private val kiButtonA = Button(
         posX = 1035, posY = 200,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240)
          onMouseClicked = {
              kiA = setKILevel(kiLevelA)
+             playerATextBox.text = printOrDeleteKiNames(kiA, kiLevelA)
              kiLevelA++
-             println("DrugsAreBad")
         }
     }
 
-    val kiButtonB = Button(
+    private val kiButtonB = Button(
         posX = 1035, posY = 350,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240)
         onMouseClicked = {
             kiB = setKILevel(kiLevelB)
+            playerBTextBox.text = printOrDeleteKiNames(kiB, kiLevelB)
             kiLevelB++
         }
     }
 
-    val kiButtonC = Button(
+    private val kiButtonC = Button(
         posX = 1035, posY = 500,
         width = 50, height = 50,
         text = "KI: "
     ).apply { visual = ColorVisual(193, 74, 240)
         onMouseClicked = {
             kiC = setKILevel(kiLevelC)
-            kiLevelC
+            playerCTextBox.text = printOrDeleteKiNames(kiC, kiLevelC)
+            kiLevelC++
         }
     }
 
@@ -113,7 +115,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     ).apply { visual = ColorVisual(193, 74, 240)
         onMouseClicked = {
             kiD = setKILevel(kiLevelD)
-            kiLevelD
+            playerDTextBox.text = printOrDeleteKiNames(kiD, kiLevelD)
+            kiLevelD++
         }
     }
 
@@ -123,10 +126,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private var kiLevelC = 0
     private var kiLevelD = 0
 
-    private var kiA : Boolean = false
-    private var kiB : Boolean = false
-    private var kiC : Boolean = false
-    private var kiD : Boolean = false
+    var kiA : Boolean = false
+    var kiB : Boolean = false
+    var kiC : Boolean = false
+    var kiD : Boolean = false
 
 
     //SequenzButtons
@@ -251,12 +254,25 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         var isKi = false
         when (level % 3){
             0 -> { isKi = false}
-            1 -> { isKi = true
-                    playerDTextBox.text = "[G4]RandomKi"}
-            2 -> { isKi = true
-                    playerDTextBox.text = "[G4]MurderProKiLevel500"}
+            1 -> { isKi = true}
+            2 -> { isKi = true}
         }
         return isKi
+    }
+
+    private fun printOrDeleteKiNames(kiForName : Boolean, kiLevelForName : Int) : String{
+        var str = ""
+        if(kiForName){
+            if(kiLevelForName % 3 == 1){
+                str = "[G4]RandomKi"
+            }
+            if(kiLevelForName % 3 == 2){
+                str = "[G4]MurderProKiLevel500"
+            }
+        } else {
+            str = ""
+        }
+        return str
     }
 
     private fun cycleThroughPlayerSequence(pos : Int) : Int{

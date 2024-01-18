@@ -15,11 +15,6 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     private val rootService = RootService()
 
-    private var useKiA = false
-    private var useKiB = false
-    private var useKiC = false
-    private var useKiD = false
-
     private var hotSeat = true
 
     private var gameMode = 0
@@ -89,48 +84,31 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
-            useKiA = false
-            useKiB = false
-            useKiC = false
-            useKiD = false
+            kiA = false
+            kiB = false
+            kiC = false
+            kiD = false
             gameMode = 0
             this@IndigoApplication.showMenuScene(chosePlayerCountScene)
-        }
-
-        kiButtonA.onMouseClicked = {
-            useKiA = true
-            println("drugsAreGood")
-        }
-
-        kiButtonB.onMouseClicked = {
-            useKiB = true
-        }
-
-        kiButtonC.onMouseClicked = {
-            useKiC = true
-        }
-
-        kiButtonD.onMouseClicked = {
-            useKiD = true
         }
 
         startGameButton.onMouseClicked = {
             if (hotSeat)
             {
                 if(gameMode == 1) {
-                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                         GameMode.TWO_PLAYERS)
                 }
                 else if(gameMode == 2) {
-                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                         GameMode.THREE_PLAYERS)
                 }
                 else if(gameMode == 3) {
-                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                         GameMode.THREE_PLAYERS_SHARED_GATES)
                 }
                 else if(gameMode == 4) {
-                    rootService.startGame(playerConfigList(gameMode, useKiA, useKiB, useKiC, useKiD),
+                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                         GameMode.FOUR_PLAYERS)
                 }
             }
