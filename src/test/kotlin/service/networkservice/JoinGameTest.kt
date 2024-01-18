@@ -33,10 +33,10 @@ class JoinGameTest {
             }
         })
 
-        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        host.networkService.createGame(sessionID, NetworkConfig.ALICE, GameMode.TWO_PLAYERS)
         Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
-        guest.networkService.joinGame(sessionID, "Bob")
+        guest.networkService.joinGame(sessionID, NetworkConfig.BOB)
 
         assert(gameStartSemaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"
@@ -89,17 +89,17 @@ class JoinGameTest {
                 }
             })
 
-            host.networkService.createGame(sessionID, "Alice", mode)
+            host.networkService.createGame(sessionID, NetworkConfig.ALICE, mode)
             Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
-            guest.networkService.joinGame(sessionID, "Bob")
+            guest.networkService.joinGame(sessionID, NetworkConfig.BOB)
 
             if (mode != GameMode.TWO_PLAYERS) {
-                RootService().networkService.joinGame(sessionID, "Charlie")
+                RootService().networkService.joinGame(sessionID, NetworkConfig.CHARLIE)
             }
 
             if (mode == GameMode.FOUR_PLAYERS) {
-                RootService().networkService.joinGame(sessionID, "Dave")
+                RootService().networkService.joinGame(sessionID, NetworkConfig.DAVE)
             }
 
             assert(semaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
@@ -119,7 +119,7 @@ class JoinGameTest {
         val sessionID = java.util.Random().nextInt().toString()
         val gameStartSemaphore = Semaphore(0)
 
-        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        host.networkService.createGame(sessionID, NetworkConfig.ALICE, GameMode.TWO_PLAYERS)
         Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
         guest.addRefreshable(object : Refreshable {
@@ -128,7 +128,7 @@ class JoinGameTest {
             }
         })
 
-        guest.networkService.joinGame(sessionID, "Bob")
+        guest.networkService.joinGame(sessionID, NetworkConfig.BOB)
 
         assert(gameStartSemaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"

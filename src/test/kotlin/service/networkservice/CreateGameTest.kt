@@ -36,11 +36,11 @@ class CreateGameTest {
 
         val sessionID = java.util.Random().nextInt().toString()
 
-        host.networkService.createGame(sessionID, "Alice", GameMode.TWO_PLAYERS)
+        host.networkService.createGame(sessionID, NetworkConfig.ALICE, GameMode.TWO_PLAYERS)
 
         Thread.sleep(NetworkConfig.TEST_TIMEOUT)
 
-        guest.networkService.joinGame(sessionID, "Bob")
+        guest.networkService.joinGame(sessionID, NetworkConfig.BOB)
 
         assert(gameStartSemaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to onGameStart timed out"
