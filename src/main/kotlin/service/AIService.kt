@@ -365,7 +365,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
 
             for (move in possibleMoves) {
                 // Apply the move on a temporary game state
-                val tempGameState = applyMove(game.copy(), move)
+                val tempGameState = applyMove(game.deepCopy(), move)
 
                 // Calculate the heuristic score considering the AI player's token
                 val score = calculateHeuristicScore(tempGameState, aiPlayerToken)
@@ -445,17 +445,16 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return null
     }
 
-    private fun findNearestGateDistance(gemPosition: Pair<Int, Int>, gates: Array<Pair<PlayerToken, PlayerToken>>): Int? {
-        // Use the logic to calculate the distance from gemPosition to each gate
-        // TODO:  Return the minimum distance or null if no path to a gate is found.
+    private fun findNearestGateDistance(gemPosition: Pair<Int, Int>, gatePairs: Array<Pair<PlayerToken, PlayerToken>>): Int? {
         var minDistance: Int? = null
 
-        for (gateIndex in gates.indices) {
-            val gatePosition = getGatePosition(gates[gateIndex])
-            val distance =
-                calculatePathDistance(gemPosition, gatePosition)
+        for (gatePair in gatePairs) {
+            val gatePosition = getGatePosition(gatePair)
 
-            if (distance != null && (minDistance == null || distance < minDistance)) {
+            // Calculate the distance, considering that paths might be blocked or gates might be inaccessible
+            val distance = calculatePathDistance(gemPosition, gatePosition)
+
+            if (minDistance == null || distance < minDistance) {
                 minDistance = distance
             }
         }
@@ -464,8 +463,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
     }
 
     private fun getGatePosition(gatePair: Pair<PlayerToken, PlayerToken>): Pair<Int, Int> {
-        // TODO: Logic to extract the gate position from the gate pair.
-        return Pair(gatePair.first.ordinal, gatePair.second.ordinal)
+        // TODO: Implement logic to apply a move to the game state
+        return Pair(0,0)
     }
 
     private fun calculatePathDistance(startPos: Pair<Int, Int>, endPos: Pair<Int, Int>): Int {
@@ -509,8 +508,19 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
     }
 
     private fun getGemsWithPositions(game: GameState): List<Pair<Gem, Pair<Int, Int>>> {
-        // TODO: Implement logic to get gems with positions from the game state
-        return emptyList()
+        val gemsWithPositions = mutableListOf<Pair<Gem, Pair<Int, Int>>>()
+
+        // iterate board
+        for ((position, tile) in game.board.grid.grid.entries) {
+            // check for gems
+            tile.gems.forEachIndexed { index, gem ->
+                if (gem != null) {
+                    gemsWithPositions.add(Pair(gem, position))
+                }
+            }
+        }
+
+        return gemsWithPositions
     }
     private fun applyMove(gameState: GameState, move: Pair<Pair<Int, Int>, Int>): GameState {
         // TODO: Implement logic to apply a move to the game state
