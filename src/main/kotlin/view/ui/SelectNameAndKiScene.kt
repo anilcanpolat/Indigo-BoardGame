@@ -1,6 +1,5 @@
 package view.ui
 
-import entity.Player
 import entity.PlayerConfig
 import entity.PlayerType
 import service.RootService
@@ -362,6 +361,83 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         startGameButton.isDisabled = true
     }
 
+    private fun sequenceTheListForReturn(playerCount: Int,
+                                         p1 : PlayerConfig,
+                                         p2 : PlayerConfig,
+                                         p3 : PlayerConfig,
+                                         p4 : PlayerConfig) : MutableList<PlayerConfig>{
+
+        val typeList: MutableList<PlayerConfig>
+        val returnTypeList : MutableList<PlayerConfig> = mutableListOf()
+
+        if(overAllPos == 0) {
+            when (playerCount) {
+                1 -> {
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
+                    typeList.add(p1)
+                    typeList.add(p2)
+                    returnTypeList.addAll(typeList)
+                }
+                2, 3 -> {
+                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
+                    typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+                    returnTypeList.addAll(typeList)
+                }
+                4 -> {
+                    typeList = MutableList(4) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
+                    typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+                    typeList.add(p4)
+                    returnTypeList.addAll(typeList)
+                }
+            }
+        } else {
+            when (playerCount) {
+                1 -> {
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    returnTypeList.addAll(typeList)
+                }
+                2, 3 -> {
+                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    typeList.removeAt(playerCPos-1)
+                    typeList.add(playerCPos-1, p3)
+                    returnTypeList.addAll(typeList)
+                }
+                4 -> {
+                    typeList = MutableList(4) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    typeList.removeAt(playerCPos-1)
+                    typeList.add(playerCPos-1, p3)
+                    typeList.removeAt(playerDPos-1)
+                    typeList.add(playerDPos-1, p4)
+                    returnTypeList.addAll(typeList)
+                }
+            }
+        }
+
+        if(randomCheckbox.isChecked) {
+            returnTypeList.shuffle()
+        }
+        return returnTypeList
+    }
+
     /**
      *  playerConfig is created and used to give data to service layer when
      *  the start game Button is pressed.
@@ -371,9 +447,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
                          kiB: Boolean,
                          kiC: Boolean,
                          kiD: Boolean): MutableList<PlayerConfig>{
-
-        val typeList: MutableList<PlayerConfig>
-        var returnTypeList : MutableList<PlayerConfig> = mutableListOf()
 
         var p1Name = ""
         var p2Name = ""
@@ -422,75 +495,9 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         val p3 = PlayerConfig(p3Name, 0, p3Type)
         val p4 = PlayerConfig(p4Name, 0, p4Type)
 
-        if(overAllPos == 0) {
-            when (playerCount) {
-                1 -> {
-                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
-                    typeList.clear()
-                    typeList.add(p1)
-                    typeList.add(p2)
-                    returnTypeList.addAll(typeList)
-                }
-
-                2, 3 -> {
-                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
-                    typeList.clear()
-                    typeList.add(p1)
-                    typeList.add(p2)
-                    typeList.add(p3)
-                    returnTypeList.addAll(typeList)
-                }
-
-                4 -> {
-                    typeList = MutableList(4) { PlayerConfig("alex", 0, PlayerType.PERSON) }
-                    typeList.clear()
-                    typeList.add(p1)
-                    typeList.add(p2)
-                    typeList.add(p3)
-                    typeList.add(p4)
-                    returnTypeList.addAll(typeList)
-                }
-            }
-        } else {
-            when (playerCount) {
-                1 -> {
-                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
-                    typeList.removeAt(playerAPos-1)
-                    typeList.add(playerAPos-1, p1)
-                    typeList.removeAt(playerBPos-1)
-                    typeList.add(playerBPos-1, p2)
-                    returnTypeList.addAll(typeList)
-                }
-                2, 3 -> {
-                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
-                    typeList.removeAt(playerAPos-1)
-                    typeList.add(playerAPos-1, p1)
-                    typeList.removeAt(playerBPos-1)
-                    typeList.add(playerBPos-1, p2)
-                    typeList.removeAt(playerCPos-1)
-                    typeList.add(playerCPos-1, p3)
-                    returnTypeList.addAll(typeList)
-                }
-                4 -> {
-                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
-                    typeList.removeAt(playerAPos-1)
-                    typeList.add(playerAPos-1, p1)
-                    typeList.removeAt(playerBPos-1)
-                    typeList.add(playerBPos-1, p2)
-                    typeList.removeAt(playerCPos-1)
-                    typeList.add(playerCPos-1, p3)
-                    typeList.removeAt(playerDPos-1)
-                    typeList.add(playerDPos-1, p4)
-                    returnTypeList.addAll(typeList)
-                }
-            }
-        }
-
-        if(randomCheckbox.isChecked) {
-            returnTypeList.shuffle()
-        }
-
-        return returnTypeList
+        var finalTypeList : MutableList<PlayerConfig> = mutableListOf()
+        finalTypeList = sequenceTheListForReturn(playerCount, p1, p2, p3, p4)
+        return finalTypeList
     }
 
     init {
