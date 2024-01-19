@@ -419,10 +419,20 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         val p3 = PlayerConfig(p3Name, 0, p3Type)
         val p4 = PlayerConfig(p4Name, 0, p4Type)
 
-        typeList.add(p1)
-        typeList.add(p2)
-        typeList.add(p3)
-        typeList.add(p4)
+        when(playerCount){
+            1 -> {  typeList.add(p1)
+                    typeList.add(p2)
+            }
+            2,3 -> {typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+            }
+            4 -> {  typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+                    typeList.add(p4)
+            }
+        }
 
         return typeList
     }
