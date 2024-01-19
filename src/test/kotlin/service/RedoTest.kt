@@ -17,13 +17,19 @@ class RedoTest {
         assertThrows<IllegalStateException> {
             rootService.redo()
         }
+
         rootService.startGame(listOf(player1, player2),GameMode.TWO_PLAYERS)
-        //nur um Testen ,habe ich nexstate=currentGame genommen statt ganz neue implementierung zu machen (um nextstate !=null)
-        rootService.currentGame!!.nextState = rootService.currentGame
-        val nextstate= rootService.currentGame!!.nextState
-        val gamestate=rootService.currentGame
+
+        val gameState = checkNotNull(rootService.currentGame)
+        val nextState = gameState.deepCopy()
+
+        gameState.nextState = nextState
+        nextState.previousState = gameState
+
+
         rootService.redo()
-        assertEquals(rootService.currentGame!!.previousState,gamestate)
-        assertEquals(rootService.currentGame!!,nextstate)
+
+        assertEquals(checkNotNull(rootService.currentGame).previousState, gameState)
+        assertEquals(checkNotNull(rootService.currentGame), nextState)
     }
 }

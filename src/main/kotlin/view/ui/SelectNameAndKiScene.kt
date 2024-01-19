@@ -1,5 +1,8 @@
 package view.ui
 
+import entity.PlayerConfig
+import entity.PlayerType
+import service.RootService
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
@@ -15,7 +18,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * required for the game to start. only shows properties that are required for
  * the amount of players selected. also gives us control over KI.
  */
-class SelectNameAndKiScene : MenuScene(1920, 1080,
+class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {
 
     val returnFromNameButton = Button(
@@ -27,55 +30,106 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         )
     )
 
-    //textfields for player names
+    //textfield for player names
     private val playerATextBox = TextField(
         posX = 760, posY = 200,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     private val playerBTextBox = TextField(
         posX = 760, posY = 350,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     private val playerCTextBox = TextField(
         posX = 760, posY = 500,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     private val playerDTextBox = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
         prompt = "Put in Name! "
-    )
+    ).apply {
+        onKeyTyped = {
+            startGameButton.isDisabled = !checkIfBlank()
+        }
+    }
 
     // KI Buttons
     private val kiButtonA = Button(
         posX = 1035, posY = 200,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+         onMouseClicked = {
+             kiA = setKILevel(kiLevelA)
+             playerATextBox.text = printOrDeleteKiNames(kiA, kiLevelA)
+             kiLevelA++
+        }
+    }
 
     private val kiButtonB = Button(
         posX = 1035, posY = 350,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+        onMouseClicked = {
+            kiB = setKILevel(kiLevelB)
+            playerBTextBox.text = printOrDeleteKiNames(kiB, kiLevelB)
+            kiLevelB++
+        }
+    }
 
     private val kiButtonC = Button(
         posX = 1035, posY = 500,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+        onMouseClicked = {
+            kiC = setKILevel(kiLevelC)
+            playerCTextBox.text = printOrDeleteKiNames(kiC, kiLevelC)
+            kiLevelC++
+        }
+    }
 
-    private val kiButtonD = Button(
+    val kiButtonD = Button(
         posX = 1035, posY = 650,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240) }
+    ).apply { visual = ColorVisual(193, 74, 240)
+        onMouseClicked = {
+            kiD = setKILevel(kiLevelD)
+            playerDTextBox.text = printOrDeleteKiNames(kiD, kiLevelD)
+            kiLevelD++
+        }
+    }
+
+    //var for level of Ki
+    private var kiLevelA = 0
+    private var kiLevelB = 0
+    private var kiLevelC = 0
+    private var kiLevelD = 0
+
+    var kiA : Boolean = false
+    var kiB : Boolean = false
+    var kiC : Boolean = false
+    var kiD : Boolean = false
 
 
     //SequenzButtons
@@ -83,25 +137,53 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         posX = 1110, posY = 200,
         width = 50, height = 50,
         text = "1: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+    onMouseClicked = {
+            playerAPos = cycleThroughPlayerSequence(playerAPos)
+            text = playerAPos.toString()
+        }
+    }
 
     private val playerSequenzBButton = Button(
         posX = 1110, posY = 350,
         width = 50, height = 50,
         text = "2: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+        onMouseClicked = {
+            playerBPos = cycleThroughPlayerSequence(playerBPos)
+            text = playerBPos.toString()
+        }
+    }
 
     private val playerSequenzCButton = Button(
         posX = 1110, posY = 500,
         width = 50, height = 50,
         text = "3: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+        onMouseClicked = {
+            playerCPos = cycleThroughPlayerSequence(playerCPos)
+            text = playerCPos.toString()
+        }
+    }
 
     private val playerSequenzDButton = Button(
         posX = 1110, posY = 650,
         width = 50, height = 50,
         text = "4: "
-    ).apply { visual = ColorVisual(90, 74, 240) }
+    ).apply { visual = ColorVisual(90, 74, 240)
+        onMouseClicked = {
+            playerDPos = cycleThroughPlayerSequence(playerDPos)
+            text = playerDPos.toString()
+        }
+    }
+
+    //var for sequence
+    private var overAllPos = 0
+    private var playerAPos = 0
+    private var playerBPos = 0
+    private var playerCPos = 0
+    private var playerDPos = 0
+
 
     //Ki Speed stuff
     private val labelKiSpeedPartA = Label(
@@ -135,11 +217,197 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     )
 
 
-    private val startGameButton = Button(
+    val startGameButton = Button(
         posX = 955, posY = 790,
         width = 200, height = 100,
         text = "Start!", font = Font(50)
-    )
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
+    isDisabled = true}
+
+
+    //functions
+    private fun checkIfBlank() : Boolean {
+        var checkBlank = false
+        if(!playerDTextBox.isVisible){
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank() &&
+                    playerCTextBox.text.isNotBlank())
+
+        }
+
+        if(!playerDTextBox.isVisible && !playerCTextBox.isVisible){
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank())
+        }
+
+        if(playerDTextBox.isVisible) {
+            checkBlank = (playerATextBox.text.isNotBlank() &&
+                    playerBTextBox.text.isNotBlank() &&
+                    playerCTextBox.text.isNotBlank() &&
+                    playerDTextBox.text.isNotBlank())
+        }
+
+        return checkBlank
+    }
+
+    private fun setKILevel(level : Int) : Boolean{
+        var isKi = false
+        when (level % 3){
+            0 -> { isKi = false}
+            1 -> { isKi = true}
+            2 -> { isKi = true}
+        }
+        return isKi
+    }
+
+    private fun printOrDeleteKiNames(kiForName : Boolean, kiLevelForName : Int) : String{
+        var str = ""
+        if(kiForName){
+            if(kiLevelForName % 3 == 1){
+                str = "[G4]RandomKi"
+            }
+            if(kiLevelForName % 3 == 2){
+                str = "[G4]MurderProKiLevel500"
+            }
+        } else {
+            str = ""
+        }
+        return str
+    }
+
+    private fun cycleThroughPlayerSequence(pos : Int) : Int{
+        var posToReturn = 0
+        if(pos == 0){
+            overAllPos++
+            posToReturn = overAllPos
+        } else{
+            overAllPos--
+            posToReturn = 0
+        }
+        return posToReturn
+    }
+
+    /**
+     * a function to set the Scenes for the amount of players selected by the player.
+     * this means we only show buttons required and hide the others.
+     */
+    fun setAmountOfPlayers(playerToRemove: Int){
+        if (playerToRemove == 2) {
+            kiButtonC.isDisabled = true
+            kiButtonC.isVisible = false
+            playerCTextBox.isDisabled = true
+            playerCTextBox.isVisible = false
+            playerSequenzCButton.isDisabled = true
+            playerSequenzCButton.isVisible = false
+
+            kiButtonD.isDisabled = true
+            kiButtonD.isVisible = false
+            playerDTextBox.isDisabled = true
+            playerDTextBox.isVisible = false
+            playerSequenzDButton.isDisabled = true
+            playerSequenzDButton.isVisible = false
+        }
+        else if (playerToRemove == 1)
+        {
+            kiButtonD.isDisabled = true
+            kiButtonD.isVisible = false
+            playerDTextBox.isDisabled = true
+            playerDTextBox.isVisible = false
+            playerSequenzDButton.isDisabled = true
+            playerSequenzDButton.isVisible = false
+        }
+    }
+
+    /**
+     * function to reset this Scene when pressing the return button.
+     */
+    fun resetSceneOnReturn(){
+        kiButtonC.isDisabled = false
+        kiButtonC.isVisible = true
+        playerCTextBox.isDisabled = false
+        playerCTextBox.isVisible = true
+        playerSequenzCButton.isDisabled = false
+        playerSequenzCButton.isVisible = true
+
+        kiButtonD.isDisabled = false
+        kiButtonD.isVisible = true
+        playerDTextBox.isDisabled = false
+        playerDTextBox.isVisible = true
+        playerSequenzDButton.isDisabled = false
+        playerSequenzDButton.isVisible = true
+
+        playerATextBox.text = ""
+        playerBTextBox.text = ""
+        playerCTextBox.text = ""
+        playerDTextBox.text = ""
+
+        startGameButton.isDisabled = true
+    }
+
+    /**
+     *  playerConfig is created and used to give data to service layer when
+     *  the start game Button is pressed.
+     */
+    fun playerConfigList(playerCount: Int,
+                         kiA: Boolean,
+                         kiB: Boolean,
+                         kiC: Boolean,
+                         kiD: Boolean): MutableList<PlayerConfig>{
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
+
+        var p1Name = ""
+        var p2Name = ""
+        var p3Name = ""
+        var p4Name = ""
+
+        var p1Type: PlayerType = PlayerType.PERSON
+        var p2Type: PlayerType = PlayerType.PERSON
+        var p3Type: PlayerType = PlayerType.PERSON
+        var p4Type: PlayerType = PlayerType.PERSON
+
+        when (playerCount) {
+            1 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+            }
+            2, 3 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+            }
+            4 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+                p4Name = playerDTextBox.text
+            }
+        }
+
+        if(kiA){
+            p1Type = PlayerType.COMPUTER
+        }
+        if(kiB){
+            p2Type = PlayerType.COMPUTER
+        }
+        if(kiC){
+            p3Type = PlayerType.COMPUTER
+        }
+        if(kiD){
+            p4Type = PlayerType.COMPUTER
+        }
+
+        val p1 = PlayerConfig(p1Name, 0, p1Type)
+        val p2 = PlayerConfig(p2Name, 0, p2Type)
+        val p3 = PlayerConfig(p3Name, 0, p3Type)
+        val p4 = PlayerConfig(p4Name, 0, p4Type)
+
+        typeList.add(p1)
+        typeList.add(p2)
+        typeList.add(p3)
+        typeList.add(p4)
+
+        return typeList
+    }
 
     init {
         addComponents(

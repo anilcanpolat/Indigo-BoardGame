@@ -1,5 +1,7 @@
 package entity
+import kotlinx.serialization.Serializable
 
+@Serializable
 /**
  * class representing a single tile including its paths,
  * its rotation and the gems on top of it
@@ -66,25 +68,19 @@ data class Tile(
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is Tile) {
-            return false
-        }
-
-        val tile: Tile = other
-
-        if (this.tileType != tile.tileType || this.rotation != tile.rotation) {
-            return false
-        }
-
-        if (!this.gems.contentEquals(tile.gems) || !this.paths.contentEquals(tile.paths)) {
-            return false
-        }
-
-        return true
-    }
-
     override fun hashCode(): Int = tileType.hashCode() * rotation.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Tile
+
+        if (!paths.contentEquals(other.paths)) { return false }
+        if (!gems.contentEquals(other.gems)) { return false }
+
+        return tileType == other.tileType && rotation == other.rotation
+    }
 }
 
 private fun pathsForTileType(tileType: TileType): Array<Int?> {

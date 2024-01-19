@@ -1,15 +1,21 @@
 package service
 
 import edu.udo.cs.sopra.ntf.*
+import entity.PlayerConfig
 import entity.Tile
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
 
-/** class handling bgw-net messages when running as a guest */
-class GuestMessageHandler(private val networkService: NetworkService,
-                          private val name: String): MessageHandler {
-    override fun onJoinGame(resp: JoinGameResponse) {
+/**
+ * Class handling bgw-net messages when running as a guest.
+ * @property rootService reference to the [RootService] for state access and invoking methods on instances of [Refreshable]
+ * @property config Config of the guest. The name must be unique in the session.
+ */
+class GuestMessageHandler(private val rootService: RootService,
+                          private val config: PlayerConfig
+): MessageHandler {
+    override fun onJoinGame(client: IndigoClient, resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
         }
@@ -17,12 +23,12 @@ class GuestMessageHandler(private val networkService: NetworkService,
         println("Successfully joined game")
     }
 
-    override fun onInitMessage(initMessage: GameInitMessage, sender: String) {
+    override fun onInitMessage(client: IndigoClient, initMessage: GameInitMessage, sender: String) {
         val tiles = initMessage.tileList.map { Tile(translateTileType(it)) }.toMutableList()
 
         val players = initMessage.players.map {
             val firstTile = tiles.removeFirst()
-            val player = translatePlayer(it, name == it.name)
+            val player = translatePlayer(it, config.name == it.name)
 
             player.currentTile = firstTile
             player
@@ -41,25 +47,29 @@ class GuestMessageHandler(private val networkService: NetworkService,
 
         setGameState(state)
 
-        networkService.onAllRefreshables { onGameStart(players, gates.toList()) }
+        rootService.onAllRefreshables { onGameStart(players, gates.toList()) }
     }
 
-    override fun onTilePlaced(tilePlacedMessage: TilePlacedMessage, sender: String) {
+    override fun onTilePlaced(client: IndigoClient, tilePlacedMessage: TilePlacedMessage, sender: String) {
         val currentPlayer = getGameState().currentPlayer
         val rotation = tilePlacedMessage.rotation
-        val position = Pair(tilePlacedMessage.qCoordinate, tilePlacedMessage.rCoordinate)
+        val position = Pair(tilePlacedMessage.qcoordinate, tilePlacedMessage.rcoordinate)
 
         val tile = checkNotNull(currentPlayer.currentTile) {
             "current player does not hold a tile"
         }
 
-        networkService.rootService.playerService.playerMove(Pair(tile, rotation), position)
+        if (CommonMethods.isValidMove(getGameState(), tile, rotation, position)) {
+            rootService.playerService.playerMove(Pair(tile, rotation), position)
+        } else {
+            println("Error: Received invalid move by a remote player")
+        }
     }
 
-    private fun getGameState(): entity.GameState = checkNotNull(networkService.rootService.currentGame)
+    private fun getGameState(): entity.GameState = checkNotNull(rootService.currentGame)
 
     private fun setGameState(state: entity.GameState) {
-        networkService.rootService.currentGame = state
+        rootService.currentGame = state
     }
 
     private fun translateMode(mode: GameMode): entity.GameMode =
@@ -80,7 +90,7 @@ class GuestMessageHandler(private val networkService: NetworkService,
         }
 
     private fun translatePlayer(player: Player, isSelf: Boolean = false): entity.Player {
-        val type = if (isSelf) entity.PlayerType.PERSON else entity.PlayerType.REMOTE
+        val type = if (isSelf) config.type else entity.PlayerType.REMOTE
         val token = translateToken(player.color)
 
         return entity.Player(player.name, 0, type, token)
