@@ -81,6 +81,31 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png"),
     ).apply { rotate(30) }
 
+    private val gate1Token1 = Label(
+        width = 70, height = 70,posX = 1075, posY = 70, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate1Token2 = Label(
+        width = 70, height = 70,posX = 1175, posY = 120, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate2Token1 = Label(
+        width = 70, height = 70,posX = 1375, posY = 450, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate2Token2 = Label(
+        width = 70, height = 70,posX = 1375, posY = 550, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate3Token1 = Label(
+        width = 70, height = 70,posX = 1175, posY = 900, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate3Token2 = Label(
+        width = 70, height = 70,posX = 1075, posY = 950, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate4Token1 = Label(
+        width = 70, height = 70,posX = 700, posY = 950, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate4Token2 = Label(
+        width = 70, height = 70,posX = 600, posY = 900, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate5Token1 = Label(
+        width = 70, height = 70,posX = 400, posY = 550, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate5Token2 = Label(
+        width = 70, height = 70,posX = 400, posY = 450, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate6Token1 = Label(
+        width = 70, height = 70,posX = 600, posY = 120, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate6Token2 = Label(
+        width = 70, height = 70,posX = 700, posY = 70, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+
 
 
     //It is for layout of the playerName and score
@@ -166,7 +191,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     //Lists of player labels
     private val playerNameList = listOf(player1Text, player2Text, player3Text, player4Text)
     private val playerTokenList = listOf(player1Token, player2Token, player3Token,player4Token)
-    private val playerTileList = listOf(player1Tile, player2Tile, player3Tile, player4Tile)
+    private val gatesTokenList = listOf(gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
+        gate4Token1,gate4Token2,gate5Token1,gate5Token2,gate6Token1,gate6Token2)
 
 
     init {
@@ -195,7 +221,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
         addComponents(saveButton, quitButton,redoButton,undoButton,
-            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,gridPane)
+            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,gridPane,
+            gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
+            gate4Token1,gate4Token2,gate5Token1,gate5Token2,gate6Token1,gate6Token2)
     }
     //Clone the list to reach the players after onGameStart
     private var playerList = listOf<Player>()
@@ -214,10 +242,16 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 gridPane[0,3]!!.isVisible = false
             }
         }
-         for (i in 0..players.size){
+         for (i in players.indices){
              playerNameList[i].text= players[i].name
              playerTokenList[i].visual = ImageVisual(path = "PlayerColor"+ players[i].playerToken.toString() +".png")
 
+         }
+
+         var index = 0
+         for (i in gates.indices){
+             gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].first.toString() +".png")
+             gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].second.toString() +".png")
          }
 
      }
