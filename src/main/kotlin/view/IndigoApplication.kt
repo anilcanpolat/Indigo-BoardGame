@@ -25,9 +25,10 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
         }
     }
 
-    private val welcomeScene : MenuScene = WelcomeScene().apply {
+    private val welcomeScene : MenuScene = WelcomeScene(rootService).apply {
         loadGameButton.onMouseClicked = {
             this@IndigoApplication.showGameScene(gameScene)
+            hideMenuScene()
         }
 
         hostButton.onMouseClicked = {
