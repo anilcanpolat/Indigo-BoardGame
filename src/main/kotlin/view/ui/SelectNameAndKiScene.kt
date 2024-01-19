@@ -12,6 +12,7 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
+import java.awt.Color
 
 /**
  * scene that allows the player to input there name and other utilities
@@ -76,7 +77,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 1035, posY = 200,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+    ).apply { visual = ColorVisual(kiLevelColorA)
          onMouseClicked = {
              kiA = setKILevel(kiLevelA)
              playerATextBox.text = printOrDeleteKiNames(kiA, kiLevelA)
@@ -88,7 +89,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 1035, posY = 350,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+    ).apply { visual = ColorVisual(kiLevelColorB)
         onMouseClicked = {
             kiB = setKILevel(kiLevelB)
             playerBTextBox.text = printOrDeleteKiNames(kiB, kiLevelB)
@@ -100,7 +101,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 1035, posY = 500,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+    ).apply { visual = ColorVisual(kiLevelColorC)
         onMouseClicked = {
             kiC = setKILevel(kiLevelC)
             playerCTextBox.text = printOrDeleteKiNames(kiC, kiLevelC)
@@ -112,7 +113,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 1035, posY = 650,
         width = 50, height = 50,
         text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+    ).apply { visual = ColorVisual(kiLevelColorD)
         onMouseClicked = {
             kiD = setKILevel(kiLevelD)
             playerDTextBox.text = printOrDeleteKiNames(kiD, kiLevelD)
@@ -130,6 +131,11 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     var kiB : Boolean = false
     var kiC : Boolean = false
     var kiD : Boolean = false
+
+    private var kiLevelColorA : Color = ColorEnum.Wheat.toRgbValue()
+    private var kiLevelColorB : Color = ColorEnum.Wheat.toRgbValue()
+    private var kiLevelColorC : Color = ColorEnum.Wheat.toRgbValue()
+    private var kiLevelColorD : Color = ColorEnum.Wheat.toRgbValue()
 
 
     //SequenzButtons

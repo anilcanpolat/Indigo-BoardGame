@@ -9,7 +9,7 @@ import view.ui.*
 
 /**
  * Create scenes and give some buttons there functionality.
- * initialize the scenes afterwards
+ * initialize the scenes afterward
  */
 class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
