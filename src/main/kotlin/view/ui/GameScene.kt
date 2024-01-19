@@ -271,13 +271,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
      }
 
     override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {
-        println("OnPlayerMove")
-
+        playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType.toType())) }
         hexagonGrid[position.first,position.second]?.apply {
             visual = ImageVisual(findTilePath(tile.tileType.toType())).apply {
                 rotate(rotation) }
         }
-
+        //highlightCurrentPlayer()
     }
 
     private fun placeTiles(){
@@ -318,7 +317,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             2 -> return "StraightAndCurveTile.png"
             3 -> return "longCurveTile.png"
             4 -> return "CurveTile.png"
-            else -> ""
         }
         return ""
     }
