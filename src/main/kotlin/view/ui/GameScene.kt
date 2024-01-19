@@ -2,6 +2,7 @@ package view.ui
 
 import entity.Player
 import entity.PlayerToken
+import entity.Tile
 import service.Refreshable
 import service.RootService
 import tools.aqua.bgw.components.ComponentView
@@ -59,11 +60,14 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png"))
     ).apply { rotate(30) }
 
+    private var rotationRate : Int = 0
+
     private val rotateLeftButton = Button(
         width = 130, height = 50,
         posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
     ).apply { onMouseClicked={
         playersTile.rotate(-60)
+        rotationRate -= 60
     } }
 
     private val rotateRightButton = Button(
@@ -71,11 +75,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 100, posY = 950, visual = ColorVisual.GRAY, text = "Rotate Right"
     ).apply { onMouseClicked={
         playersTile.rotate(60)
+        rotationRate += 60
     } }
 
     private val hexagonGrid = HexagonGrid<HexagonView>(
          coordinateSystem = HexagonGrid.CoordinateSystem.AXIAL, posX = 900, posY = 450
-    ).apply { rotate(30) }
+    ).apply {rotate(30) }
 
     private val playersTile = HexagonView(
         posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png"),
@@ -213,7 +218,13 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                     continue
                 }
 
-                val hexagon = HexagonView(visual = ColorVisual(250,240,202 ), size = 65)
+                val hexagon = HexagonView(visual = ColorVisual(250,240,202 ), size = 65).apply {
+                    onMouseClicked= {rootService.playerService.playerMove(
+                        Pair(rootService.currentGame!!.currentPlayer.currentTile!!, rotationRate),Pair(col,row))
+                    }
+
+
+                }
                 hexagonGrid[col, row] = hexagon
             }
         }
@@ -253,8 +264,21 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
              gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].first.toString() +".png")
              gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].second.toString() +".png")
          }
+         highlightCurrentPlayer()
+         playersTile.apply { visual = ImageVisual(
+             findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType.toType())) }
 
      }
+
+    override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {
+        println("OnPlayerMove")
+
+        hexagonGrid[position.first,position.second]?.apply {
+            visual = ImageVisual(findTilePath(tile.tileType.toType())).apply {
+                rotate(rotation) }
+        }
+
+    }
 
     private fun placeTiles(){
         //up
@@ -275,9 +299,28 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     }
 
-    /*
-    fun pathConst(name : String){
-        //This should return the path of the wanted image
-    }*/
+    //To add highlight to currentPlayer and delete other highlights
+    private fun highlightCurrentPlayer(){
+        for (i in playerNameList){
+            if (i.text == rootService.currentGame!!.currentPlayer.name){
+                i.apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+            }
+            else i.apply { visual = ColorVisual.TRANSPARENT }
+        }
+    }
+
+
+
+    private fun findTilePath(type : Int?): String {
+        when(type){
+            0 -> return "StraightAndLongCurveTile.png"
+            1 -> return "XTile.png"
+            2 -> return "StraightAndCurveTile.png"
+            3 -> return "longCurveTile.png"
+            4 -> return "CurveTile.png"
+            else -> ""
+        }
+        return ""
+    }
 
 }
