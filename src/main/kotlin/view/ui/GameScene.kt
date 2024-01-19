@@ -33,7 +33,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 150, posY = 50,visual = CompoundVisual(
             ColorVisual(ColorEnum.Olivine.toRgbValue()),
             ImageVisual(path = "save.png"))
-    ).apply {onMouseClicked = {rootService.save("src/main/resources")}
+    ).apply {onMouseClicked = {rootService.save("savestate.json")}
     }
 
     val quitButton = Button(
