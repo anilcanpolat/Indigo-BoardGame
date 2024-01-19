@@ -112,6 +112,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
                         GameMode.FOUR_PLAYERS)
                 }
             }
+            this@IndigoApplication.showGameScene(gameScene)
+            this@IndigoApplication.hideMenuScene()
         }
     }
 
@@ -134,6 +136,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     }
 
     init {
+        rootService.addRefreshable(gameScene)
+        rootService.addRefreshable(saveAndLoadScene)
         this.showMenuScene(welcomeScene)
     }
 
