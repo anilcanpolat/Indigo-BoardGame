@@ -135,6 +135,13 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     var kiC : Boolean = false
     var kiD : Boolean = false
 
+    //var for sequence
+    private var overAllPos = 0
+    private var playerAPos = 0
+    private var playerBPos = 0
+    private var playerCPos = 0
+    private var playerDPos = 0
+
     //SequenzButtons
     private val playerSequenzAButton = Button(
         posX = 1110, posY = 200,
@@ -180,13 +187,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         }
     }
 
-    //var for sequence
-    private var overAllPos = 0
-    private var playerAPos = 0
-    private var playerBPos = 0
-    private var playerCPos = 0
-    private var playerDPos = 0
-
 
     //Ki Speed stuff
     private val labelKiSpeedPartA = Label(
@@ -218,7 +218,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 910, posY = 840,
         width = 150, height = 50
     )
-
 
     val startGameButton = Button(
         posX = 955, posY = 790,
@@ -371,6 +370,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
                          kiB: Boolean,
                          kiC: Boolean,
                          kiD: Boolean): MutableList<PlayerConfig>{
+
         val typeList: MutableList<PlayerConfig> = mutableListOf()
 
         var p1Name = ""
@@ -419,19 +419,48 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         val p3 = PlayerConfig(p3Name, 0, p3Type)
         val p4 = PlayerConfig(p4Name, 0, p4Type)
 
-        when(playerCount){
-            1 -> {  typeList.add(p1)
+        if(overAllPos == 0) {
+            when (playerCount) {
+                1 -> {
+                    typeList.add(p1)
                     typeList.add(p2)
-            }
-            2,3 -> {typeList.add(p1)
+                }
+
+                2, 3 -> {
+                    typeList.add(p1)
                     typeList.add(p2)
                     typeList.add(p3)
-            }
-            4 -> {  typeList.add(p1)
+                }
+
+                4 -> {
+                    typeList.add(p1)
                     typeList.add(p2)
                     typeList.add(p3)
                     typeList.add(p4)
+                }
             }
+        } else {
+            when (playerCount) {
+                1 -> {
+                    typeList.add(playerAPos, p1)
+                    typeList.add(playerBPos, p2)
+                }
+                2, 3 -> {
+                    typeList.add(playerAPos, p1)
+                    typeList.add(playerBPos, p2)
+                    typeList.add(playerCPos, p3)
+                }
+                4 -> {
+                    typeList.add(playerAPos, p1)
+                    typeList.add(playerBPos, p2)
+                    typeList.add(playerCPos, p3)
+                    typeList.add(playerDPos, p4)
+                }
+            }
+        }
+
+        if(randomCheckbox.isChecked) {
+            typeList.shuffle()
         }
 
         return typeList
