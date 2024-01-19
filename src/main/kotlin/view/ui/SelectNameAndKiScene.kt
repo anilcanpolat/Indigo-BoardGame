@@ -12,7 +12,6 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
-import java.awt.Color
 
 /**
  * scene that allows the player to input there name and other utilities
@@ -75,48 +74,52 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     // KI Buttons
     private val kiButtonA = Button(
         posX = 1035, posY = 200,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(kiLevelColorA)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
          onMouseClicked = {
              kiA = setKILevel(kiLevelA)
              playerATextBox.text = printOrDeleteKiNames(kiA, kiLevelA)
+             visual = changeColorForKi(kiA, kiLevelA)
              kiLevelA++
         }
     }
 
     private val kiButtonB = Button(
         posX = 1035, posY = 350,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(kiLevelColorB)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiB = setKILevel(kiLevelB)
             playerBTextBox.text = printOrDeleteKiNames(kiB, kiLevelB)
+            visual = changeColorForKi(kiB, kiLevelB)
             kiLevelB++
         }
     }
 
     private val kiButtonC = Button(
         posX = 1035, posY = 500,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(kiLevelColorC)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiC = setKILevel(kiLevelC)
             playerCTextBox.text = printOrDeleteKiNames(kiC, kiLevelC)
+            visual = changeColorForKi(kiC, kiLevelC)
             kiLevelC++
         }
     }
 
-    val kiButtonD = Button(
+    private val kiButtonD = Button(
         posX = 1035, posY = 650,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(kiLevelColorD)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiD = setKILevel(kiLevelD)
             playerDTextBox.text = printOrDeleteKiNames(kiD, kiLevelD)
+            visual = changeColorForKi(kiD, kiLevelD)
             kiLevelD++
         }
     }
@@ -131,12 +134,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     var kiB : Boolean = false
     var kiC : Boolean = false
     var kiD : Boolean = false
-
-    private var kiLevelColorA : Color = ColorEnum.Wheat.toRgbValue()
-    private var kiLevelColorB : Color = ColorEnum.Wheat.toRgbValue()
-    private var kiLevelColorC : Color = ColorEnum.Wheat.toRgbValue()
-    private var kiLevelColorD : Color = ColorEnum.Wheat.toRgbValue()
-
 
     //SequenzButtons
     private val playerSequenzAButton = Button(
@@ -279,6 +276,21 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
             str = ""
         }
         return str
+    }
+
+    private fun changeColorForKi(kiForName : Boolean, kiLevelForName : Int) : ColorVisual{
+        var colorToReturn = ColorVisual(ColorEnum.Papaya.toRgbValue())
+        if(kiForName){
+            if(kiLevelForName % 3 == 1){
+                colorToReturn = ColorVisual(ColorEnum.Olivine.toRgbValue())
+            }
+            if(kiLevelForName % 3 == 2){
+                colorToReturn = ColorVisual(ColorEnum.EngOrange.toRgbValue())
+            }
+        } else {
+            colorToReturn = ColorVisual(ColorEnum.Papaya.toRgbValue())
+        }
+        return colorToReturn
     }
 
     private fun cycleThroughPlayerSequence(pos : Int) : Int{
