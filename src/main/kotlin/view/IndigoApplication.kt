@@ -137,6 +137,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     init {
         rootService.addRefreshable(gameScene)
+        rootService.playerService.addRefreshable(gameScene)
         rootService.addRefreshable(saveAndLoadScene)
         this.showMenuScene(welcomeScene)
     }
