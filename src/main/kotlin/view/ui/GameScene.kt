@@ -1,5 +1,6 @@
 package view.ui
 
+import entity.Gem
 import entity.Player
 import entity.PlayerToken
 import entity.Tile
@@ -66,7 +67,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         width = 130, height = 50,
         posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
     ).apply { onMouseClicked={
-        playersTile.rotate(-60)
+        playersTile.apply { rotation -= 60 }
         rotationRate -= 60
     } }
 
@@ -74,7 +75,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         width = 130, height = 50,
         posX = 100, posY = 950, visual = ColorVisual.GRAY, text = "Rotate Right"
     ).apply { onMouseClicked={
-        playersTile.rotate(60)
+        playersTile.apply { rotation += 60 }
         rotationRate += 60
     } }
 
@@ -84,7 +85,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     private val playersTile = HexagonView(
         posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png"),
-    ).apply { rotate(30) }
+    ).apply {rotation = 90.0 }
 
     private val gate1Token1 = Label(
         width = 70, height = 70,posX = 1075, posY = 70, visual = ImageVisual(path = "PlayerColorCYAN.png"))
@@ -198,6 +199,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     private val playerTokenList = listOf(player1Token, player2Token, player3Token,player4Token)
     private val gatesTokenList = listOf(gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
         gate4Token1,gate4Token2,gate5Token1,gate5Token2,gate6Token1,gate6Token2)
+    private val scoresList = listOf(player1Score, player2Score,player3Score,player4Score)
 
 
     init {
@@ -264,7 +266,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
              gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].first.toString() +".png")
              gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].second.toString() +".png")
          }
-         highlightCurrentPlayer()
+         highlightPlayer(rootService.currentGame!!.currentPlayer)
          playersTile.apply { visual = ImageVisual(
              findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType.toType())) }
 
@@ -274,9 +276,19 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType.toType())) }
         hexagonGrid[position.first,position.second]?.apply {
             visual = ImageVisual(findTilePath(tile.tileType.toType())).apply {
-                rotate(rotation) }
+                rotate(rotation+60) }
         }
-        //highlightCurrentPlayer()
+        highlightPlayer(nextPlayer)
+        rotationRate = 0
+        playersTile.apply { this.rotation = 90.0 }
+
+    }
+
+    override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
+        println("Gem Removed")
+        for (i in playerList.indices){
+            scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
+        }
     }
 
     private fun placeTiles(){
@@ -299,9 +311,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     }
 
     //To add highlight to currentPlayer and delete other highlights
-    private fun highlightCurrentPlayer(){
+    private fun highlightPlayer(player : Player){
         for (i in playerNameList){
-            if (i.text == rootService.currentGame!!.currentPlayer.name){
+            if (i.text == player.name){
                 i.apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
             }
             else i.apply { visual = ColorVisual.TRANSPARENT }
@@ -319,6 +331,14 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             4 -> return "CurveTile.png"
         }
         return ""
+    }
+
+    private fun calcScore(gems : MutableList<Gem>) : Int{
+        var score = 0
+        for (i in gems){
+           score += i.score()
+        }
+        return score
     }
 
 }
