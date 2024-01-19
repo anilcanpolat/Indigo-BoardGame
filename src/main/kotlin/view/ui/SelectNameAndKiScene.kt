@@ -1,5 +1,6 @@
 package view.ui
 
+import entity.Player
 import entity.PlayerConfig
 import entity.PlayerType
 import service.RootService
@@ -371,7 +372,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
                          kiC: Boolean,
                          kiD: Boolean): MutableList<PlayerConfig>{
 
-        val typeList: MutableList<PlayerConfig> = mutableListOf()
+        val typeList: MutableList<PlayerConfig>
+        var returnTypeList : MutableList<PlayerConfig> = mutableListOf()
 
         var p1Name = ""
         var p2Name = ""
@@ -385,6 +387,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
 
         when (playerCount) {
             1 -> {
+
                 p1Name = playerATextBox.text
                 p2Name = playerBTextBox.text
             }
@@ -422,48 +425,72 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         if(overAllPos == 0) {
             when (playerCount) {
                 1 -> {
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
                     typeList.add(p1)
                     typeList.add(p2)
+                    returnTypeList.addAll(typeList)
                 }
 
                 2, 3 -> {
+                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
                     typeList.add(p1)
                     typeList.add(p2)
                     typeList.add(p3)
+                    returnTypeList.addAll(typeList)
                 }
 
                 4 -> {
+                    typeList = MutableList(4) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
                     typeList.add(p1)
                     typeList.add(p2)
                     typeList.add(p3)
                     typeList.add(p4)
+                    returnTypeList.addAll(typeList)
                 }
             }
         } else {
             when (playerCount) {
                 1 -> {
-                    typeList.add(playerAPos, p1)
-                    typeList.add(playerBPos, p2)
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    returnTypeList.addAll(typeList)
                 }
                 2, 3 -> {
-                    typeList.add(playerAPos, p1)
-                    typeList.add(playerBPos, p2)
-                    typeList.add(playerCPos, p3)
+                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    typeList.removeAt(playerCPos-1)
+                    typeList.add(playerCPos-1, p3)
+                    returnTypeList.addAll(typeList)
                 }
                 4 -> {
-                    typeList.add(playerAPos, p1)
-                    typeList.add(playerBPos, p2)
-                    typeList.add(playerCPos, p3)
-                    typeList.add(playerDPos, p4)
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    typeList.removeAt(playerCPos-1)
+                    typeList.add(playerCPos-1, p3)
+                    typeList.removeAt(playerDPos-1)
+                    typeList.add(playerDPos-1, p4)
+                    returnTypeList.addAll(typeList)
                 }
             }
         }
 
         if(randomCheckbox.isChecked) {
-            typeList.shuffle()
+            returnTypeList.shuffle()
         }
 
-        return typeList
+        return returnTypeList
     }
 
     init {
