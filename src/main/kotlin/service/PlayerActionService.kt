@@ -97,6 +97,12 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         if (!isAI) {
             processAllAIMoves()
         }
+
+        val state = checkNotNull(rootService.currentGame)
+
+        if (state.currentPlayer.playerType == PlayerType.PERSON) {
+            onAllRefreshables { onWaitForInput() }
+        }
     }
 
     /**
@@ -107,29 +113,12 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
             val player = state.currentPlayer
 
-            if (player.playerType != PlayerType.REMOTE) { break }
+            if (player.playerType != PlayerType.COMPUTER) { break }
 
             // currently only random ai works, because I implemented it myself
-            val move = calculateRandomAIMove()
+            val move = CommonMethods.calculateRandomAIMove(state)
             playerMove(move.first, move.second)
         }
-    }
-
-    private fun calculateRandomAIMove(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
-        val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
-        val tile = checkNotNull(state.currentPlayer.currentTile) { "players should be holding tiles in an active game" }
-
-        var q: Int
-        var r: Int
-        var rotate: Int
-
-        do {
-            q = Random.nextInt(-4, 5)
-            r = Random.nextInt(-4, 5)
-            rotate = Random.nextInt(0, 6)
-        } while (!CommonMethods.isValidMove(state, tile, rotate, Pair(q, r)))
-
-        return Pair(Pair(tile, rotate), Pair(q, r))
     }
 
     /**
