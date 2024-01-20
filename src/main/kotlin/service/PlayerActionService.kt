@@ -82,7 +82,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         game.currentPlayer.currentTile = null
 
-        if (game.drawPile.isNotEmpty()) {
+        if (!gameIsFinished()) {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
         } else {
             onAllRefreshables { onGameFinished(game.players) }
@@ -154,6 +154,39 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         }
 
         return listOf(Pair(currentPosition, fromEdge))
+    }
+
+    /**
+     * Test whether the game has finished. A game is considered to be finished if
+     * - No more tiles are on the draw pile
+     * - There are no more gems on the board
+     * - No valid move can be executed by the next player
+     */
+    private fun gameIsFinished(): Boolean {
+        val gameState = checkNotNull(rootService.currentGame)
+
+        val anyGemsOnBoard = gameState.board.grid.grid.any {
+            it.value.gems.any { gem ->
+                gem != null
+            }
+        }
+
+        if (anyGemsOnBoard) { return false }
+        if (gameState.drawPile.isNotEmpty()) { return false }
+
+        for (q in -4..4) {
+            for (r in -4..4) {
+                for (rotation in 0..5) {
+                    val tile = gameState.currentPlayer.currentTile ?: gameState.drawPile.last()
+
+                    if (CommonMethods.isValidMove(gameState, tile, rotation, Pair(q, r))) {
+                        return false
+                    }
+                }
+            }
+        }
+
+        return true
     }
 
     /**
