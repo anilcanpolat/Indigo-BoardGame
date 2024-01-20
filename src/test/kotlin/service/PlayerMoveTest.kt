@@ -2,6 +2,8 @@ package service
 
 import entity.*
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.assertThrows
+import kotlin.random.Random
 import kotlin.test.*
 
 /**
@@ -205,6 +207,49 @@ class PlayerMoveTest {
         assertFails("blocking gates using a tile should not be possible") {
             playerService.playerMove(Pair(currentTile(), 0), Pair(-1, -3))
         }
+    }
+
+    /** make sure that invalid moves will not affect the game state */
+    @Test
+    fun invalidMovesFailTest() {
+        val invalidMoves: MutableList<Pair<Pair<Tile, Int>, Pair<Int, Int>>> = mutableListOf()
+
+        while (invalidMoves.size < 10000) {
+            val pos = Pair(Random.nextInt(-4, 5), Random.nextInt(-4, 5))
+            val rot = Random.nextInt(0, 6)
+            val tile = randomTile()
+
+            val gameStateCopy = gameState().deepCopy()
+            gameStateCopy.currentPlayer.currentTile = tile
+
+            if (!CommonMethods.isValidMove(gameStateCopy, tile, rot, pos)) {
+                invalidMoves.add(Pair(Pair(tile, rot), pos))
+            }
+        }
+
+        invalidMoves.forEach {
+            gameState().currentPlayer.currentTile = it.first.first
+            val copy = gameState().deepCopy()
+
+            assertThrows<IllegalStateException> {
+                playerService.playerMove(it.first, it.second)
+            }
+
+            assertEquals(copy, gameState())
+        }
+    }
+
+    /** generate a random tile object */
+    private fun randomTile(): Tile {
+        val rotation = Random.nextInt(0, 6)
+        val tileType = TileType.values().filter {
+            it != TileType.TREASURE_CENTER && it != TileType.TREASURE_CORNER
+        }.random()
+
+        val tile = Tile(tileType)
+        tile.rotate(rotation)
+
+        return tile
     }
 
     /** utility to get the current game state */
