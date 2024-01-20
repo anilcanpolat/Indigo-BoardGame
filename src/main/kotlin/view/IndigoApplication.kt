@@ -1,6 +1,7 @@
 package view
 
 import entity.*
+import service.Refreshable
 import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
@@ -11,7 +12,7 @@ import view.ui.*
  * Create scenes and give some buttons there functionality.
  * initialize the scenes afterward
  */
-class IndigoApplication : BoardGameApplication("Indigo-Game") {
+class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val rootService = RootService()
 
@@ -136,9 +137,18 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     }
 
+    override fun onGameFinished(players: List<Player>) {
+        this.showMenuScene(endGameScene)
+    }
+
+
     init {
         rootService.addRefreshable(gameScene)
+        rootService.addRefreshable(this)
+        rootService.addRefreshable(endGameScene)
         rootService.playerService.addRefreshable(gameScene)
+        rootService.playerService.addRefreshable(this)
+        rootService.playerService.addRefreshable(endGameScene)
         rootService.addRefreshable(saveAndLoadScene)
         this.showMenuScene(welcomeScene)
     }
