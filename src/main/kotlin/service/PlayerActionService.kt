@@ -20,14 +20,17 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         val gameCopy = game.deepCopy()
         gameCopy.nextState = game
 
+        check(CommonMethods.distanceToCenter(position) <= 4) { "invalid position" }
+
         // prevent double placement of tiles
         check(game.board.grid.grid[position] == null) { "attempted to place a tile at an occupied position" }
 
         //check for the illegal moves
-        check(!isBlockingGates(move.first, position)) {
+        check(!isBlockingGates(move.first, move.second, position)) {
             "It is not permitted to block two gates by putting a curve to both gates"
         }
 
+        move.first.rotate(move.second)
         game.board.grid.grid[position] = move.first
 
         val neighbours = getNeighboursOf(move.first)
@@ -200,14 +203,18 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
     /**
      * Check whether a tile connects two gates directly, leading to a blocked gate.
      * @param fromTile tile which might be blocking a gate. The currently applied rotation is considered.
+     * @param rotation amount of rotation applied to [fromTile]. [fromTile] itself will not be altered.
      * @param position position the tile would be placed at
      * @return true if the [fromTile] would block a gate when placed at [position]
      */
-    private fun isBlockingGates(fromTile: Tile, position: Pair<Int, Int>): Boolean {
+    private fun isBlockingGates(fromTile: Tile, rotation: Int, position: Pair<Int, Int>): Boolean {
+        val tileCopy = fromTile.deepCopy()
+        tileCopy.rotate(rotation)
+
         val idx = CommonMethods.borderingGateNumber(position) ?: return false
         val edgeB = (idx + 1) % 6
 
-        return fromTile.paths[idx] == edgeB
+        return tileCopy.paths[idx] == edgeB
     }
 
     /**
