@@ -68,7 +68,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
     ).apply { onMouseClicked={
         playersTile.apply { rotation -= 60 }
-        rotationRate -= 60
+        rotationRate -=1
     } }
 
     private val rotateRightButton = Button(
@@ -76,7 +76,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 100, posY = 950, visual = ColorVisual.GRAY, text = "Rotate Right"
     ).apply { onMouseClicked={
         playersTile.apply { rotation += 60 }
-        rotationRate += 60
+        rotationRate +=1
     } }
 
     private val hexagonGrid = HexagonGrid<HexagonView>(
@@ -212,7 +212,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         gridPane[0,2] = player3Pane
         gridPane[0,3] = player4Pane
 
-
+        rotateLeftButton.apply { isDisabled
+        isVisible = false}
         //There should not be a coordinate like [4,1], [-4,-1] or [-4,-4] and others
         for (row in -4..4) {
             for (col in -4..4) {
@@ -276,7 +277,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType.toType())) }
         hexagonGrid[position.first,position.second]?.apply {
             visual = ImageVisual(findTilePath(tile.tileType.toType())).apply {
-                rotate(rotation+60) }
+                rotate((rotation*60)+60) }
         }
         highlightPlayer(nextPlayer)
         rotationRate = 0
