@@ -11,6 +11,7 @@ import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
 
+
 /**
  * creates the endgame scene of the Indigo game
  */
@@ -60,24 +61,24 @@ class EndgameScene : MenuScene(1920, 1080,
         visual = ColorVisual(136, 221, 136)
     }
 
-    private val winnerOne = Label(width = 200, height = 500,
+    val winnerOne = Label(width = 200, height = 500,
         posX = 845, posY = 100, text = "").apply {
-            visual = ColorVisual(0,0,0)
+            visual = ColorVisual(255,255,255)
     }
 
-    private val winnerTwo = Label(width = 200, height = 400,
+    val winnerTwo = Label(width = 200, height = 400,
         posX = 445, posY = 200, text = "winner 2").apply {
-        visual = ColorVisual(0,0,0)
+        visual = ColorVisual(255,255,255)
     }
 
-    private val winnerThree = Label(width = 200, height = 300,
+    val winnerThree = Label(width = 200, height = 300,
         posX = 1245, posY = 300, text = "winner 3").apply {
-        visual = ColorVisual(0,0,0)
+        visual = ColorVisual(255,255,255)
     }
 
-    private val winnerFour = Label(width = 1000, height = 125,
+    val winnerFour = Label(width = 1000, height = 125,
         posX = 445, posY = 650, text = "winner 4").apply {
-        visual = ColorVisual(0,0,0)
+        visual = ColorVisual(255,255,255)
     }
 
     init {

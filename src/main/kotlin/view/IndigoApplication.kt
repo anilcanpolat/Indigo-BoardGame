@@ -162,12 +162,25 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             this@IndigoApplication.showMenuScene(welcomeScene)
         }
 
-
     }
 
-    var gameFinishedPlayerList : List<Player> = listOf()
+    var list: List<Player> = listOf()
+
+    private fun calcScore(gems : MutableList<Gem>) : Int{
+        var score = 0
+        for (i in gems){
+            score += i.score()
+        }
+        return score
+    }
+
     override fun onGameFinished(players: List<Player>) {
-        gameFinishedPlayerList = players
+        list = players
+        list.sortedByDescending { calcScore(it.collectedGems)  }
+        endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
+        endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
+        endGameScene.winnerThree.text = list[2].name + ": " + calcScore(list[2].collectedGems).toString()
+        endGameScene.winnerFour.text = list[3].name + ": " +  calcScore(list[3].collectedGems).toString()
         this.showMenuScene(endGameScene)
     }
 
