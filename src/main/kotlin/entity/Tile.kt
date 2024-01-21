@@ -126,7 +126,7 @@ private fun gemsForTileType(tileType: TileType): Array<Gem?> =
         else -> Array(6) { null }
     }
 
-private fun calcAllBorderTreasureTiles(): List<Pair<Pair<Int, Int>, Tile>> {
+fun calcAllBorderTreasureTiles(): List<Pair<Pair<Int, Int>, Tile>> {
     val rotationValue = listOf(
         Pair(Pair(4, 0), 0),
         Pair(Pair(0, 4), 1),
