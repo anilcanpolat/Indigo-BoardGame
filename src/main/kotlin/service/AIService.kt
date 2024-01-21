@@ -34,7 +34,6 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
      */
     fun randomMove(): Pair<Pair<Int, Int>, Int> {
         val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
-        val currentTile = game.drawPile.first()
 
         val possibleMoves = mutableListOf<Pair<Pair<Int, Int>, Int>>()
 
@@ -47,7 +46,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
                 val position = Pair(col, row)
 
                 for (rotation in 0 until 6) {
-                    if (CommonMethods.isValidMove(game, currentTile, rotation, position)) {
+                    if (CommonMethods.isValidMove(game, game.currentPlayer.currentTile!!, rotation, position)) {
                         possibleMoves.add(position to rotation)
                     }
                 }
