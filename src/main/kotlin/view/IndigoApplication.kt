@@ -17,6 +17,13 @@ import view.ui.*
 class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     private val rootService = RootService()
+    private val networkService = NetworkService(rootService)
+
+    private fun generateRandomId(): String {
+        val random = Random(System.currentTimeMillis())
+        return random.nextInt(1000, 10000).toString()
+    }
+    private val id = generateRandomId()
 
     private var hotSeat = true
 
@@ -28,7 +35,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
         }
     }
 
-    private val welcomeScene : MenuScene = WelcomeScene().apply {
+    private val welcomeScene : MenuScene = WelcomeScene(rootService).apply {
         loadGameButton.onMouseClicked = {
             this@IndigoApplication.showGameScene(gameScene)
         }
@@ -113,7 +120,25 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
                 else if(gameMode == 4) {
                     rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                         GameMode.FOUR_PLAYERS)
+                }/*else{
+                if(gameMode == 1) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.TWO_PLAYERS)
                 }
+                else if(gameMode == 2) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.THREE_PLAYERS)
+                }
+                else if(gameMode == 3) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.THREE_PLAYERS_SHARED_GATES)
+                }
+                else if(gameMode == 4) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.FOUR_PLAYERS)
+                }
+
+            }*/
             }
             this@IndigoApplication.showGameScene(gameScene)
             this@IndigoApplication.hideMenuScene()
