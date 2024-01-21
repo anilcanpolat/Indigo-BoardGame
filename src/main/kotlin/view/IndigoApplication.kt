@@ -14,7 +14,7 @@ import view.ui.*
  * Create scenes and give some buttons there functionality.
  * initialize the scenes afterward
  */
-class IndigoApplication : BoardGameApplication("Indigo-Game") {
+class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val rootService = RootService()
     private val networkService = NetworkService(rootService)
@@ -38,10 +38,12 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
     private val welcomeScene : MenuScene = WelcomeScene(rootService).apply {
         loadGameButton.onMouseClicked = {
             this@IndigoApplication.showGameScene(gameScene)
+            hideMenuScene()
         }
 
         hostButton.onMouseClicked = {
             hotSeat = false
+            this@IndigoApplication.showMenuScene(chosePlayerCountScene)
         }
 
         hotSeatModeButton.onMouseClicked = {
@@ -163,10 +165,22 @@ class IndigoApplication : BoardGameApplication("Indigo-Game") {
 
     }
 
+    var gameFinishedPlayerList : List<Player> = listOf()
+    override fun onGameFinished(players: List<Player>) {
+        gameFinishedPlayerList = players
+        this.showMenuScene(endGameScene)
+    }
+
+
     init {
         rootService.addRefreshable(gameScene)
+        rootService.addRefreshable(this)
+        rootService.addRefreshable(endGameScene)
+        rootService.playerService.addRefreshable(gameScene)
+        rootService.playerService.addRefreshable(this)
+        rootService.playerService.addRefreshable(endGameScene)
         rootService.addRefreshable(saveAndLoadScene)
-        this.showMenuScene(welcomeScene)
+        this.showMenuScene(endGameScene)
     }
 
 }
