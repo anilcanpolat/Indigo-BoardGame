@@ -66,57 +66,6 @@ class RootService : AbstractRefreshingService() {
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Get the gate configuration for the given game mode.
-     * @param players list of players to get their tokens from
-     * @param mode [GameMode] used to derive the configuration
-     * @return array with 6 items holding two [PlayerToken] objects each
-     */
-    private fun gatesForMode(players: List<Player>, mode: GameMode): Array<Pair<PlayerToken, PlayerToken>> =
-        when (mode) {
-            GameMode.TWO_PLAYERS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-
-                val fstPair = Pair(fst, fst)
-                val sndPair = Pair(snd, snd)
-
-                arrayOf(fstPair, sndPair, fstPair, sndPair, fstPair, sndPair)
-            }
-
-            GameMode.THREE_PLAYERS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-                val thd = players[2].playerToken
-
-                val fstPair = Pair(fst, fst)
-                val sndPair = Pair(snd, snd)
-                val thdPair = Pair(thd, thd)
-
-                arrayOf(fstPair, sndPair, thdPair, fstPair, sndPair, thdPair)
-            }
-
-            GameMode.THREE_PLAYERS_SHARED_GATES -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-                val thd = players[2].playerToken
-
-                arrayOf(Pair(fst, fst), Pair(fst, snd), Pair(thd, thd), Pair(thd, fst), Pair(snd, snd), Pair(snd, thd))
-            }
-
-            GameMode.FOUR_PLAYERS -> {
-                val fst = players[0].playerToken
-                val snd = players[1].playerToken
-                val thd = players[2].playerToken
-                val fth = players[3].playerToken
-
-                arrayOf(Pair(fst, snd), Pair(snd, thd), Pair(fst, fth), Pair(fth, snd), Pair(thd, fst), Pair(thd, fth))
-            }
-        }
-
-    /**
->>>>>>> cyclic-dependency-fix
      * Get the number of players required for the given [GameMode]
      * @return integer between 2 and 4 (inclusive)
      */
@@ -132,10 +81,14 @@ class RootService : AbstractRefreshingService() {
      * Regress the [GameState] assuming that previous [GameState] exists
      */
     fun undo() {
-        checkNotNull(currentGame)
+        val state = checkNotNull(currentGame) { "game is not initialised" }
+        val prev = state.previousState
+
         if (!isNetworkGame()) {
-            if (currentGame?.previousState != null) {
-                currentGame = currentGame?.previousState
+            if (prev != null) {
+                currentGame = prev
+
+                onAllRefreshables { onStateChange(prev) }
             }
         }
     }
@@ -145,10 +98,14 @@ class RootService : AbstractRefreshingService() {
      */
 
     fun redo() {
-        checkNotNull(currentGame)
+        val state = checkNotNull(currentGame) { "game is not initialised" }
+        val next = state.nextState
+
         if (!isNetworkGame()) {
-            if (currentGame?.nextState != null) {
-                currentGame = currentGame?.nextState
+            if (next != null) {
+                currentGame = next
+
+                onAllRefreshables { onStateChange(next) }
             }
         }
     }
