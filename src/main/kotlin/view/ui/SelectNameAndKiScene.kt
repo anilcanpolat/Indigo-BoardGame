@@ -362,6 +362,60 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         startGameButton.isDisabled = true
     }
 
+    fun remoteConfigList(playerCount: Int): MutableList<PlayerConfig>{
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
+
+        var p1Name = ""
+        var p2Name = ""
+        var p3Name = ""
+        var p4Name = ""
+
+        val p1Type: PlayerType = PlayerType.PERSON
+        val p2Type: PlayerType = PlayerType.REMOTE
+        val p3Type: PlayerType = PlayerType.REMOTE
+        val p4Type: PlayerType = PlayerType.REMOTE
+
+        when (playerCount) {
+            1 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+            }
+            2, 3 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+            }
+            4 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+                p4Name = playerDTextBox.text
+            }
+        }
+
+        val p1 = PlayerConfig(p1Name, 0, p1Type)
+        val p2 = PlayerConfig(p2Name, 0, p2Type)
+        val p3 = PlayerConfig(p3Name, 0, p3Type)
+        val p4 = PlayerConfig(p4Name, 0, p4Type)
+
+        when(playerCount){
+            1 -> {  typeList.add(p1)
+                typeList.add(p2)
+            }
+            2,3 -> {typeList.add(p1)
+                typeList.add(p2)
+                typeList.add(p3)
+            }
+            4 -> {  typeList.add(p1)
+                typeList.add(p2)
+                typeList.add(p3)
+                typeList.add(p4)
+            }
+        }
+
+        return typeList
+    }
+
     /**
      *  playerConfig is created and used to give data to service layer when
      *  the start game Button is pressed.
