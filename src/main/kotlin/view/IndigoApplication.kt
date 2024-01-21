@@ -1,6 +1,8 @@
 package view
 
 import entity.*
+import service.NetworkService
+import kotlin.random.Random
 import service.Refreshable
 import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
@@ -15,6 +17,13 @@ import view.ui.*
 class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val rootService = RootService()
+    private val networkService = NetworkService(rootService)
+
+    private fun generateRandomId(): String {
+        val random = Random(System.currentTimeMillis())
+        return random.nextInt(1000, 10000).toString()
+    }
+    private val id = generateRandomId()
 
     private var hotSeat = true
 
@@ -34,6 +43,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
         hostButton.onMouseClicked = {
             hotSeat = false
+            this@IndigoApplication.showMenuScene(chosePlayerCountScene)
         }
 
         hotSeatModeButton.onMouseClicked = {
@@ -112,7 +122,25 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                 else if(gameMode == 4) {
                     rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                         GameMode.FOUR_PLAYERS)
+                }/*else{
+                if(gameMode == 1) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.TWO_PLAYERS)
                 }
+                else if(gameMode == 2) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.THREE_PLAYERS)
+                }
+                else if(gameMode == 3) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.THREE_PLAYERS_SHARED_GATES)
+                }
+                else if(gameMode == 4) {
+                    networkService.createGame(id, remoteConfigList(gameMode),
+                        GameMode.FOUR_PLAYERS)
+                }
+
+            }*/
             }
             this@IndigoApplication.showGameScene(gameScene)
             this@IndigoApplication.hideMenuScene()
@@ -137,7 +165,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     }
 
+    var gameFinishedPlayerList : List<Player> = listOf()
     override fun onGameFinished(players: List<Player>) {
+        gameFinishedPlayerList = players
         this.showMenuScene(endGameScene)
     }
 
@@ -150,7 +180,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         rootService.playerService.addRefreshable(this)
         rootService.playerService.addRefreshable(endGameScene)
         rootService.addRefreshable(saveAndLoadScene)
-        this.showMenuScene(welcomeScene)
+        this.showMenuScene(endGameScene)
     }
 
 }

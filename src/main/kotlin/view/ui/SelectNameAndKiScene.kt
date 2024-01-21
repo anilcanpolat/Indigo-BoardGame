@@ -135,13 +135,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     var kiC : Boolean = false
     var kiD : Boolean = false
 
-    //var for sequence
-    private var overAllPos = 0
-    private var playerAPos = 0
-    private var playerBPos = 0
-    private var playerCPos = 0
-    private var playerDPos = 0
-
     //SequenzButtons
     private val playerSequenzAButton = Button(
         posX = 1110, posY = 200,
@@ -187,6 +180,13 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         }
     }
 
+    //var for sequence
+    private var overAllPos = 0
+    private var playerAPos = 0
+    private var playerBPos = 0
+    private var playerCPos = 0
+    private var playerDPos = 0
+
 
     //Ki Speed stuff
     private val labelKiSpeedPartA = Label(
@@ -218,6 +218,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 910, posY = 840,
         width = 150, height = 50
     )
+
 
     val startGameButton = Button(
         posX = 955, posY = 790,
@@ -438,6 +439,60 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         return returnTypeList
     }
 
+    fun remoteConfigList(playerCount: Int): MutableList<PlayerConfig>{
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
+
+        var p1Name = ""
+        var p2Name = ""
+        var p3Name = ""
+        var p4Name = ""
+
+        val p1Type: PlayerType = PlayerType.PERSON
+        val p2Type: PlayerType = PlayerType.REMOTE
+        val p3Type: PlayerType = PlayerType.REMOTE
+        val p4Type: PlayerType = PlayerType.REMOTE
+
+        when (playerCount) {
+            1 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+            }
+            2, 3 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+            }
+            4 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+                p4Name = playerDTextBox.text
+            }
+        }
+
+        val p1 = PlayerConfig(p1Name, 0, p1Type)
+        val p2 = PlayerConfig(p2Name, 0, p2Type)
+        val p3 = PlayerConfig(p3Name, 0, p3Type)
+        val p4 = PlayerConfig(p4Name, 0, p4Type)
+
+        when(playerCount){
+            1 -> {  typeList.add(p1)
+                typeList.add(p2)
+            }
+            2,3 -> {typeList.add(p1)
+                typeList.add(p2)
+                typeList.add(p3)
+            }
+            4 -> {  typeList.add(p1)
+                typeList.add(p2)
+                typeList.add(p3)
+                typeList.add(p4)
+            }
+        }
+
+        return typeList
+    }
+
     /**
      *  playerConfig is created and used to give data to service layer when
      *  the start game Button is pressed.
@@ -447,6 +502,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
                          kiB: Boolean,
                          kiC: Boolean,
                          kiD: Boolean): MutableList<PlayerConfig>{
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
 
         var p1Name = ""
         var p2Name = ""
@@ -460,7 +516,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
 
         when (playerCount) {
             1 -> {
-
                 p1Name = playerATextBox.text
                 p2Name = playerBTextBox.text
             }
@@ -495,9 +550,22 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         val p3 = PlayerConfig(p3Name, 0, p3Type)
         val p4 = PlayerConfig(p4Name, 0, p4Type)
 
-        var finalTypeList : MutableList<PlayerConfig> = mutableListOf()
-        finalTypeList = sequenceTheListForReturn(playerCount, p1, p2, p3, p4)
-        return finalTypeList
+        when(playerCount){
+            1 -> {  typeList.add(p1)
+                    typeList.add(p2)
+            }
+            2,3 -> {typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+            }
+            4 -> {  typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+                    typeList.add(p4)
+            }
+        }
+
+        return typeList
     }
 
     init {
