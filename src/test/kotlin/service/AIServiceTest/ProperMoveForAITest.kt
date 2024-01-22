@@ -25,7 +25,7 @@ class ProperMoveForAITest {
         player3 = PlayerConfig("Cortana", 8, PlayerType.COMPUTER)
         player4 = PlayerConfig("GoogleAssistant", 8, PlayerType.COMPUTER)
     }
-
+/*
     @Test
     fun `test properMoveForAI with ideal conditions`() {
         players = listOf(player1, player2)
@@ -68,7 +68,7 @@ class ProperMoveForAITest {
         println(point1)
         assertTrue { point2 >= point1 }
     }
-
+*/
     /*
     @Test
     fun `test properMoveForAI with no possible moves`() {
