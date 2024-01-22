@@ -2,7 +2,9 @@ package service
 
 import edu.udo.cs.sopra.ntf.*
 import entity.PlayerConfig
+import entity.PlayerType
 import entity.Tile
+import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 
@@ -20,7 +22,17 @@ class GuestMessageHandler(private val rootService: RootService,
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
         }
 
+        for (player in resp.opponents) {
+            val config = PlayerConfig(player, -1, PlayerType.REMOTE)
+            rootService.playerService.onAllRefreshables { onPlayerJoinedGame(config) }
+        }
+
         println("Successfully joined game")
+    }
+
+    override fun onPlayerJoined(client: IndigoClient, player: PlayerJoinedNotification) {
+        val config = PlayerConfig(player.sender, -1, PlayerType.REMOTE)
+        rootService.playerService.onAllRefreshables { onPlayerJoinedGame(config) }
     }
 
     override fun onInitMessage(client: IndigoClient, initMessage: GameInitMessage, sender: String) {
@@ -90,7 +102,7 @@ class GuestMessageHandler(private val rootService: RootService,
         }
 
     private fun translatePlayer(player: Player, isSelf: Boolean = false): entity.Player {
-        val type = if (isSelf) config.type else entity.PlayerType.REMOTE
+        val type = if (isSelf) config.type else PlayerType.REMOTE
         val token = translateToken(player.color)
 
         return entity.Player(player.name, 0, type, token)
