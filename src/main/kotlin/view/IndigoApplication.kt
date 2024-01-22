@@ -37,9 +37,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val welcomeScene : MenuScene = WelcomeScene(rootService).apply {
         loadGameButton.onMouseClicked = {
-            this@IndigoApplication.showGameScene(gameScene)
-            hideMenuScene()
-        }
+            this@IndigoApplication.showMenuScene(saveAndLoadScene)
+                    }
 
         hostButton.onMouseClicked = {
             hotSeat = false

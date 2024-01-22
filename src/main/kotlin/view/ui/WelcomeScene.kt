@@ -61,10 +61,10 @@ class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 860, posY = 650,
         width = 200, height = 50,
         text = "load game"
-    ).apply {onMouseClicked = {
-        rootService.load("savestate.json")
+    ).apply {
+        visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
     }
-        visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+
 
     val quitButton = Button(
     posX = 910, posY = 750,
