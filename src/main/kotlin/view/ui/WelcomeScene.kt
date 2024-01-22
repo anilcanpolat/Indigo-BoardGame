@@ -40,15 +40,6 @@ class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
         text = "Play as Guest: "
     ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue()) }
 
-    private val guestIdFiled = TextField(
-        posX = 885, 440,
-        150, 30,
-        prompt = "Enter id: "
-    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
-    onKeyTyped = {
-            guestButton.isDisabled = false
-            }
-    }
 
     val hotSeatModeButton = Button(
         posX = 860, posY = 550,
@@ -76,8 +67,7 @@ class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
         opacity = 0.5
         addComponents(headLineLabel,
             labelOnlineGame, hostButton,
-            guestButton, guestIdFiled,
-            hotSeatModeButton,
+            guestButton, hotSeatModeButton,
             loadGameButton, quitButton)
     }
 }
