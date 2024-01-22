@@ -17,7 +17,6 @@ import view.ui.*
 class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val rootService = RootService()
-    private val networkService = NetworkService(rootService)
 
     private fun generateRandomId(): String {
         val random = Random(System.currentTimeMillis())
@@ -132,19 +131,19 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             } else {
                 when (gameMode){
                     1 -> {
-                        networkService.createGame(generateRandomId(),
+                        rootService.networkService.createGame(generateRandomId(),
                             remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
                     }
                     2 -> {
-                        networkService.createGame(generateRandomId(),
+                        rootService.networkService.createGame(generateRandomId(),
                             remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
                     }
                     3 -> {
-                        networkService.createGame(generateRandomId(),
+                        rootService.networkService.createGame(generateRandomId(),
                             remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
                     }
                     4 -> {
-                        networkService.createGame(generateRandomId(),
+                        rootService.networkService.createGame(generateRandomId(),
                             remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
                     }
                 }
@@ -171,7 +170,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     }
 
-    private val guestButtonScene : GuestButtonScene = GuestButtonScene(networkService).apply {
+    private val guestButtonScene : GuestButtonScene =
+        GuestButtonScene(rootService.networkService).apply {
+
         returnGuestButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
 
@@ -191,6 +192,12 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
         return score
     }
+
+
+    override fun onPlayerJoinedGame(playerConfig: PlayerConfig) {
+
+    }
+
 
     override fun onGameFinished(players: List<Player>) {
         list = players
