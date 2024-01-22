@@ -4,6 +4,7 @@ import kotlin.test.*
 import org.junit.jupiter.api.Nested
 
 import entity.*
+import java.util.Random
 
 class AiIntegrationTest {
     private var rootService = RootService()
@@ -62,6 +63,39 @@ class AiIntegrationTest {
             }
 
             assertEquals(moves, 12, "ai did not play the correct amount of moves")
+        }
+
+        @Test
+        fun aiGameTest() {
+            val host = RootService()
+            val session = Random().nextInt().toString()
+
+            host.networkService.createGame(session, PlayerConfig("Alice", -1, PlayerType.PERSON), GameMode.TWO_PLAYERS)
+            Thread.sleep(1000)
+
+            val guest = RootService()
+            guest.networkService.joinGame(session, PlayerConfig("Bob", -1, PlayerType.COMPUTER))
+
+            Thread.sleep(1000)
+
+            var moves = 0
+
+            host.playerService.addRefreshable(object : Refreshable {
+                override fun onPlayerMove(
+                    player: Player,
+                    nextPlayer: Player,
+                    tile: Tile,
+                    position: Pair<Int, Int>,
+                    rotation: Int
+                ) {
+                    moves += 1
+                }
+            })
+
+            host.playerService.playerMove(Pair(currentTile(), 0), Pair(-1, 1))
+
+            Thread.sleep(2000)
+            assertEquals(moves, 2)
         }
     }
 
