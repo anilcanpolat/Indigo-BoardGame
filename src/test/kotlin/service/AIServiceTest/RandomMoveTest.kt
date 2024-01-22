@@ -6,7 +6,7 @@ import kotlin.test.*
 /**
  * Test class for AIService.randomMove method.
  */
-class AIServiceTest {
+class RandomMoveTest {
 
     private lateinit var rootService: RootService
     private lateinit var aiService: AIService

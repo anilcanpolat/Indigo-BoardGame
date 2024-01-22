@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import kotlinx.coroutines.currentCoroutineContext
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import service.CommonMethods.neighbouringPositions
@@ -20,10 +21,6 @@ import service.CommonMethods.neighbouringPositions
 class AIService(private val rootService: RootService) : AbstractRefreshingService() {
 
     private val ps = rootService.playerService
-
-    //It is needed in order AIService and RootService logically bind them.
-    //var AIService = AIService(this)
-
 
     /**
      * Calculates the next move for the AI player based on the current game state.
@@ -77,10 +74,11 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
      * where the first element is a Pair of the current Tile and an Int representing the rotation of the tile,
      * and the second element is a Pair of coordinates representing the position on the board for the chosen tile.
      */
-    fun properMoveForAI(game: GameState, currentTile: Tile): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+    fun properMoveForAI(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+        val game = rootService.currentGame!!
+        val currentTile = game.currentPlayer.currentTile!!
         var bestScore = Int.MIN_VALUE
         var bestMove: Pair<Pair<Int, Int>, Int>? = null
-
 
         val aiPlayer = game.currentPlayer
         val aiPlayerToken = aiPlayer.playerToken
@@ -99,7 +97,6 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
                 bestMove = move
             }
         }
-
 
         if (bestMove == null) {
             val fallbackMove = randomMove()
@@ -157,6 +154,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
 
         return score
     }
+
     private fun calculateGemSecure(gameState: GameState): Int {
         // Check the gems size on the previous state(before the move)
         val previousState = gameState.previousState
@@ -415,8 +413,6 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
             }
         }
     }
-
-
 
     private fun getNeighboursOf(gameState: GameState, position: Pair<Int, Int>): Array<Tile?> {
         val neighbouringPositions = neighbouringPositions(position)
