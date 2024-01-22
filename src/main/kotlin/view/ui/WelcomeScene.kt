@@ -38,8 +38,7 @@ class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 860, 370,
         200, 50,
         text = "Play as Guest: "
-    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
-    isDisabled = true}
+    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue()) }
 
     private val guestIdFiled = TextField(
         posX = 885, 440,
