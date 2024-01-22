@@ -58,5 +58,8 @@ interface Refreshable {
      */
     fun onGameFinished(players: List<Player>) {}
 
+    fun onPlayerJoinedGame(playerConfig: PlayerConfig){
+
+    }
 
 }
