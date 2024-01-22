@@ -17,7 +17,6 @@ import view.ui.*
 class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val rootService = RootService()
-    private val networkService = NetworkService(rootService)
 
     private fun generateRandomId(): String {
         val random = Random(System.currentTimeMillis())
@@ -111,40 +110,43 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         startGameButton.onMouseClicked = {
             if (hotSeat)
             {
-                if(gameMode == 1) {
-                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
-                        GameMode.TWO_PLAYERS)
+                when (gameMode) {
+                    1 -> {
+                        rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
+                            GameMode.TWO_PLAYERS)
+                    }
+                    2 -> {
+                        rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
+                            GameMode.THREE_PLAYERS)
+                    }
+                    3 -> {
+                        rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
+                            GameMode.THREE_PLAYERS_SHARED_GATES)
+                    }
+                    4 -> {
+                        rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
+                            GameMode.FOUR_PLAYERS)
+                    }
                 }
-                else if(gameMode == 2) {
-                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
-                        GameMode.THREE_PLAYERS)
+            } else {
+                when (gameMode){
+                    1 -> {
+                        rootService.networkService.createGame(generateRandomId(),
+                            remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
+                    }
+                    2 -> {
+                        rootService.networkService.createGame(generateRandomId(),
+                            remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
+                    }
+                    3 -> {
+                        rootService.networkService.createGame(generateRandomId(),
+                            remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
+                    }
+                    4 -> {
+                        rootService.networkService.createGame(generateRandomId(),
+                            remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
+                    }
                 }
-                else if(gameMode == 3) {
-                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
-                        GameMode.THREE_PLAYERS_SHARED_GATES)
-                }
-                else if(gameMode == 4) {
-                    rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
-                        GameMode.FOUR_PLAYERS)
-                }/*else{
-                if(gameMode == 1) {
-                    networkService.createGame(id, remoteConfigList(gameMode),
-                        GameMode.TWO_PLAYERS)
-                }
-                else if(gameMode == 2) {
-                    networkService.createGame(id, remoteConfigList(gameMode),
-                        GameMode.THREE_PLAYERS)
-                }
-                else if(gameMode == 3) {
-                    networkService.createGame(id, remoteConfigList(gameMode),
-                        GameMode.THREE_PLAYERS_SHARED_GATES)
-                }
-                else if(gameMode == 4) {
-                    networkService.createGame(id, remoteConfigList(gameMode),
-                        GameMode.FOUR_PLAYERS)
-                }
-
-            }*/
             }
             this@IndigoApplication.showGameScene(gameScene)
             this@IndigoApplication.hideMenuScene()
@@ -168,7 +170,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     }
 
-    private val guestButtonScene : GuestButtonScene = GuestButtonScene(networkService).apply {
+    private val guestButtonScene : GuestButtonScene =
+        GuestButtonScene(rootService.networkService).apply {
+
         returnGuestButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
 
@@ -188,6 +192,12 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
         return score
     }
+
+
+    override fun onPlayerJoinedGame(playerConfig: PlayerConfig) {
+
+    }
+
 
     override fun onGameFinished(players: List<Player>) {
         list = players
