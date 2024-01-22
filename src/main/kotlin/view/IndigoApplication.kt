@@ -163,6 +163,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     }
 
+    private val guestButtonScene : GuestButtonScene = GuestButtonScene()
+
     var list: List<Player> = listOf()
 
     private fun calcScore(gems : MutableList<Gem>) : Int{
@@ -192,7 +194,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         rootService.playerService.addRefreshable(this)
         rootService.playerService.addRefreshable(endGameScene)
         rootService.addRefreshable(saveAndLoadScene)
-        this.showMenuScene(endGameScene)
+        this.showMenuScene(guestButtonScene)
     }
 
 }
