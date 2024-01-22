@@ -171,6 +171,10 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     private val guestButtonScene : GuestButtonScene = GuestButtonScene(networkService).apply {
         returnGuestButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
+
+            joinButton.onMouseClicked = {
+                showGameScene(gameScene)
+            }
         }
     }
 
