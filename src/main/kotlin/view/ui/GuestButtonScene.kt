@@ -1,6 +1,5 @@
 package view.ui
 
-import entity.Player
 import entity.PlayerConfig
 import entity.PlayerType
 import service.NetworkService

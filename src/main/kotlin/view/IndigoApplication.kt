@@ -1,7 +1,6 @@
 package view
 
 import entity.*
-import service.NetworkService
 import kotlin.random.Random
 import service.Refreshable
 import service.RootService
