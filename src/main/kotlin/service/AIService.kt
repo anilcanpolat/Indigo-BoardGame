@@ -213,7 +213,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return tile?.gems?.firstOrNull { it != null }
     }
 
-    private fun findNearestGateAndDistance(board: Board, gemPosition: Pair<Int, Int>): Pair<Pair<PlayerToken, PlayerToken>?, Int?> {
+    private fun findNearestGateAndDistance(board: Board,
+                                           gemPosition: Pair<Int, Int>): Pair<Pair<PlayerToken, PlayerToken>?, Int?> {
         var nearestGate: Pair<PlayerToken, PlayerToken>? = null
         var minDistance: Int? = null
 
@@ -329,7 +330,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return modifiedGameState
     }
 
-    private fun processGemMovementsAfterTilePlacement(gameState: GameState, placedTile: Tile, position: Pair<Int, Int>) {
+    private fun processGemMovementsAfterTilePlacement(gameState: GameState,
+                                                      placedTile: Tile, position: Pair<Int, Int>) {
         val neighbours = getNeighboursOf(gameState, position)
 
         for (i in 0..5) {
@@ -372,7 +374,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         }
     }
 
-    private fun handleGemCollisionOrEndOfPath(gameState: GameState, gem: Gem, fromTile: Tile, toTile: Tile, fromEdge: Int, toEdge: Int?) {
+    private fun handleGemCollisionOrEndOfPath(gameState: GameState, gem: Gem,
+                                              fromTile: Tile, toTile: Tile, fromEdge: Int, toEdge: Int?) {
         // Check if the gem has reached the end of a path or collided with another gem
         if (toEdge == null || toTile.gems[toEdge] != null) {
             // Handle the end of path or collision
@@ -405,7 +408,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         }
     }
 
-    private fun allocatePointsToPlayers(gameState: GameState, gem: Gem, borderingGates: Pair<PlayerToken, PlayerToken>) {
+    private fun allocatePointsToPlayers(gameState: GameState, gem: Gem,
+                                        borderingGates: Pair<PlayerToken, PlayerToken>) {
         gameState.players.forEach { player ->
             if (player.playerToken == borderingGates.first || player.playerToken == borderingGates.second) {
                 // Add the gem to the player's collected gems
