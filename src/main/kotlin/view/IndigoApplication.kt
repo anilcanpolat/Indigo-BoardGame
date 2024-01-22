@@ -133,19 +133,19 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                 when (gameMode){
                     1 -> {
                         networkService.createGame(generateRandomId(),
-                            remoteConfigList(1)[0], entity.GameMode.TWO_PLAYERS)
+                            remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
                     }
                     2 -> {
                         networkService.createGame(generateRandomId(),
-                            remoteConfigList(2)[0], entity.GameMode.THREE_PLAYERS)
+                            remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
                     }
                     3 -> {
                         networkService.createGame(generateRandomId(),
-                            remoteConfigList(3)[0], entity.GameMode.THREE_PLAYERS_SHARED_GATES)
+                            remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
                     }
                     4 -> {
                         networkService.createGame(generateRandomId(),
-                            remoteConfigList(4)[0], entity.GameMode.FOUR_PLAYERS)
+                            remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
                     }
                 }
             }
