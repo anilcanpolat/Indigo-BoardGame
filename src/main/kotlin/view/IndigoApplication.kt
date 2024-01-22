@@ -46,7 +46,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
         hostButton.onMouseClicked = {
             hotSeat = false
-            this@IndigoApplication.showMenuScene(chosePlayerCountScene)
+            this@IndigoApplication.showMenuScene(hostGameScene)
         }
 
         hotSeatModeButton.onMouseClicked = {
@@ -63,7 +63,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
         backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
-            hotSeat = false
+            hotSeat = true
        }
 
        p2Button.onMouseClicked = {
@@ -96,6 +96,38 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
        }
     }
 
+    private val hostGameScene : HostGameScene = HostGameScene().apply {
+        backFromHostGameScene.onMouseClicked = {
+            hotSeat = true
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+
+        host2Pl.onMouseClicked = {
+            rootService.networkService.createGame(generateRandomId(),
+                remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
+            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+        }
+
+        host3PlShared.onMouseClicked = {
+            rootService.networkService.createGame(generateRandomId(),
+                remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
+            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+        }
+
+        host3Pl.onMouseClicked = {
+            rootService.networkService.createGame(generateRandomId(),
+                remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
+            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+
+        }
+
+        host4Pl.onMouseClicked = {
+            rootService.networkService.createGame(generateRandomId(),
+                remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
+            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+        }
+    }
+
     private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
@@ -126,25 +158,6 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                     4 -> {
                         rootService.startGame(playerConfigList(gameMode, kiA, kiB, kiC, kiD),
                             GameMode.FOUR_PLAYERS)
-                    }
-                }
-            } else {
-                when (gameMode){
-                    1 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
-                    }
-                    2 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
-                    }
-                    3 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
-                    }
-                    4 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
                     }
                 }
             }

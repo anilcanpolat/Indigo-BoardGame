@@ -83,6 +83,7 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
         width = 40, height = 30,
         text = "250"
     )
+
     val joinButton = Button(
         posX = 860, 700,
         200, 50,
