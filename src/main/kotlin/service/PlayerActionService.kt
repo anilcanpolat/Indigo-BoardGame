@@ -35,6 +35,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         val neighbours = getNeighboursOf(move.first)
         val isAI = game.currentPlayer.playerType == PlayerType.COMPUTER
+        val isRemote = game.currentPlayer.playerType == PlayerType.REMOTE
 
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
@@ -79,6 +80,10 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         val nextPlayerIndex = (game.players.indexOf(game.currentPlayer) + 1) % game.players.size
         val nextPlayer = game.players[nextPlayerIndex]
 
+        if (!isRemote && isNetworkGame()) {
+            rootService.networkService.sendTilePlaced(move.second, position)
+        }
+
         onAllRefreshables { onPlayerMove(game.currentPlayer, nextPlayer, move.first, position, move.second) }
 
         game.currentPlayer.currentTile = null
@@ -99,12 +104,15 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             processAllAIMoves()
         }
 
-        val state = checkNotNull(rootService.currentGame)
-
-        if (state.currentPlayer.playerType == PlayerType.PERSON) {
+        if (!isAI && !isRemote) {
             onAllRefreshables { onWaitForInput() }
         }
     }
+
+    private fun isNetworkGame(): Boolean =
+        checkNotNull(rootService.currentGame).players.any {
+            it.playerType == PlayerType.REMOTE
+        }
 
     /**
      * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
