@@ -74,48 +74,52 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     // KI Buttons
     private val kiButtonA = Button(
         posX = 1035, posY = 200,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
          onMouseClicked = {
              kiA = setKILevel(kiLevelA)
              playerATextBox.text = printOrDeleteKiNames(kiA, kiLevelA)
+             visual = changeColorForKi(kiA, kiLevelA)
              kiLevelA++
         }
     }
 
     private val kiButtonB = Button(
         posX = 1035, posY = 350,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiB = setKILevel(kiLevelB)
             playerBTextBox.text = printOrDeleteKiNames(kiB, kiLevelB)
+            visual = changeColorForKi(kiB, kiLevelB)
             kiLevelB++
         }
     }
 
     private val kiButtonC = Button(
         posX = 1035, posY = 500,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiC = setKILevel(kiLevelC)
             playerCTextBox.text = printOrDeleteKiNames(kiC, kiLevelC)
+            visual = changeColorForKi(kiC, kiLevelC)
             kiLevelC++
         }
     }
 
-    val kiButtonD = Button(
+    private val kiButtonD = Button(
         posX = 1035, posY = 650,
-        width = 50, height = 50,
-        text = "KI: "
-    ).apply { visual = ColorVisual(193, 74, 240)
+        width = 60, height = 50,
+        text = "Add Ki"
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiD = setKILevel(kiLevelD)
             playerDTextBox.text = printOrDeleteKiNames(kiD, kiLevelD)
+            visual = changeColorForKi(kiD, kiLevelD)
             kiLevelD++
         }
     }
@@ -130,7 +134,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     var kiB : Boolean = false
     var kiC : Boolean = false
     var kiD : Boolean = false
-
 
     //SequenzButtons
     private val playerSequenzAButton = Button(
@@ -275,6 +278,21 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         return str
     }
 
+    private fun changeColorForKi(kiForName : Boolean, kiLevelForName : Int) : ColorVisual{
+        var colorToReturn = ColorVisual(ColorEnum.Papaya.toRgbValue())
+        if(kiForName){
+            if(kiLevelForName % 3 == 1){
+                colorToReturn = ColorVisual(ColorEnum.Olivine.toRgbValue())
+            }
+            if(kiLevelForName % 3 == 2){
+                colorToReturn = ColorVisual(ColorEnum.EngOrange.toRgbValue())
+            }
+        } else {
+            colorToReturn = ColorVisual(ColorEnum.Papaya.toRgbValue())
+        }
+        return colorToReturn
+    }
+
     private fun cycleThroughPlayerSequence(pos : Int) : Int{
         var posToReturn = 0
         if(pos == 0){
@@ -344,6 +362,137 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         startGameButton.isDisabled = true
     }
 
+    private fun sequenceTheListForReturn(playerCount: Int,
+                                         p1 : PlayerConfig,
+                                         p2 : PlayerConfig,
+                                         p3 : PlayerConfig,
+                                         p4 : PlayerConfig) : MutableList<PlayerConfig>{
+
+        val typeList: MutableList<PlayerConfig>
+        val returnTypeList : MutableList<PlayerConfig> = mutableListOf()
+
+        if(overAllPos == 0) {
+            when (playerCount) {
+                1 -> {
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
+                    typeList.add(p1)
+                    typeList.add(p2)
+                    returnTypeList.addAll(typeList)
+                }
+                2, 3 -> {
+                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
+                    typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+                    returnTypeList.addAll(typeList)
+                }
+                4 -> {
+                    typeList = MutableList(4) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.clear()
+                    typeList.add(p1)
+                    typeList.add(p2)
+                    typeList.add(p3)
+                    typeList.add(p4)
+                    returnTypeList.addAll(typeList)
+                }
+            }
+        } else {
+            when (playerCount) {
+                1 -> {
+                    typeList = MutableList(2) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    returnTypeList.addAll(typeList)
+                }
+                2, 3 -> {
+                    typeList = MutableList(3) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    typeList.removeAt(playerCPos-1)
+                    typeList.add(playerCPos-1, p3)
+                    returnTypeList.addAll(typeList)
+                }
+                4 -> {
+                    typeList = MutableList(4) { PlayerConfig("alex", 0, PlayerType.PERSON) }
+                    typeList.removeAt(playerAPos-1)
+                    typeList.add(playerAPos-1, p1)
+                    typeList.removeAt(playerBPos-1)
+                    typeList.add(playerBPos-1, p2)
+                    typeList.removeAt(playerCPos-1)
+                    typeList.add(playerCPos-1, p3)
+                    typeList.removeAt(playerDPos-1)
+                    typeList.add(playerDPos-1, p4)
+                    returnTypeList.addAll(typeList)
+                }
+            }
+        }
+
+        if(randomCheckbox.isChecked) {
+            returnTypeList.shuffle()
+        }
+        return returnTypeList
+    }
+
+    fun remoteConfigList(playerCount: Int): MutableList<PlayerConfig>{
+        val typeList: MutableList<PlayerConfig> = mutableListOf()
+
+        var p1Name = ""
+        var p2Name = ""
+        var p3Name = ""
+        var p4Name = ""
+
+        val p1Type: PlayerType = PlayerType.PERSON
+        val p2Type: PlayerType = PlayerType.REMOTE
+        val p3Type: PlayerType = PlayerType.REMOTE
+        val p4Type: PlayerType = PlayerType.REMOTE
+
+        when (playerCount) {
+            1 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+            }
+            2, 3 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+            }
+            4 -> {
+                p1Name = playerATextBox.text
+                p2Name = playerBTextBox.text
+                p3Name = playerCTextBox.text
+                p4Name = playerDTextBox.text
+            }
+        }
+
+        val p1 = PlayerConfig(p1Name, 0, p1Type)
+        val p2 = PlayerConfig(p2Name, 0, p2Type)
+        val p3 = PlayerConfig(p3Name, 0, p3Type)
+        val p4 = PlayerConfig(p4Name, 0, p4Type)
+
+        when(playerCount){
+            1 -> {  typeList.add(p1)
+                typeList.add(p2)
+            }
+            2,3 -> {typeList.add(p1)
+                typeList.add(p2)
+                typeList.add(p3)
+            }
+            4 -> {  typeList.add(p1)
+                typeList.add(p2)
+                typeList.add(p3)
+                typeList.add(p4)
+            }
+        }
+
+        return typeList
+    }
+
     /**
      *  playerConfig is created and used to give data to service layer when
      *  the start game Button is pressed.
@@ -353,7 +502,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
                          kiB: Boolean,
                          kiC: Boolean,
                          kiD: Boolean): MutableList<PlayerConfig>{
-        val typeList: MutableList<PlayerConfig> = mutableListOf()
 
         var p1Name = ""
         var p2Name = ""
@@ -401,12 +549,9 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         val p3 = PlayerConfig(p3Name, 0, p3Type)
         val p4 = PlayerConfig(p4Name, 0, p4Type)
 
-        typeList.add(p1)
-        typeList.add(p2)
-        typeList.add(p3)
-        typeList.add(p4)
-
-        return typeList
+        var finalTypeList : MutableList<PlayerConfig> = mutableListOf()
+        finalTypeList = sequenceTheListForReturn(playerCount,p1, p2, p3, p4)
+        return finalTypeList
     }
 
     init {

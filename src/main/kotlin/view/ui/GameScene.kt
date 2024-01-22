@@ -1,7 +1,9 @@
 package view.ui
 
+import entity.Gem
 import entity.Player
 import entity.PlayerToken
+import entity.Tile
 import service.Refreshable
 import service.RootService
 import tools.aqua.bgw.components.ComponentView
@@ -31,7 +33,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 150, posY = 50,visual = CompoundVisual(
             ColorVisual(ColorEnum.Olivine.toRgbValue()),
             ImageVisual(path = "save.png"))
-    ).apply {onMouseClicked = {rootService.save("src/main/resources")}
+    ).apply {onMouseClicked = {rootService.save("savestate.json")}
     }
 
     val quitButton = Button(
@@ -59,27 +61,56 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png"))
     ).apply { rotate(30) }
 
+    private var rotationRate : Int = 0
+
     private val rotateLeftButton = Button(
         width = 130, height = 50,
         posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
     ).apply { onMouseClicked={
-        playersTile.rotate(-60)
+        playersTile.apply { rotation -= 60 }
+        rotationRate -=1
     } }
 
     private val rotateRightButton = Button(
         width = 130, height = 50,
         posX = 100, posY = 950, visual = ColorVisual.GRAY, text = "Rotate Right"
     ).apply { onMouseClicked={
-        playersTile.rotate(60)
+        playersTile.apply { rotation += 60 }
+        rotationRate +=1
     } }
 
     private val hexagonGrid = HexagonGrid<HexagonView>(
          coordinateSystem = HexagonGrid.CoordinateSystem.AXIAL, posX = 900, posY = 450
-    ).apply { rotate(30) }
+    ).apply {rotate(30) }
 
     private val playersTile = HexagonView(
         posX = 100, posY = 750, size =65, visual = ImageVisual(path = "longCurveTile.png"),
-    ).apply { rotate(30) }
+    ).apply {rotation = 90.0 }
+
+    private val gate1Token1 = Label(
+        width = 70, height = 70,posX = 1075, posY = 70, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate1Token2 = Label(
+        width = 70, height = 70,posX = 1175, posY = 120, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate2Token1 = Label(
+        width = 70, height = 70,posX = 1375, posY = 450, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate2Token2 = Label(
+        width = 70, height = 70,posX = 1375, posY = 550, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate3Token1 = Label(
+        width = 70, height = 70,posX = 1175, posY = 900, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate3Token2 = Label(
+        width = 70, height = 70,posX = 1075, posY = 950, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate4Token1 = Label(
+        width = 70, height = 70,posX = 700, posY = 950, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate4Token2 = Label(
+        width = 70, height = 70,posX = 600, posY = 900, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate5Token1 = Label(
+        width = 70, height = 70,posX = 400, posY = 550, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate5Token2 = Label(
+        width = 70, height = 70,posX = 400, posY = 450, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate6Token1 = Label(
+        width = 70, height = 70,posX = 600, posY = 120, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+    private val gate6Token2 = Label(
+        width = 70, height = 70,posX = 700, posY = 70, visual = ImageVisual(path = "PlayerColorCYAN.png"))
 
 
 
@@ -166,7 +197,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     //Lists of player labels
     private val playerNameList = listOf(player1Text, player2Text, player3Text, player4Text)
     private val playerTokenList = listOf(player1Token, player2Token, player3Token,player4Token)
-    private val playerTileList = listOf(player1Tile, player2Tile, player3Tile, player4Tile)
+    private val gatesTokenList = listOf(gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
+        gate4Token1,gate4Token2,gate5Token1,gate5Token2,gate6Token1,gate6Token2)
+    private val scoresList = listOf(player1Score, player2Score,player3Score,player4Score)
 
 
     init {
@@ -179,7 +212,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         gridPane[0,2] = player3Pane
         gridPane[0,3] = player4Pane
 
-
+        rotateLeftButton.apply { isDisabled
+        isVisible = false}
         //There should not be a coordinate like [4,1], [-4,-1] or [-4,-4] and others
         for (row in -4..4) {
             for (col in -4..4) {
@@ -187,7 +221,13 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                     continue
                 }
 
-                val hexagon = HexagonView(visual = ColorVisual(250,240,202 ), size = 65)
+                val hexagon = HexagonView(visual = ColorVisual(250,240,202 ), size = 65).apply {
+                    onMouseClicked= {rootService.playerService.playerMove(
+                        Pair(rootService.currentGame!!.currentPlayer.currentTile!!, rotationRate),Pair(col,row))
+                    }
+
+
+                }
                 hexagonGrid[col, row] = hexagon
             }
         }
@@ -195,7 +235,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
         addComponents(saveButton, quitButton,redoButton,undoButton,
-            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,gridPane)
+            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,gridPane,
+            gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
+            gate4Token1,gate4Token2,gate5Token1,gate5Token2,gate6Token1,gate6Token2)
     }
     //Clone the list to reach the players after onGameStart
     private var playerList = listOf<Player>()
@@ -214,13 +256,41 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 gridPane[0,3]!!.isVisible = false
             }
         }
-         for (i in 0..players.size){
+         for (i in players.indices){
              playerNameList[i].text= players[i].name
              playerTokenList[i].visual = ImageVisual(path = "PlayerColor"+ players[i].playerToken.toString() +".png")
 
          }
 
+         var index = 0
+         for (i in gates.indices){
+             gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].first.toString() +".png")
+             gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor"+ gates[i].second.toString() +".png")
+         }
+         highlightPlayer(rootService.currentGame!!.currentPlayer)
+         playersTile.apply { visual = ImageVisual(
+             findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType.toType())) }
+
      }
+
+    override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {
+        playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType.toType())) }
+        hexagonGrid[position.first,position.second]?.apply {
+            visual = ImageVisual(findTilePath(tile.tileType.toType())).apply {
+                rotate((rotation*60)+60) }
+        }
+        highlightPlayer(nextPlayer)
+        rotationRate = 0
+        playersTile.apply { this.rotation = 90.0 }
+
+    }
+
+    override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
+        println("Gem Removed")
+        for (i in playerList.indices){
+            scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
+        }
+    }
 
     private fun placeTiles(){
         //up
@@ -241,9 +311,35 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     }
 
-    /*
-    fun pathConst(name : String){
-        //This should return the path of the wanted image
-    }*/
+    //To add highlight to currentPlayer and delete other highlights
+    private fun highlightPlayer(player : Player){
+        for (i in playerNameList){
+            if (i.text == player.name){
+                i.apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
+            }
+            else i.apply { visual = ColorVisual.TRANSPARENT }
+        }
+    }
+
+
+
+    private fun findTilePath(type : Int?): String {
+        when(type){
+            0 -> return "StraightAndLongCurveTile.png"
+            1 -> return "XTile.png"
+            2 -> return "StraightAndCurveTile.png"
+            3 -> return "longCurveTile.png"
+            4 -> return "CurveTile.png"
+        }
+        return ""
+    }
+
+    private fun calcScore(gems : MutableList<Gem>) : Int{
+        var score = 0
+        for (i in gems){
+           score += i.score()
+        }
+        return score
+    }
 
 }
