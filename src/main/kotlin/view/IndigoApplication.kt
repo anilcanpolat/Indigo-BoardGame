@@ -40,6 +40,11 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             this@IndigoApplication.showMenuScene(saveAndLoadScene)
                     }
 
+        guestButton.onMouseClicked = {
+            hotSeat = false
+            this@IndigoApplication.showMenuScene(guestButtonScene)
+        }
+
         hostButton.onMouseClicked = {
             hotSeat = false
             this@IndigoApplication.showMenuScene(chosePlayerCountScene)
@@ -163,7 +168,11 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     }
 
-    private val guestButtonScene : GuestButtonScene = GuestButtonScene()
+    private val guestButtonScene : GuestButtonScene = GuestButtonScene().apply {
+        returnGuestButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+    }
 
     var list: List<Player> = listOf()
 

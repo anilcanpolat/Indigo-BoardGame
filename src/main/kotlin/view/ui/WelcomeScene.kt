@@ -34,7 +34,7 @@ class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
         text = "Play as Host: "
     ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue()) }
 
-    private val guestButton = Button(
+    val guestButton = Button(
         posX = 860, 370,
         200, 50,
         text = "Play as Guest: "
