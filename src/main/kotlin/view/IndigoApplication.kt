@@ -173,7 +173,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             this@IndigoApplication.showMenuScene(welcomeScene)
 
             joinButton.onMouseClicked = {
-                showGameScene(gameScene)
+                this@IndigoApplication.hideMenuScene()
+                this@IndigoApplication.showGameScene(gameScene)
             }
         }
     }
