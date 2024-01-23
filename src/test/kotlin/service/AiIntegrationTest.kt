@@ -15,7 +15,7 @@ class AiIntegrationTest {
     }
 
     @Nested
-    inner class TwoPlayerTests() {
+    inner class TwoPlayerTests {
         @BeforeTest
         fun startGame() {
             val players = listOf(
