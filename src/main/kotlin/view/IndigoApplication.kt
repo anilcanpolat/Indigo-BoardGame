@@ -7,6 +7,7 @@ import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
 import view.ui.*
+import java.io.File
 
 
 /**
@@ -28,9 +29,19 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private var gameMode = 0
 
+    private var isUse1 = false
+    private var isUse2 = false
+    private var isUse3 = false
+    private var isUse4 = false
+    private var isUse5 = false
+
     private val gameScene : GameScene = GameScene(rootService, this).apply {
         quitButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+
+        saveButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(saveAndLoadScene)
         }
     }
 
@@ -180,9 +191,100 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
     }
 
+    private fun deleteState(file: File){
+        file.delete()
+    }
+
+    //safe and load functionality
     private val saveAndLoadScene : SaveAndLoadScene = SaveAndLoadScene().apply {
         returnFromSaveButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+
+        saveButtonOne.onMouseClicked = {
+            if (!isUse1) {
+                rootService.save("savestate1.json")
+                saveButtonOne.text = "Savestate 1"
+                isUse1 = true
+            }else{
+                rootService.load("savestate1.json")
+            }
+        }
+        saveButtonTwo.onMouseClicked = {
+            if (!isUse2) {
+                rootService.save("savestate2.json")
+                saveButtonTwo.text = "Savestate 2"
+                isUse2 = true
+            }else{
+                rootService.load("savestate2.json")
+            }
+        }
+        saveButtonThree.onMouseClicked = {
+            if (!isUse3) {
+                rootService.save("savestate3.json")
+                saveButtonTwo.text = "Savestate 3"
+                isUse3 = true
+            }else{
+                rootService.load("savestate3.json")
+            }
+        }
+        saveButtonFour.onMouseClicked = {
+            if (!isUse4) {
+                rootService.save("savestate4.json")
+                saveButtonTwo.text = "Savestate 4"
+                isUse4 = true
+            }else{
+                rootService.load("savestate4.json")
+            }
+        }
+        saveButtonFive.onMouseClicked = {
+            if (!isUse5) {
+                rootService.save("savestate5.json")
+                saveButtonTwo.text = "Savestate 5"
+                isUse5 = true
+            }else{
+                rootService.load("savestate5.json")
+            }
+        }
+
+        deleteButtonOne.onMouseClicked = {
+            if (isUse1){
+                deleteState(File("savestate1.json"))
+                saveButtonOne.text = "Empty: "
+                isUse1 = false
+            }
+        }
+
+        deleteButtonTwo.onMouseClicked = {
+            if (isUse2){
+                deleteState(File("savestate2.json"))
+                saveButtonTwo.text = "Empty: "
+                isUse2 = false
+            }
+        }
+
+        deleteButtonThree.onMouseClicked = {
+            if (isUse3){
+                deleteState(File("savestate3.json"))
+                saveButtonThree.text = "Empty: "
+                isUse3 = false
+            }
+        }
+
+        deleteButtonFour.onMouseClicked = {
+            if (isUse4){
+                deleteState(File("savestate4.json"))
+                saveButtonFour.text = "Empty: "
+                isUse4 = false
+            }
+        }
+
+        deleteButtonFive.onMouseClicked = {
+            if (isUse5){
+                deleteState(File("savestate5.json"))
+                saveButtonFive.text = "Empty: "
+                isUse5 = false
+            }
         }
     }
 

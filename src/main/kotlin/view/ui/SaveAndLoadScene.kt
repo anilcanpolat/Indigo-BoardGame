@@ -61,61 +61,61 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
         text = "5: "
     )
 
-    private val saveButtonOne = Button(
+    val saveButtonOne = Button(
         posX = 745, posY = 87.5,
         width = 450, height = 50,
         text = "Game from: "
     )
 
-    private val saveButtonTwo = Button(
+    val saveButtonTwo = Button(
         posX = 745, posY = 240,
         width = 450, height = 50,
         text = "Game from: "
     )
 
-    private val saveButtonThree = Button(
+    val saveButtonThree = Button(
         posX = 745, posY = 388.5,
         width = 450, height = 50,
         text = "Empty: "
     )
 
-    private val saveButtonFour = Button(
+    val saveButtonFour = Button(
         posX = 745, posY = 538.5,
         width = 450, height = 50,
         text = "Empty: "
     )
 
-    private val saveButtonFive = Button(
+    val saveButtonFive = Button(
         posX = 745, posY = 688.5,
         width = 450, height = 50,
         text = "Empty: "
     )
 
-    private val deleteButtonOne = Button(
+    val deleteButtonOne = Button(
         posX = 1163, posY = 90,
         width = 30, height = 45,
         text = "D"
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonTwo = Button(
+    val deleteButtonTwo = Button(
         posX = 1163, posY = 242.5,
         width = 30, height = 45,
         text = "D"
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonThree = Button(
+    val deleteButtonThree = Button(
         posX = 1163, posY = 390,
         width = 30, height = 45,
         text = "D"
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonFour = Button(
+    val deleteButtonFour = Button(
         posX = 1163, posY = 540,
         width = 30, height = 47.5,
         text = "D"
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonFive = Button(
+    val deleteButtonFive = Button(
         posX = 1163, posY = 690,
         width = 30, height = 45,
         text = "D"

@@ -28,13 +28,13 @@ import kotlin.math.absoluteValue
 class GameScene(private val rootService: RootService, private val app: view.IndigoApplication) : BoardGameScene(1920, 1080),Refreshable {
 
 
-    private val saveButton =  Button(
+    val saveButton =  Button(
         width = 40, height = 40,
         posX = 150, posY = 50,visual = CompoundVisual(
             ColorVisual(ColorEnum.Olivine.toRgbValue()),
             ImageVisual(path = "save.png"))
-    ).apply {onMouseClicked = {rootService.save("savestate.json")}
-    }
+    )
+
 
     val quitButton = Button(
         width = 40, height = 40,
