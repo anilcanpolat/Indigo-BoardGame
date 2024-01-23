@@ -42,16 +42,10 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
             if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
+                var gem =currentNeighbour.gems[connectingEdge]
 
-                val gem = if (emeraldIndex != -1) {
-                    // swap the emerald with the gem at the current position. Positions on the center
-                    // tile are irrelevant, but [moveGemToEnd] requires them to be set correctly.
-                    currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
-                        currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
-                    }
+                 if (emeraldIndex == -1) {
 
-                    Gem.EMERALD
-                } else {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
@@ -61,11 +55,12 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[saphireIndex]
                     }
 
-                    Gem.SAPHIRE
+                     gem = Gem.SAPHIRE
                 }
-
-                val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
-                onAllRefreshables { onGemMove(path) }
+                if (gem != null) {
+                    val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
+                    onAllRefreshables { onGemMove(path) }
+                }
             } else {
                 val gem = currentNeighbour.gems[connectingEdge]
 
@@ -149,8 +144,10 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         }
 
         val neighbours = getNeighboursOf(fromTile)
+//hnaaaaa
 
-        neighbours[fromEdge]?.let { neighbourTile ->
+        val neighbourTile = neighbours[fromEdge]
+        if(neighbourTile!=null){
             // Check for collision of gems
             if (neighbourTile.gems[(fromEdge + 3) % 6] != null) {
                 val neighbourPosition = checkNotNull(getTilePosition(neighbourTile))
