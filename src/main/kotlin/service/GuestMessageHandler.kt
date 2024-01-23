@@ -103,10 +103,18 @@ class GuestMessageHandler(private val rootService: RootService,
         }
 
     private fun translatePlayer(player: Player, isSelf: Boolean = false): entity.Player {
-        val type = if (isSelf) config.type else PlayerType.REMOTE
         val token = translateToken(player.color)
 
-        return entity.Player(player.name, 0, type, token)
+        return if (isSelf) {
+            entity.Player(
+                player.name,
+                0, config.type,
+                token,
+                useRandomAI = config.useRandomAI,aiDelay = config.aiDelay
+            )
+        } else {
+            entity.Player(player.name, -1, PlayerType.REMOTE, token)
+        }
     }
 
     private fun translateToken(color: PlayerColor): entity.PlayerToken =

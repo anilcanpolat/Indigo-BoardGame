@@ -20,7 +20,7 @@ class AiIntegrationTest {
         fun startGame() {
             val players = listOf(
                 PlayerConfig("Alice", -1, PlayerType.PERSON),
-                PlayerConfig("Bob", -1, PlayerType.COMPUTER, useRandomAI = false)
+                PlayerConfig("Bob", -1, PlayerType.COMPUTER, useRandomAI = true)
             )
 
             rootService.startGame(players, GameMode.TWO_PLAYERS)
@@ -70,11 +70,11 @@ class AiIntegrationTest {
             val host = RootService()
             val session = Random().nextInt().toString()
 
-            host.networkService.createGame(session, PlayerConfig("Alice", -1, PlayerType.PERSON), GameMode.TWO_PLAYERS)
+            host.networkService.createGame(session, PlayerConfig("Alice", -1, PlayerType.PERSON, useRandomAI = true), GameMode.TWO_PLAYERS)
             Thread.sleep(1000)
 
             val guest = RootService()
-            guest.networkService.joinGame(session, PlayerConfig("Bob", -1, PlayerType.COMPUTER))
+            guest.networkService.joinGame(session, PlayerConfig("Bob", -1, PlayerType.COMPUTER, useRandomAI = true))
 
             Thread.sleep(1000)
 
