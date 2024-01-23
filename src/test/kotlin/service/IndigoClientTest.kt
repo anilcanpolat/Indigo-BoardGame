@@ -7,6 +7,7 @@ import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.CreateGameResponse
 import tools.aqua.bgw.net.common.response.CreateGameResponseStatus
 import tools.aqua.bgw.net.common.response.JoinGameResponse
+import java.util.Random
 
 import kotlin.test.*
 
@@ -140,5 +141,23 @@ class IndigoClientTest {
         assert(semaphore.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS)) {
             "waiting for call to sendGameActionMessage timed out"
         }
+    }
+
+    /** make sure that exception capturing works */
+    @Test
+    fun captureExceptionTest() {
+        val callbackReceived = Semaphore(0)
+
+        val client = IndigoClient(object : MessageHandler {
+            override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
+                callbackReceived.release()
+                check(false) { "should not cause a failure when calling create game" }
+            }
+        }, "Alice", captureCallbackFailures = true)
+
+        assertTrue(client.connect())
+        client.createGame("Indigo", Random().nextInt().toString(), "Hello, World!")
+
+        check(callbackReceived.tryAcquire(1, TimeUnit.SECONDS)) { "timed out" }
     }
 }
