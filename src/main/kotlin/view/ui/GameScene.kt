@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
  * show the game filed and all the user UI,
  * take inputs from the User and show results
  */
-class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080),Refreshable {
+class GameScene(private val rootService: RootService, private val app: view.IndigoApplication) : BoardGameScene(1920, 1080),Refreshable {
 
 
     private val saveButton =  Button(
@@ -273,7 +273,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
          stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
 
-
+         app.hideMenuAndShowGame()
      }
 
     override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {

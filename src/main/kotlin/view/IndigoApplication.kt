@@ -28,7 +28,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private var gameMode = 0
 
-    private val gameScene : GameScene = GameScene(rootService).apply {
+    private val gameScene : GameScene = GameScene(rootService, this).apply {
         quitButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
         }
@@ -177,8 +177,6 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                     }
                 }
             }
-            this@IndigoApplication.showGameScene(gameScene)
-            this@IndigoApplication.hideMenuScene()
         }
     }
 
@@ -229,6 +227,10 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         return score
     }
 
+    fun hideMenuAndShowGame(){
+        this@IndigoApplication.showGameScene(gameScene)
+        this@IndigoApplication.hideMenuScene()
+    }
 
     override fun onGameFinished(players: List<Player>) {
         list = players
