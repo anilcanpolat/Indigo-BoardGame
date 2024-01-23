@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Nested
 import entity.*
 import java.util.Random
 
+/**
+ * test cases making sure that AI games are handled correctly both
+ * in local and in remote games
+ */
 class AiIntegrationTest {
     private var rootService = RootService()
 
@@ -14,8 +18,10 @@ class AiIntegrationTest {
         rootService = RootService()
     }
 
+    /** test cases with two players where one is using the ai */
     @Nested
     inner class TwoPlayerTests {
+        /** create a new game with two players */
         @BeforeTest
         fun startGame() {
             val players = listOf(
@@ -41,6 +47,7 @@ class AiIntegrationTest {
             assertTrue(callbackReceived, "missing onWaitForInput refresh")
         }
 
+        /** make sure that some moves can be played with the ai */
         @Test
         fun randomGameTest() {
             var moves = 0
@@ -65,6 +72,7 @@ class AiIntegrationTest {
             assertEquals(moves, 12, "ai did not play the correct amount of moves")
         }
 
+        /** test a game with two ai players connected over the network */
         @Test
         fun aiGameTest() {
             val host = RootService()

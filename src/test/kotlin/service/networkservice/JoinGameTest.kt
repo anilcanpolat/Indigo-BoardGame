@@ -17,7 +17,7 @@ import java.util.concurrent.Semaphore
 class JoinGameTest {
     /** make sure that [Refreshable.onGameStart] is called in a guest when the host starts the game */
     @Test
-    fun joinGameTest() {
+    fun testOnGameStartCalled() {
         val host = RootService()
         val guest = RootService()
 
