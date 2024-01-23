@@ -34,6 +34,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         game.board.grid.grid[position] = move.first
 
         val neighbours = getNeighboursOf(move.first)
+        val isAI = game.currentPlayer.playerType == PlayerType.COMPUTER
 
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
@@ -93,6 +94,32 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         game.previousState = gameCopy
         game.nextState = null
         gameCopy.nextState = game
+
+        if (!isAI) {
+            processAllAIMoves()
+        }
+
+        val state = checkNotNull(rootService.currentGame)
+
+        if (state.currentPlayer.playerType == PlayerType.PERSON) {
+            onAllRefreshables { onWaitForInput() }
+        }
+    }
+
+    /**
+     * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
+     */
+    fun processAllAIMoves() {
+        while (true) {
+            val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
+            val player = state.currentPlayer
+
+            if (player.playerType != PlayerType.COMPUTER) { break }
+
+            // currently only random ai works, because I implemented it myself
+            val move = CommonMethods.calculateRandomAIMove(state)
+            playerMove(move.first, move.second)
+        }
     }
 
     /**
@@ -103,8 +130,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * @param gem the gem to move
      * @return a list of all positions and edges the gem was on
      */
-
-
     private fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem): List<Pair<Pair<Int, Int>, Int>> {
         //check bordering gates, give points to the owners of the gates
         val gates = getBorderingGates(fromTile, fromEdge)

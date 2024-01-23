@@ -24,7 +24,10 @@ class HostMessageHandler(private val rootService: RootService,
     }
 
     override fun onPlayerJoined(client: IndigoClient, player: PlayerJoinedNotification) {
-        playerList.add(PlayerConfig(player.sender, 0, entity.PlayerType.REMOTE))
+        val playerConfig = PlayerConfig(player.sender, 0, entity.PlayerType.REMOTE)
+
+        playerList.add(playerConfig)
+        rootService.playerService.onAllRefreshables { onPlayerJoinedGame(playerConfig) }
 
         if (playerList.size == playerCountInMode(mode)) {
             rootService.startGame(playerList, mode)

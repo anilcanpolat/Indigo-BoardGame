@@ -7,6 +7,7 @@ import entity.GameState
 import entity.Tile
 import entity.TileType
 import java.util.HashSet
+import kotlin.random.Random
 
 /**
  * Some utility functions that are required in multiple spots throughout the program.
@@ -79,6 +80,32 @@ object CommonMethods {
         val index = border.indexOf(position)
 
         return index / 4
+    }
+
+    /**
+     * Generate a random valid move.
+     * @param state gamestate the move should be valid in
+     * @throws IllegalStateException when no valid moves exist
+     */
+    fun calculateRandomAIMove(state: GameState): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+        val tile = checkNotNull(state.currentPlayer.currentTile) { "players should be holding tiles in an active game" }
+
+        var q: Int
+        var r: Int
+        var rotate: Int
+
+        var iterCount = 0
+
+        do {
+            q = Random.nextInt(-4, 5)
+            r = Random.nextInt(-4, 5)
+            rotate = Random.nextInt(0, 6)
+
+            iterCount += 1
+        } while (!isValidMove(state, tile, rotate, Pair(q, r)) && iterCount < 30000)
+
+        check(iterCount < 30000) { "no valid moves exist" }
+        return Pair(Pair(tile, rotate), Pair(q, r))
     }
 
     /**

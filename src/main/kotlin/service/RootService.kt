@@ -63,6 +63,14 @@ class RootService : AbstractRefreshingService() {
         currentGame = GameState(playerList[0], board, playerList, tiles)
 
         onAllRefreshables { onGameStart(playerList, gates.toList()) }
+
+        playerService.processAllAIMoves()
+
+        val state = checkNotNull(currentGame)
+
+        if (state.currentPlayer.playerType == PlayerType.PERSON) {
+            onAllRefreshables { onWaitForInput() }
+        }
     }
 
     /**
@@ -202,5 +210,4 @@ class RootService : AbstractRefreshingService() {
     fun load(path: String) {
         load(File(path))
     }
-
 }
