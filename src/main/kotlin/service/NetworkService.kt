@@ -21,7 +21,8 @@ class NetworkService(private val rootService: RootService) {
     /**
      * Create a new game as the host. Once enough players have joined, the [RootService.startGame]
      * method will be called to initialize the game. [Refreshable.onGameStart] will be called on all
-     * instances of [Refreshable] registered on the [RootService].
+     * instances of [Refreshable] registered on the [RootService]. Each joining player will cause
+     * the [Refreshable.onPlayerJoinedGame] refresh to be invoked on [PlayerActionService].
      * @param sessionID ID used by all other players to join the game.
      *                  It's best to choose some a string to avoid collisions with other running games.
      * @param config Config of the host player used throughout the session. The current protocol does not support
@@ -46,7 +47,9 @@ class NetworkService(private val rootService: RootService) {
     /**
      * Join into an existing session. Once the host starts the game, the [entity.GameState] maintained in
      * [RootService] will be set directly and [Refreshable.onGameStart] will be invoked on all instances
-     * of [Refreshable] added to the [RootService].
+     * of [Refreshable] added to the [RootService]. Once joined, the [Refreshable.onPlayerJoinedGame] refresh
+     * will be invoked for each player already in the session. It will also be invoked for each player
+     * joining after us.
      * @param sessionID ID of the session to join. This value should be chosen at random to avoid collisions.
      *  @param config Config of the host player used throughout the session. The current protocol does not support
      *                two players with the same name. Choose carefully.
