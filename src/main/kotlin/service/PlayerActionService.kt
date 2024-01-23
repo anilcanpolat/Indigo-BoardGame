@@ -118,15 +118,23 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
      */
     fun processAllAIMoves() {
-        while (true) {
+        while (!gameIsFinished()) {
             val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
             val player = state.currentPlayer
 
             if (player.playerType != PlayerType.COMPUTER) { break }
 
             // currently only random ai works, because I implemented it myself
-            val move = CommonMethods.calculateRandomAIMove(state)
-            playerMove(move.first, move.second)
+            val tile = checkNotNull(player.currentTile) { "player is not holding a tile" }
+            var move: Pair<Pair<Int, Int>, Int>
+
+            if (player.useRandomAI) {
+                move = AIService(rootService).randomMove()
+            } else {
+                TODO("proper moves not implemented in AIService")
+            }
+
+            playerMove(Pair(tile, move.second), move.first)
         }
     }
 
