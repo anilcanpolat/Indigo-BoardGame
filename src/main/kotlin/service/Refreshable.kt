@@ -58,8 +58,13 @@ interface Refreshable {
      */
     fun onGameFinished(players: List<Player>) {}
 
-    fun onPlayerJoinedGame(playerConfig: PlayerConfig){
-
-    }
+    /**
+     * Refresh called when a remote player joins a lobby the local player
+     * created or joined. In the latter case this method is also called
+     * for each player already in the lobby directly after the local player
+     * joined.
+     * @param playerConfig object holding the name and type of the joined player
+     */
+    fun onPlayerJoinedGame(playerConfig: PlayerConfig){}
 
 }
