@@ -33,8 +33,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     //textfield for player names
     private val playerATextBox = TextField(
         posX = 760, posY = 200,
-        width = 250, height = 50,
-        prompt = "Put in Name! "
+        width = 250, height = 50
     ).apply {
         onKeyTyped = {
             startGameButton.isDisabled = !checkIfBlank()
@@ -437,44 +436,6 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
             returnTypeList.shuffle()
         }
         return returnTypeList
-    }
-
-    /**
-     * comment your shit please.
-     */
-    fun remoteConfigList(playerCount: Int): MutableList<PlayerConfig>{
-        val typeList: MutableList<PlayerConfig> = mutableListOf()
-
-        var p1Name = ""
-        val p1Type: PlayerType = PlayerType.PERSON
-
-
-        when (playerCount) {
-            1 -> {
-                p1Name = playerATextBox.text
-                            }
-            2, 3 -> {
-                p1Name = playerATextBox.text
-            }
-            4 -> {
-                p1Name = playerATextBox.text
-            }
-        }
-        val p1 = PlayerConfig(p1Name, 0, p1Type)
-
-        when(playerCount){
-            1 -> {
-                typeList.add(p1)
-            }
-            2,3 -> {
-            typeList.add(p1)
-            }
-            4 -> {
-                typeList.add(p1)
-            }
-        }
-
-        return typeList
     }
 
     /**

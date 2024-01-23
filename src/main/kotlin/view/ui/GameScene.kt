@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
  * show the game filed and all the user UI,
  * take inputs from the User and show results
  */
-class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080),Refreshable {
+class GameScene(private val rootService: RootService, private val app: view.IndigoApplication) : BoardGameScene(1920, 1080),Refreshable {
 
 
     private val saveButton =  Button(
@@ -61,6 +61,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             ColorVisual(250,240,202),ImageVisual(path = "BacksideTile.png"))
     ).apply { rotate(30) }
 
+    private val stackSize = Label(posX = 100, posY = 600, text = "")
+
     private var rotationRate : Int = 0
 
     private val rotateLeftButton = Button(
@@ -68,7 +70,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         posX = 100, posY = 900, visual = ColorVisual.GRAY, text = "Rotate Left"
     ).apply { onMouseClicked={
         playersTile.apply { rotation -= 60 }
-        rotationRate -=1
+        rotationRate +=5
     } }
 
     private val rotateRightButton = Button(
@@ -212,8 +214,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         gridPane[0,2] = player3Pane
         gridPane[0,3] = player4Pane
 
-        rotateLeftButton.apply { isDisabled
-        isVisible = false}
         //There should not be a coordinate like [4,1], [-4,-1] or [-4,-4] and others
         for (row in -4..4) {
             for (col in -4..4) {
@@ -235,7 +235,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
         addComponents(saveButton, quitButton,redoButton,undoButton,
-            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,gridPane,
+            hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,stackSize,gridPane,
             gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
             gate4Token1,gate4Token2,gate5Token1,gate5Token2,gate6Token1,gate6Token2)
     }
@@ -271,6 +271,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
          playersTile.apply { visual = ImageVisual(
              findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType.toType())) }
 
+         stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
+
+         app.hideMenuAndShowGame()
      }
 
     override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {
@@ -283,6 +286,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         rotationRate = 0
         playersTile.apply { this.rotation = 90.0 }
 
+        stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
     }
 
     override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
