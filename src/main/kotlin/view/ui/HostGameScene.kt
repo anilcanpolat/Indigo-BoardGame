@@ -103,7 +103,7 @@ class HostGameScene : MenuScene(1920, 1080,
     }
 
     /**
-     * comment your shit please.
+     * help function to create a list of playerConfigs, required to start the game
      */
     fun remoteConfigList(playerCount: Int): MutableList<PlayerConfig>{
         val typeList: MutableList<PlayerConfig> = mutableListOf()

@@ -21,7 +21,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         val random = Random(System.currentTimeMillis())
         return random.nextInt(1000, 10000).toString()
     }
-    private val id = generateRandomId()
+
+    private var id = ""
 
     private var hotSeat = true
 
@@ -102,31 +103,47 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
 
         host2Pl.onMouseClicked = {
-            rootService.networkService.createGame(generateRandomId(),
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
                 remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
-            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(2)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
         }
 
         host3PlShared.onMouseClicked = {
-            rootService.networkService.createGame(generateRandomId(),
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
                 remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
-            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(3)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
         }
 
         host3Pl.onMouseClicked = {
-            rootService.networkService.createGame(generateRandomId(),
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
                 remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
-            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
-
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(3)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
         }
 
         host4Pl.onMouseClicked = {
-            rootService.networkService.createGame(generateRandomId(),
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
                 remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
-            this@IndigoApplication.showMenuScene(selectNameAndKiScene)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(3)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
         }
     }
 
+    //Select the name and Ki level for a game in the Hotseat mode
     private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
@@ -171,6 +188,13 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
     }
 
+    private val lobbyScene : LobbyScene = LobbyScene().apply {
+        backFromLobbyScene.onMouseClicked = {
+            hotSeat = true
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+    }
+
     private val endGameScene : EndgameScene = EndgameScene().apply {
         quitButton.onMouseClicked = {
             exit()
@@ -206,11 +230,6 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
 
-    override fun onPlayerJoinedGame(playerConfig: PlayerConfig) {
-
-    }
-
-
     override fun onGameFinished(players: List<Player>) {
         list = players
         list.sortedByDescending { calcScore(it.collectedGems)  }
@@ -230,6 +249,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         rootService.playerService.addRefreshable(this)
         rootService.playerService.addRefreshable(endGameScene)
         rootService.addRefreshable(saveAndLoadScene)
+        rootService.addRefreshable(lobbyScene)
+        rootService.playerService.addRefreshable(lobbyScene)
         this.showMenuScene(welcomeScene)
     }
 
