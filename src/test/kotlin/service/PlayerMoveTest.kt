@@ -138,10 +138,10 @@ class PlayerMoveTest {
         @Test
         fun testGemEliminationTest() {
             val positions = listOf(
-                Pair(-3, 3), Pair(-1, 1), Pair(-2, 2)
-            )
+                Pair(3, -3), Pair(2, -2), Pair(1, -1)
 
-            positions.forEach {
+            )
+             positions.forEach {
                 playerService.playerMove(Pair(currentTile(), 0), it)
             }
 
@@ -149,16 +149,19 @@ class PlayerMoveTest {
                 assertTrue(getTileAt(it).gems.all { gem -> gem == null })
             }
 
-            assertTrue(getTileAt(Pair(-4, 4)).gems.all { it == null })
+            assertTrue(getTileAt(Pair(4, -4)).gems.all { it == null })
 
             assertEquals(getTileAt(Pair(0, 0)).gems.count { it != null }, 5)
             assertContains(getTileAt(Pair(0, 0)).gems, Gem.SAPHIRE)
+
         }
+
 
         @Test
         fun testGemEliminationDirectCenterContact() {
             val positions = listOf(
-                Pair(3, -3), Pair(2, -2), Pair(1, -1)
+                Pair(-3, 3), Pair(-1, 1), Pair(-2, 2)
+
             )
 
             positions.forEach {
@@ -169,7 +172,7 @@ class PlayerMoveTest {
                 assertTrue(getTileAt(it).gems.all { gem -> gem == null})
             }
 
-            assertTrue(getTileAt(Pair(4, -4)).gems.all { it == null })
+            assertTrue(getTileAt(Pair(-4, 4)).gems.all { it == null })
             assertTrue(getTileAt(Pair(0, 0)).gems.any { it == null })
         }
     }
