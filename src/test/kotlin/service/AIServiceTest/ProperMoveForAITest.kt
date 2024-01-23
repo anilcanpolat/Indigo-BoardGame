@@ -25,7 +25,7 @@ class ProperMoveForAITest {
         player3 = PlayerConfig("Cortana", 8, PlayerType.COMPUTER)
         player4 = PlayerConfig("GoogleAssistant", 8, PlayerType.COMPUTER)
     }
-/*
+
     @Test
     fun `test properMoveForAI with ideal conditions`() {
         players = listOf(player1, player2)
@@ -46,29 +46,42 @@ class ProperMoveForAITest {
         for(i in 0..20) {
             //RandomAI
             var randomMove = aiService.randomMove()
+            print("TileType:")
+            println(gameState.currentPlayer.currentTile!!.tileType.toString())
+            print("randomMoveCoordinate: ")
+            println(randomMove.first.toString())
+            print("randomMoveRotation: ")
+            println(randomMove.second.toString())
             rootService.playerService.playerMove(
                 Pair(gameState.currentPlayer.currentTile!!,randomMove.second),
                 randomMove.first)
 
             //Better AI
             var betterMove = aiService.properMoveForAI()
+            print("TileType:")
+            println(betterMove.first.first.tileType.toString())
+            print("properMoveCoordinate: ")
+            println(betterMove.second.toString())
+            print("properMoveRotation: ")
+            println(betterMove.first.second.toString())
             rootService.playerService.playerMove(betterMove.first, betterMove.second) //Path leads to a tile with no connecting path
+                                                                                    //more than 6 gems removed from center tile
         }
         var point1 = 0
-        rootService.currentGame!!.players.get(0).collectedGems.forEach{ gem->
+        rootService.currentGame!!.players[0].collectedGems.forEach{ gem->
 
             point1 += gem.score()}
         var point2 = 0
-        rootService.currentGame!!.players.get(1).collectedGems.forEach{ gem->
+        rootService.currentGame!!.players[1].collectedGems.forEach{ gem->
             point2 += gem.score()}
 
-        println("p2: ")
-        println(point2)
-        println(", p1: ")
-        println(point1)
+        print("player2: ")
+        print(point2)
+        print(", player1: ")
+        print(point1)
         assertTrue { point2 >= point1 }
     }
-*/
+
     /*
     @Test
     fun `test properMoveForAI with no possible moves`() {
