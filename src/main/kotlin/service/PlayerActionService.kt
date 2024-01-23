@@ -103,8 +103,6 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * @param gem the gem to move
      * @return a list of all positions and edges the gem was on
      */
-
-
     private fun moveGemToEnd(fromTile: Tile, fromEdge: Int, gem: Gem): List<Pair<Pair<Int, Int>, Int>> {
         //check bordering gates, give points to the owners of the gates
         val gates = getBorderingGates(fromTile, fromEdge)
@@ -163,31 +161,38 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
      * - No valid move can be executed by the next player
      */
     private fun gameIsFinished(): Boolean {
-        val gameState = checkNotNull(rootService.currentGame)
+        val gameState = checkNotNull(rootService.currentGame).deepCopy()
 
-        val anyGemsOnBoard = gameState.board.grid.grid.any {
-            it.value.gems.any { gem ->
-                gem != null
+        val anyGemsOnBoard = gameState.board.grid.grid.values.any {
+            it.gems.any { gem -> gem != null }
+        }
+
+        if (!anyGemsOnBoard) { return true }
+        if (gameState.drawPile.isEmpty()) { return true }
+
+        val player = gameState.currentPlayer
+        val tile = player.currentTile ?: gameState.drawPile.removeLast()
+
+        player.currentTile = tile
+
+        val validMoveExists = allCoordinates().any { pos ->
+            (0..5).any { rot ->
+                CommonMethods.isValidMove(gameState, tile, rot, pos)
             }
         }
 
-        if (anyGemsOnBoard) { return false }
-        if (gameState.drawPile.isNotEmpty()) { return false }
-
-        for (q in -4..4) {
-            for (r in -4..4) {
-                for (rotation in 0..5) {
-                    val tile = gameState.currentPlayer.currentTile ?: gameState.drawPile.last()
-
-                    if (CommonMethods.isValidMove(gameState, tile, rotation, Pair(q, r))) {
-                        return false
-                    }
-                }
-            }
-        }
-
-        return true
+        return !validMoveExists
     }
+
+    private fun allCoordinates(): List<Pair<Int, Int>> =
+        (-4..4).flatMap { q ->
+            (-4..4).map { r ->
+                Pair(q, r)
+            }
+        }.filter {
+            CommonMethods.distanceToCenter(it) <= 4
+        }
+
 
     /**
      * Get the gate bordering a given tiles edge, if any exist.
