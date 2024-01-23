@@ -102,10 +102,12 @@ class SendTilePlacedTest {
         host.playerService.playerMove(Pair(hostTile, 0), Pair(1, 0))
 
         assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+        assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
 
         val guestTile = checkNotNull(checkNotNull(guest.currentGame).currentPlayer.currentTile)
         guest.playerService.playerMove(Pair(guestTile, 0), Pair(-1, 0))
 
+        assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
         assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
     }
 }
