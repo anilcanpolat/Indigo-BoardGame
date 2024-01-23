@@ -60,6 +60,7 @@ class GuestMessageHandler(private val rootService: RootService,
         setGameState(state)
 
         rootService.onAllRefreshables { onGameStart(players, gates.toList()) }
+        rootService.playerService.processAllAIMoves()
     }
 
     override fun onTilePlaced(client: IndigoClient, tilePlacedMessage: TilePlacedMessage, sender: String) {
