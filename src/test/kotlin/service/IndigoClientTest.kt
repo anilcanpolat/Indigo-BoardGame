@@ -48,7 +48,7 @@ class IndigoClientTest {
         val hostSemaphore = Semaphore(0)
         val guestSemaphore = Semaphore(0)
 
-        val sessionID = java.util.Random().nextInt().toString()
+        val sessionID = Random().nextInt().toString()
 
         val host = IndigoClient(object: MessageHandler {
             override fun onCreateGame(client: IndigoClient, resp: CreateGameResponse) {
@@ -121,7 +121,7 @@ class IndigoClientTest {
         assert(host.connect()) { "cannot connect to bgw server" }
         assert(guest.connect()) { "cannot connect to bgw server"}
 
-        val sessionID = java.util.Random().nextInt().toString()
+        val sessionID = Random().nextInt().toString()
 
         host.createGame("Indigo", sessionID, "Hello, World")
 
