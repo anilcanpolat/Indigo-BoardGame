@@ -20,6 +20,8 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         val gameCopy = game.deepCopy()
         gameCopy.nextState = game
 
+        check(!gameIsFinished()) { "cannot perform any moves in a finished game" }
+
         check(CommonMethods.distanceToCenter(position) <= 4) { "invalid position" }
 
         // prevent double placement of tiles
