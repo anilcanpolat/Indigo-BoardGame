@@ -382,15 +382,30 @@ class GameScene(private val rootService: RootService,
             ).apply { rotate(240) }
         }
         //down
-        hexagonGrid[0,4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(60) }}
+        hexagonGrid[0,4]?.apply { visual = CompoundVisual(
+            ImageVisual(path = "TreasureTileOutside.png"),
+            ImageVisual(path = "yellowGem0.png"),
+        ).apply { rotate(60) }}
         //down left
-        hexagonGrid[-4,4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(120) }}
+        hexagonGrid[-4,4]!!.apply { visual = CompoundVisual(
+            ImageVisual(path = "TreasureTileOutside.png"),
+            ImageVisual(path = "yellowGem0.png"),
+        ).apply { rotate(120) }}
         //up left
-        hexagonGrid[-4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(180) } }
+        hexagonGrid[-4,0]!!.apply { visual = CompoundVisual(
+            ImageVisual(path = "TreasureTileOutside.png"),
+            ImageVisual(path = "yellowGem0.png"),
+        ).apply { rotate(180) } }
         //down right
-        hexagonGrid[4,0]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png") }
+        hexagonGrid[4,0]!!.apply { visual = CompoundVisual(
+            ImageVisual(path = "TreasureTileOutside.png"),
+            ImageVisual(path = "yellowGem0.png"),
+        ) }
         //up right
-        hexagonGrid[4,-4]!!.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(-60) } }
+        hexagonGrid[4,-4]!!.apply { visual = CompoundVisual(
+            ImageVisual(path = "TreasureTileOutside.png"),
+            ImageVisual(path = "yellowGem0.png"),
+        ).apply { rotate(-60) } }
         //center
         hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
 
