@@ -1,9 +1,6 @@
 package view.ui
 
-import entity.Gem
-import entity.Player
-import entity.PlayerToken
-import entity.Tile
+import entity.*
 import service.Refreshable
 import service.RootService
 import tools.aqua.bgw.components.ComponentView
@@ -19,6 +16,7 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
+import tools.aqua.bgw.visual.SingleLayerVisual
 import kotlin.math.absoluteValue
 
 /**
@@ -115,6 +113,7 @@ class GameScene(private val rootService: RootService,
         width = 70, height = 70,posX = 600, posY = 120, visual = ImageVisual(path = "PlayerColorCYAN.png"))
     private val gate6Token2 = Label(
         width = 70, height = 70,posX = 700, posY = 70, visual = ImageVisual(path = "PlayerColorCYAN.png"))
+
 
 
 
@@ -236,6 +235,8 @@ class GameScene(private val rootService: RootService,
         //For the images of TreasureTiles
         placeTiles()
         background = ColorVisual.LIGHT_GRAY
+
+
         addComponents(saveButton, quitButton,redoButton,undoButton,
             hexagonGrid, rotateLeftButton,rotateRightButton, playersTile, routeStack,stackSize,gridPane,
             gate1Token1,gate1Token2, gate2Token1,gate2Token2,gate3Token1,gate3Token2,
@@ -271,7 +272,7 @@ class GameScene(private val rootService: RootService,
          }
          highlightPlayer(rootService.currentGame!!.currentPlayer)
          playersTile.apply { visual = ImageVisual(
-             findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType.toType())) }
+             findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType)) }
 
          stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
 
@@ -279,16 +280,87 @@ class GameScene(private val rootService: RootService,
      }
 
     override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {
-        playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType.toType())) }
+        playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType)) }
         hexagonGrid[position.first,position.second]?.apply {
-            visual = ImageVisual(findTilePath(tile.tileType.toType())).apply {
+            visual = ImageVisual(findTilePath(tile.tileType)).apply {
                 rotate((rotation*60)+60) }
         }
+        changeVisual(tile,position)
         highlightPlayer(nextPlayer)
         rotationRate = 0
         playersTile.apply { this.rotation = 90.0 }
 
         stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
+    }
+    override fun onGemMove(positionList: List<Pair<Pair<Int, Int>, Int>>) {
+        val tile1 = rootService.currentGame!!.board.grid.grid[positionList.first().first]
+        val tile2 =  rootService.currentGame!!.board.grid.grid[positionList.last().first]
+
+
+        changeVisual(tile1,positionList.first().first)
+        changeVisual(tile2,positionList.last().first)
+
+
+
+    }
+
+    private fun changeVisual(tile: Tile?, hexCord: Pair<Int, Int>) {
+            val visualList = mutableListOf<SingleLayerVisual>()
+            for (i in 0 until tile!!.gems.size) {
+                if (tile.gems[i] == null) {
+                visualList.add(ColorVisual.TRANSPARENT)
+                } else {
+                    visualList.add(ImageVisual(findGemPath(tile.gems[i], i,tile.rotation)))
+                }
+            }
+
+            val compoundVisual = CompoundVisual(
+                ImageVisual(findTilePath(tile.tileType)),
+                visualList[0], visualList[1], visualList[2], visualList[3], visualList[4], visualList[5], visualList[5]
+            )
+
+            hexagonGrid[hexCord.first, hexCord.second]!!.apply {  visual = compoundVisual}
+
+    }
+
+
+    private fun findGemPath(gem: Gem?, edge: Int, rotation: Int) : String{
+        val edgeVal = (edge-rotation) % 6
+        when (gem) {
+            Gem.AMBER -> {
+                when (edgeVal) {
+                    0 -> return "yellowGem0.png"
+                    1 -> return "yellowGem1.png"
+                    2 -> return "yellowGem2.png"
+                    3 -> return "yellowGem3.png"
+                    4 -> return "yellowGem4.png"
+                    5 -> return "yellowGem5.png"
+                }
+            }
+
+            Gem.EMERALD -> {
+                when (edgeVal) {
+                    0 -> return "greenGem0.png"
+                    1 -> return "greenGem1.png"
+                    2 -> return "greenGem2.png"
+                    3 -> return "greenGem3.png"
+                    4 -> return "greenGem4.png"
+                    5 -> return "greenGem5.png"
+                }
+        }
+            Gem.SAPHIRE -> {
+                when (edgeVal) {
+                    0 -> return "blueGem0.png"
+                    1 -> return "blueGem1.png"
+                    2 -> return "blueGem2.png"
+                    3 -> return "blueGem3.png"
+                    4 -> return "blueGem4.png"
+                    5 -> return "blueGem5.png"
+                }
+            }
+            null -> return ""
+        }
+        return ""
     }
 
     override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
@@ -296,11 +368,19 @@ class GameScene(private val rootService: RootService,
         for (i in playerList.indices){
             scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
         }
+        changeVisual(rootService.currentGame!!.board.grid.grid[fromTile], fromTile)
     }
+
+
 
     private fun placeTiles(){
         //up
-        hexagonGrid[0,-4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(240) } }
+        hexagonGrid[0, -4]?.apply {
+            visual = CompoundVisual(
+                ImageVisual(path = "TreasureTileOutside.png"),
+                ImageVisual(path = "yellowGem0.png"),
+            ).apply { rotate(240) }
+        }
         //down
         hexagonGrid[0,4]?.apply { visual = ImageVisual(path = "TreasureTileOutside.png").apply { rotate(60) }}
         //down left
@@ -329,15 +409,16 @@ class GameScene(private val rootService: RootService,
 
 
 
-    private fun findTilePath(type : Int?): String {
-        when(type){
-            0 -> return "StraightAndLongCurveTile.png"
-            1 -> return "XTile.png"
-            2 -> return "StraightAndCurveTile.png"
-            3 -> return "longCurveTile.png"
-            4 -> return "CurveTile.png"
+    private fun findTilePath(type : TileType): String {
+        return when(type){
+            TileType.LONG_CURVES -> "StraightAndLongCurveTile.png"
+            TileType.STRAIGHTS_ONLY -> "XTile.png"
+            TileType.STRAIGHT_NOCROSS -> "StraightAndCurveTile.png"
+            TileType.CURVES_TO_CORNER -> "longCurveTile.png"
+            TileType.CORNERS_ONLY -> "CurveTile.png"
+            TileType.TREASURE_CORNER -> "TreasureTileOutside.png"
+            TileType.TREASURE_CENTER -> "TreasureTileInside.png"
         }
-        return ""
     }
 
     private fun calcScore(gems : MutableList<Gem>) : Int{
@@ -347,5 +428,7 @@ class GameScene(private val rootService: RootService,
         }
         return score
     }
+
+
 
 }
