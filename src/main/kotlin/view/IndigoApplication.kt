@@ -339,7 +339,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
     /**
-     * helpfunction to show the lobby scene when pressing join in the guestButtonScene
+     * help function to show the lobby scene when pressing join in the guestButtonScene.
      */
     fun showLobbyScene(){
         this@IndigoApplication.showMenuScene(lobbyScene)
@@ -365,7 +365,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                 endGameScene.winnerFour.text = list[3].name + ": " +  calcScore(list[3].collectedGems).toString()
             }
         }
-        this.showMenuScene(welcomeScene)
+        this.showMenuScene(endGameScene)
     }
 
 

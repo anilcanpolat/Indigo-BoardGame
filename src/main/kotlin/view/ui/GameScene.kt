@@ -445,5 +445,7 @@ class GameScene(private val rootService: RootService,
     }
 
 
+    override fun onGameFinished(players: List<Player>) {
 
+    }
 }

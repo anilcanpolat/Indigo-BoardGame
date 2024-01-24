@@ -43,7 +43,8 @@ class GuestButtonScene(networkService: NetworkService,
     private val playerATextBox = TextField(
         posX = 780, posY = 380,
         width = 250, height = 50,
-        prompt = "Enter Name: "
+        prompt = "Enter Name: ",
+        text = "", font = Font(16)
     )
 
     private var kiLevelA = 0
@@ -51,8 +52,8 @@ class GuestButtonScene(networkService: NetworkService,
 
     private val kiButtonA = Button(
         posX = 1040, posY = 380,
-        width = 60, height = 50,
-        text = "Add Ki"
+        width = 70, height = 50,
+        text = "Easy", font = Font(16)
     ).apply { onMouseClicked = {
             if(kiLevelA == 0){
                 kiLevelA = 1
@@ -66,9 +67,9 @@ class GuestButtonScene(networkService: NetworkService,
     }
 
     private val kiButtonB = Button(
-        posX = 1110, posY = 380,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1120, posY = 380,
+        width = 70, height = 50,
+        text = "Hard", font = Font(16)
     ).apply { onMouseClicked = {
         if(kiLevelA == 0){
             kiLevelA = 1
@@ -84,26 +85,26 @@ class GuestButtonScene(networkService: NetworkService,
     private val kiSpeedGuestA = Label(
         posX = 790, posY = 440,
         width = 75, height = 50,
-        text = "Ki-Speed: "
+        text = "Ki-Speed: ", font = Font(16)
     )
 
     private val kiSpeedGuestB = Label(
         posX = 915, posY = 440,
         width = 50, height = 50,
-        text = "ms "
+        text = "ms ", font = Font(16)
     )
 
     private val kiSpeedGuestText = TextField(
         posX = 875, posY = 450,
         width = 40, height = 30,
-        text = "250"
+        text = "250", font = Font(14)
     )
 
     val joinButton = Button(
         posX = 865, 600,
         250, 50,
         text = "Join ", font = Font(16)
-    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
+    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
     onMouseClicked ={
         val player  = configureGuestPlayer()
         networkService.joinGame(guestIdField.text, player)

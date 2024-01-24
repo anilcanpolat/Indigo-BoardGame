@@ -5,6 +5,9 @@ import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BorderColor
+import tools.aqua.bgw.style.BorderRadius
+import tools.aqua.bgw.style.BorderWidth
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -31,7 +34,7 @@ class LobbyScene : MenuScene(1920, 1080,
         width = 350, height = 100,
         posX = 810, posY = 105,
         text = "Lobby",
-        font = Font(size = 30)
+        font = Font(size = 40)
     )
 
     var lobbyId = Label(
@@ -44,23 +47,37 @@ class LobbyScene : MenuScene(1920, 1080,
     //Labels for names and to show how many players are left to still join.
     val hostNameLabel = Label(
         posX = 355, posY = 145,
-        width = 250, height = 250
+        width = 250, height = 250,
+        font = Font(20)
     ).apply { visual = ColorVisual(Color.WHITE) }
 
     private val p2Label = Label(
         posX = 1315, posY = 145,
-        width = 250, height = 250
+        width = 250, height = 250,
+        font = Font(20)
     ).apply { visual = ColorVisual(Color.WHITE) }
 
     private val p3Label = Label(
         posX = 355, posY = 685,
-        width = 250, height = 250
-    ).apply { visual = ColorVisual(Color.WHITE) }
+        width = 250, height = 250,
+        font = Font(20),
+        visual = ColorVisual(Color.WHITE).apply {
+            borderRadius = BorderRadius.XL
+            borderColor = BorderColor.BLACK
+            borderWidth = BorderWidth.LARGE
+        }
+    )
 
     private val p4Label = Label(
         posX = 1315, posY = 685,
-        width = 250, height = 250
-    ).apply { visual = ColorVisual(Color.WHITE) }
+        width = 250, height = 250,
+        font = Font(20),
+        visual = ColorVisual(Color.WHITE).apply {
+            borderRadius = BorderRadius.XL
+            borderColor = BorderColor.BLACK
+            borderWidth = BorderWidth.LARGE
+        }
+    )
 
 
     /**

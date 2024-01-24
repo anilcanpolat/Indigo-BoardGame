@@ -23,8 +23,15 @@ class HostGameScene : MenuScene(1920, 1080,
     private val headLabel = Label(
         width = 350, height = 75,
         posX = 810, posY = 105,
-        text = "Put in your name and chose a gamemode",
-        font = Font(size = 18)
+        text = "Enter your name: ",
+        font = Font(size = 35)
+    )
+
+    private val headLabelB = Label(
+        width = 450, height = 75,
+        posX = 760, posY = 300,
+        text = "and choose a Game mode: ",
+        font = Font(size = 35)
     )
 
     val hostNameTextfield = TextField(
@@ -38,7 +45,7 @@ class HostGameScene : MenuScene(1920, 1080,
     private val kiButtonA = Button(
         posX = 1100, posY = 175,
         width = 60, height = 50,
-        text = "Add Ki"
+        text = "Easy", font = Font(16)
     ).apply { onMouseClicked = {
         if(kiLevelA == 0){
             kiLevelA = 1
@@ -54,7 +61,7 @@ class HostGameScene : MenuScene(1920, 1080,
     private val kiButtonB = Button(
         posX = 1170, posY = 175,
         width = 60, height = 50,
-        text = "Add Ki"
+        text = "Hard", font = Font(16)
     ).apply { onMouseClicked = {
         if(kiLevelA == 0){
             kiLevelA = 1
@@ -70,25 +77,29 @@ class HostGameScene : MenuScene(1920, 1080,
     val host2Pl = Button(
         width = 200, height = 50,
         posX = 860, posY = 400,
-        text = "2 Player"
+        text = "2 Player",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
 
     val host3PlShared = Button(
         width = 200, height = 50,
         posX = 860, posY = 500,
-        text = "3 Player (Shared Gates)"
+        text = "3 Player (Shared Gates)",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val host3Pl = Button(
         width = 200, height = 50,
         posX = 860, posY = 600,
-        text = "3 Player (Own Gates)"
+        text = "3 Player (Own Gates)",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val host4Pl = Button(
         width = 200, height = 50,
         posX = 860, posY = 700,
-        text = "4 Player"
+        text = "4 Player",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val backFromHostGameScene = Button(width = 40, height = 40,
@@ -124,7 +135,7 @@ class HostGameScene : MenuScene(1920, 1080,
     init {
         opacity = 0.5
         addComponents(host2Pl, host3PlShared, host3Pl, host4Pl,
-            kiButtonA, kiButtonB,
+            kiButtonA, kiButtonB, headLabelB,
             hostNameTextfield, headLabel, backFromHostGameScene)
     }
 }
