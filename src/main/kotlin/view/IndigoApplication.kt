@@ -307,7 +307,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
     private val guestButtonScene : GuestButtonScene =
-        GuestButtonScene(rootService.networkService).apply {
+        GuestButtonScene(rootService.networkService, this).apply {
 
         returnGuestButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -336,6 +336,13 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     fun hideMenuAndShowGame(){
         this@IndigoApplication.showGameScene(gameScene)
         this@IndigoApplication.hideMenuScene()
+    }
+
+    /**
+     * helpfunction to show the lobby scene when pressing join in the guestButtonScene
+     */
+    fun showLobbyScene(){
+        this@IndigoApplication.showMenuScene(lobbyScene)
     }
 
     override fun onGameFinished(players: List<Player>) {

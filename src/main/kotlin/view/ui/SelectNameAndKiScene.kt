@@ -179,6 +179,7 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     }
 
     //var for sequence
+    private var overAllPosArray : BooleanArray = BooleanArray(4)
     private var overAllPos = 0
     private var playerAPos = 0
     private var playerBPos = 0
@@ -294,9 +295,16 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     private fun cycleThroughPlayerSequence(pos : Int) : Int{
         var posToReturn = 0
         if(pos == 0){
-            overAllPos++
-            posToReturn = overAllPos
+            for(i in 1 .. 4){
+                if(!overAllPosArray[i]){
+                    overAllPosArray[i] = true
+                    posToReturn = i
+                    overAllPos++
+                    break
+                }
+            }
         } else{
+            overAllPosArray[pos] = false
             overAllPos--
             posToReturn = 0
         }

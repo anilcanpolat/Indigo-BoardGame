@@ -35,9 +35,10 @@ class LobbyScene : MenuScene(1920, 1080,
     )
 
     var lobbyId = Label(
-        width = 100, height = 50,
+        width = 200, height = 100,
         posX = 910, posY = 525,
-        text = "LobbyId"
+        text = "LobbyId",
+        font = Font(40)
     ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue()) }
 
     //Labels for names and to show how many players are left to still join.
@@ -81,13 +82,9 @@ class LobbyScene : MenuScene(1920, 1080,
     override fun onPlayerJoinedGame(playerConfig: PlayerConfig) {
         if(p2Label.text == ""){
             p2Label.text = playerConfig.name
-        }
-
-        if(p3Label.text == ""){
+        }else if(p3Label.text == ""){
             p3Label.text = playerConfig.name
-        }
-
-        if(p4Label.text == ""){
+        }else if (p4Label.text == "") {
             p4Label.text = playerConfig.name
         }
     }

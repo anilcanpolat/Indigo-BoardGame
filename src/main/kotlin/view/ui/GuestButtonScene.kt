@@ -10,13 +10,15 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
+import view.IndigoApplication
 import java.awt.Color
 
 /**
  * this class is used to join a network game, it allows to input a game-id and
  * players name, then via join the players makes the call to join the game through the server
  */
-class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
+class GuestButtonScene(networkService: NetworkService,
+                       private val indigoApp: IndigoApplication) : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")){
 
     val returnGuestButton = Button(
@@ -95,16 +97,15 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
     onMouseClicked ={
         val player  = configureGuestPlayer()
         networkService.joinGame(guestIdField.text, player)
-
-    }}
+        indigoApp.showLobbyScene()
+        }
+    }
 
     private val guestIdField = TextField(
         posX = 885, 600,
         150, 30,
         prompt = "Enter id: "
     ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
-        onKeyTyped = {
-        }
     }
 
 
