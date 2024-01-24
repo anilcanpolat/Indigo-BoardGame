@@ -1,4 +1,6 @@
 package service
+
+import java.lang.Thread
 import entity.*
 
 /**
@@ -134,6 +136,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                 TODO("proper moves not implemented in AIService")
             }
 
+            Thread.sleep(player.aiDelay.toLong())
             playerMove(Pair(tile, move.second), move.first)
         }
     }
