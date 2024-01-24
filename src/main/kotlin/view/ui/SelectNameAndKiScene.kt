@@ -123,10 +123,10 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     }
 
     //var for level of Ki
-    private var kiLevelA = 0
-    private var kiLevelB = 0
-    private var kiLevelC = 0
-    private var kiLevelD = 0
+    private var kiLevelA = 1
+    private var kiLevelB = 1
+    private var kiLevelC = 1
+    private var kiLevelD = 1
 
     var kiA : Boolean = false
     var kiB : Boolean = false
