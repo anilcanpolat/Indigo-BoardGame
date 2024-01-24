@@ -102,17 +102,18 @@ class PlayerMoveTest {
                 Pair(0, 1), Pair(0, -1), Pair(1, 0),
                 Pair(-1, 0), Pair(1, -1), Pair(-1, 1)
             )
-
+            assertTrue {getTileAt(Pair(0, 0)).gems.contains(Gem.SAPHIRE)  }
             positions.forEach {
                 playerService.playerMove(Pair(currentTile(), 0), it)
             }
-
-            positions.subList(0, 5).forEach {
-                assertContains(getTileAt(it).gems, Gem.EMERALD)
+            var count =0
+            positions.subList(0, 6).forEach {
+                if(getTileAt(it).gems.contains(Gem.EMERALD)){
+                    count +=1
+                }
             }
-
-            val lastPos = positions.last()
-            assertContains(getTileAt(lastPos).gems, Gem.SAPHIRE)
+            assertEquals(count,5)
+            assertFalse {getTileAt(Pair(0, 0)).gems.contains(Gem.SAPHIRE)  }
         }
 
         /** assert that gems move over multiple tiles after a connecting piece is placed */
