@@ -32,37 +32,37 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
 
 
     private val labelOne = Label(
-        posX = 715, posY = 100,
+        posX = 715, posY = 259.25,
         width = 25, height = 25,
         text = "1: "
     )
 
     private val labelTwo = Label(
-        posX = 715, posY = 250,
+        posX = 715, posY = 409.25,
         width = 25, height = 25,
         text = "2: "
     )
 
     private val labelThree = Label(
-        posX = 715, posY = 400,
+        posX = 715, posY = 559.25,
         width = 25, height = 25,
         text = "3: "
     )
 
     private val labelFour = Label(
-        posX = 715, posY = 550,
+        posX = 715, posY = 709.25,
         width = 25, height = 25,
         text = "4: "
     )
 
     private val labelFive = Label(
-        posX = 715, posY = 700,
+        posX = 715, posY = 859.25,
         width = 25, height = 25,
         text = "5: "
     )
 
     val saveButtonOne = Button(
-        posX = 745, posY = 87.5,
+        posX = 745, posY = 246.75,
         width = 450, height = 50,
         text = "Game from: "
     )

@@ -25,7 +25,9 @@ import kotlin.math.absoluteValue
  * show the game filed and all the user UI,
  * take inputs from the User and show results
  */
-class GameScene(private val rootService: RootService, private val app: view.IndigoApplication) : BoardGameScene(1920, 1080),Refreshable {
+class GameScene(private val rootService: RootService,
+                private val app: view.IndigoApplication)
+    : BoardGameScene(1920, 1080),Refreshable {
 
 
     val saveButton =  Button(

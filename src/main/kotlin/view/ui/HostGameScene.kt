@@ -14,7 +14,8 @@ import java.awt.Color
 
 
 /**
- * creates a selection menu for the different numbers of players
+ * creates a selection menu for the different numbers of players,
+ * for a network game.
  */
 class HostGameScene : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {

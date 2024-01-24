@@ -1,7 +1,6 @@
 package view.ui
 
 import service.Refreshable
-import service.RootService
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
@@ -14,7 +13,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * the network or in the hotseat mode. Also allows the player to load a save state
  * and quit the game.
  */
-class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
+class WelcomeScene : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")), Refreshable {
 
     private val headLineLabel = Label(width = 750, height = 100,posX = 575, posY = 100,

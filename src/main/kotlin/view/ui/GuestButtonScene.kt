@@ -12,6 +12,10 @@ import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
 import java.awt.Color
 
+/**
+ * this class is used to join a network game, it allows to input a game-id and
+ * players name, then via join the players makes the call to join the game through the server
+ */
 class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")){
 

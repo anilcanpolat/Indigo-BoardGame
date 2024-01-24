@@ -2,7 +2,6 @@ package view.ui
 
 import entity.PlayerConfig
 import entity.PlayerType
-import service.RootService
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
@@ -18,7 +17,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * required for the game to start. only shows properties that are required for
  * the amount of players selected. also gives us control over KI.
  */
-class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
+class SelectNameAndKiScene : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {
 
     val returnFromNameButton = Button(
@@ -361,8 +360,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         startGameButton.isDisabled = true
     }
 
-    private fun sequenceTheListForReturn(playerCount: Int,
-                                         p1 : PlayerConfig,
+    private fun sequenceTheListForReturn(playerCount: Int, p1 : PlayerConfig,
                                          p2 : PlayerConfig,
                                          p3 : PlayerConfig,
                                          p4 : PlayerConfig) : MutableList<PlayerConfig>{

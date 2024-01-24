@@ -58,6 +58,10 @@ interface Refreshable {
      */
     fun onGameFinished(players: List<Player>) {}
 
+    /**
+     * used whenever a player joins our lobby scene, to show there name and
+     * let the host know how many players have joined.
+     */
     fun onPlayerJoinedGame(playerConfig: PlayerConfig){
 
     }

@@ -13,7 +13,8 @@ import java.awt.Color
 
 
 /**
- * creates a selection menu for the different numbers of players
+ * creates a wait menu which shows who and how many players
+ * have already joined our game, when we host a network game.
  */
 class LobbyScene : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")), Refreshable {
@@ -63,7 +64,7 @@ class LobbyScene : MenuScene(1920, 1080,
 
     /**
      * small help function to disable labels not needed when loading the game with
-     * less then 4 players.
+     * less than 4 players.
      */
     fun disableLabels(amountOfPlayers: Int){
         when(amountOfPlayers) {

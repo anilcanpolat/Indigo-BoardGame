@@ -45,7 +45,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
     }
 
-    private val welcomeScene : MenuScene = WelcomeScene(rootService).apply {
+    private val welcomeScene : MenuScene = WelcomeScene().apply {
         loadGameButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(saveAndLoadScene)
                     }
@@ -155,7 +155,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
     //Select the name and Ki level for a game in the Hotseat mode
-    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
+    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene().apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
             kiA = false
@@ -329,6 +329,10 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         return score
     }
 
+    /**
+     * a help function used for refreshes to hide the scene currently shown
+     * and show the gameScene. Used for example in onGameStart.
+     */
     fun hideMenuAndShowGame(){
         this@IndigoApplication.showGameScene(gameScene)
         this@IndigoApplication.hideMenuScene()
