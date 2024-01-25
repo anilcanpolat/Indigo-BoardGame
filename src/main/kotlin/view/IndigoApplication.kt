@@ -1,7 +1,6 @@
 package view
 
 import entity.*
-import service.NetworkService
 import kotlin.random.Random
 import service.Refreshable
 import service.RootService
@@ -22,13 +21,14 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         val random = Random(System.currentTimeMillis())
         return random.nextInt(1000, 10000).toString()
     }
-    private val id = generateRandomId()
+
+    private var id = ""
 
     private var hotSeat = true
 
     private var gameMode = 0
 
-    private val gameScene : GameScene = GameScene(rootService).apply {
+    private val gameScene : GameScene = GameScene(rootService, this).apply {
         quitButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
         }
@@ -46,7 +46,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
         hostButton.onMouseClicked = {
             hotSeat = false
-            this@IndigoApplication.showMenuScene(chosePlayerCountScene)
+            this@IndigoApplication.showMenuScene(hostGameScene)
         }
 
         hotSeatModeButton.onMouseClicked = {
@@ -63,7 +63,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
         backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
-            hotSeat = false
+            hotSeat = true
        }
 
        p2Button.onMouseClicked = {
@@ -96,6 +96,54 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
        }
     }
 
+    private val hostGameScene : HostGameScene = HostGameScene().apply {
+        backFromHostGameScene.onMouseClicked = {
+            hotSeat = true
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+
+        host2Pl.onMouseClicked = {
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
+                remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(2)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
+        }
+
+        host3PlShared.onMouseClicked = {
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
+                remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(3)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
+        }
+
+        host3Pl.onMouseClicked = {
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
+                remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(3)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
+        }
+
+        host4Pl.onMouseClicked = {
+            id = generateRandomId()
+            rootService.networkService.createGame(id,
+                remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
+            lobbyScene.lobbyId.text = id
+            lobbyScene.disableLabels(3)
+            lobbyScene.hostNameLabel.text = hostNameTextfield.text
+            this@IndigoApplication.showMenuScene(lobbyScene)
+        }
+    }
+
+    //Select the name and Ki level for a game in the Hotseat mode
     private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
@@ -128,33 +176,19 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                             GameMode.FOUR_PLAYERS)
                     }
                 }
-            } else {
-                when (gameMode){
-                    1 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(1)[0], GameMode.TWO_PLAYERS)
-                    }
-                    2 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(2)[0], GameMode.THREE_PLAYERS)
-                    }
-                    3 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(3)[0], GameMode.THREE_PLAYERS_SHARED_GATES)
-                    }
-                    4 -> {
-                        rootService.networkService.createGame(generateRandomId(),
-                            remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
-                    }
-                }
             }
-            this@IndigoApplication.showGameScene(gameScene)
-            this@IndigoApplication.hideMenuScene()
         }
     }
 
     private val saveAndLoadScene : SaveAndLoadScene = SaveAndLoadScene().apply {
         returnFromSaveButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+    }
+
+    private val lobbyScene : LobbyScene = LobbyScene().apply {
+        backFromLobbyScene.onMouseClicked = {
+            hotSeat = true
             this@IndigoApplication.showMenuScene(welcomeScene)
         }
     }
@@ -193,19 +227,31 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         return score
     }
 
-
-    override fun onPlayerJoinedGame(playerConfig: PlayerConfig) {
-
+    fun hideMenuAndShowGame(){
+        this@IndigoApplication.showGameScene(gameScene)
+        this@IndigoApplication.hideMenuScene()
     }
-
 
     override fun onGameFinished(players: List<Player>) {
         list = players
         list.sortedByDescending { calcScore(it.collectedGems)  }
-        endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
-        endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
-        endGameScene.winnerThree.text = list[2].name + ": " + calcScore(list[2].collectedGems).toString()
-        endGameScene.winnerFour.text = list[3].name + ": " +  calcScore(list[3].collectedGems).toString()
+        when(list.size){
+            2 -> {
+                endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
+                endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
+            }
+            3 -> {
+                endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
+                endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
+                endGameScene.winnerThree.text = list[2].name + ": " + calcScore(list[2].collectedGems).toString()
+            }
+            4 -> {
+                endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
+                endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
+                endGameScene.winnerThree.text = list[2].name + ": " + calcScore(list[2].collectedGems).toString()
+                endGameScene.winnerFour.text = list[3].name + ": " +  calcScore(list[3].collectedGems).toString()
+            }
+        }
         this.showMenuScene(welcomeScene)
     }
 
@@ -218,6 +264,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         rootService.playerService.addRefreshable(this)
         rootService.playerService.addRefreshable(endGameScene)
         rootService.addRefreshable(saveAndLoadScene)
+        rootService.addRefreshable(lobbyScene)
+        rootService.playerService.addRefreshable(lobbyScene)
         this.showMenuScene(welcomeScene)
     }
 

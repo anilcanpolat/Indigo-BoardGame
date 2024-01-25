@@ -25,7 +25,7 @@ class WelcomeScene(rootService: RootService) : MenuScene(1920, 1080,
         posX = 860, posY = 250,
         width = 200, height = 50,
         text = "Online-Game"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
 
     val hostButton = Button(
         posX = 860, posY = 310,
