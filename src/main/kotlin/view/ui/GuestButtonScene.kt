@@ -135,7 +135,7 @@ class GuestButtonScene(networkService: NetworkService,
             isRandomKi = true
         }
 
-        if(!kiBoolean){
+        if(kiBoolean){
             isPerson = PlayerType.COMPUTER
         }
 
