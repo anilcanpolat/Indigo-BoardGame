@@ -31,13 +31,6 @@ application {
 }
 
 dependencies {
-    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
-    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
-    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
-    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
-    implementation("de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
-    implementation("org.danbrough.kotlinx:kotlinx-serialization-json:1.5.0")
-    implementation("org.danbrough.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation(kotlin("test-junit5"))
     implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9")
