@@ -29,11 +29,6 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private var gameMode = 0
 
-    private var isUse1 = false
-    private var isUse2 = false
-    private var isUse3 = false
-    private var isUse4 = false
-    private var isUse5 = false
 
     private val gameScene : GameScene = GameScene(rootService, this).apply {
         quitButton.onMouseClicked = {
@@ -206,10 +201,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
 
         saveButtonOne.onMouseClicked = {
-            if (!isUse1) {
+            if (!File("savestate1.json").exists()) {
                 rootService.save("savestate1.json")
                 saveButtonOne.text = "Savestate 1"
-                isUse1 = true
             }else{
                 rootService.load("savestate1.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -217,10 +211,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             }
         }
         saveButtonTwo.onMouseClicked = {
-            if (!isUse2) {
+            if (!File("savestate2.json").exists()) {
                 rootService.save("savestate2.json")
                 saveButtonTwo.text = "Savestate 2"
-                isUse2 = true
             }else{
                 rootService.load("savestate2.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -228,10 +221,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             }
         }
         saveButtonThree.onMouseClicked = {
-            if (!isUse3) {
+            if (!File("savestate3.json").exists()) {
                 rootService.save("savestate3.json")
                 saveButtonTwo.text = "Savestate 3"
-                isUse3 = true
             }else{
                 rootService.load("savestate3.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -239,10 +231,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             }
         }
         saveButtonFour.onMouseClicked = {
-            if (!isUse4) {
+            if (!File("savestate4.json").exists()) {
                 rootService.save("savestate4.json")
                 saveButtonTwo.text = "Savestate 4"
-                isUse4 = true
             }else{
                 rootService.load("savestate4.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -250,10 +241,9 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             }
         }
         saveButtonFive.onMouseClicked = {
-            if (!isUse5) {
+            if (!File("savestate5.json").exists()) {
                 rootService.save("savestate5.json")
                 saveButtonTwo.text = "Savestate 5"
-                isUse5 = true
             }else{
                 rootService.load("savestate5.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -262,42 +252,37 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
 
         deleteButtonOne.onMouseClicked = {
-            if (isUse1){
+            if (File("savestate1.json").exists()){
                 deleteState(File("savestate1.json"))
                 saveButtonOne.text = "Empty: "
-                isUse1 = false
             }
         }
 
         deleteButtonTwo.onMouseClicked = {
-            if (isUse2){
+            if (File("savestate2.json").exists()){
                 deleteState(File("savestate2.json"))
                 saveButtonTwo.text = "Empty: "
-                isUse2 = false
             }
         }
 
         deleteButtonThree.onMouseClicked = {
-            if (isUse3){
+            if (File("savestate3.json").exists()){
                 deleteState(File("savestate3.json"))
                 saveButtonThree.text = "Empty: "
-                isUse3 = false
             }
         }
 
         deleteButtonFour.onMouseClicked = {
-            if (isUse4){
+            if (File("savestate4.json").exists()){
                 deleteState(File("savestate4.json"))
                 saveButtonFour.text = "Empty: "
-                isUse4 = false
             }
         }
 
         deleteButtonFive.onMouseClicked = {
-            if (isUse5){
+            if (File("savestate5.json").exists()){
                 deleteState(File("savestate5.json"))
                 saveButtonFive.text = "Empty: "
-                isUse5 = false
             }
         }
     }
