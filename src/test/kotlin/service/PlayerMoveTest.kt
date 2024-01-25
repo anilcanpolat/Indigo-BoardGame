@@ -261,6 +261,90 @@ class PlayerMoveTest {
         }
     }
 
+    /**
+     * make sure that connecting outer treasure tiles with the center
+     * tile behaves correctly by eliminating the amber and emerald
+     * for all possible configurations
+     */
+    @Test
+    fun testGemElimination() {
+        val directions = listOf(
+            Pair(1, 0), Pair(-1, 0), Pair(0, 1),
+            Pair(0, -1), Pair(1, -1), Pair(-1, 1)
+        )
+
+
+        val positions = directions.map { direction ->
+            (1..3).map {
+                Pair(it * direction.first, it * direction.second)
+            }
+        }
+
+        println(positions)
+
+        val corners = directions.map {
+            Pair(4 * it.first, 4 * it.second)
+        }
+
+        positions.zip(corners).forEach {
+            val pos = it.first
+            val corner = it.second
+
+            val permutations = listOf(
+                listOf(0, 1, 2), listOf(0, 2, 1),
+                listOf(1, 0, 2), listOf(1, 2, 0),
+                listOf(2, 0, 1), listOf(2, 1, 0)
+            )
+
+            permutations.forEach { perm ->
+                val order = listOf(
+                    pos[perm[0]], pos[perm[1]], pos[perm[2]]
+                )
+
+                rootService = createStraightTilesGame()
+                playerService = rootService.playerService
+
+                order.forEach { tilePosition ->
+                    playerService.playerMove(Pair(currentTile(), 0), tilePosition)
+                }
+
+                val center = getTileAt(Pair(0, 0))
+                val border = getTileAt(corner)
+
+                assertTrue(border.gems.all { gem -> gem == null }, "amber should have been moves of the border treasure tile")
+                assertTrue(center.gems.any { gem -> gem == Gem.SAPHIRE }, "the saphire should remain on the treasure tile")
+
+                val centerGemCount = center.gems.filterNotNull().size
+                assertEquals(centerGemCount, 5, "only one gem should be removed from the center")
+            }
+        }
+    }
+
+    private fun createStraightTilesGame(): RootService {
+        val serv = RootService()
+
+        val playerConfig = listOf(
+            PlayerConfig("Alice", -1, PlayerType.PERSON),
+            PlayerConfig("Bob", -1, PlayerType.PERSON)
+        )
+
+        serv.startGame(playerConfig, GameMode.TWO_PLAYERS)
+
+        val state = checkNotNull(rootService.currentGame)
+
+        state.players[0].currentTile = Tile(TileType.STRAIGHTS_ONLY)
+        state.players[1].currentTile = Tile(TileType.STRAIGHTS_ONLY)
+
+        val pile = state.drawPile
+        pile.clear()
+
+        (0..48).forEach {
+            pile.add(Tile(TileType.STRAIGHTS_ONLY))
+        }
+
+        return serv
+    }
+
     /** generate a random tile object */
     private fun randomTile(): Tile {
         val rotation = Random.nextInt(0, 6)
