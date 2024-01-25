@@ -24,6 +24,9 @@ repositories {
             create<HttpHeaderAuthentication>("header")
         }
     }
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+    }
 }
 
 application {
@@ -33,7 +36,8 @@ application {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     testImplementation(kotlin("test-junit5"))
-    implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9")
+    //implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9")
+    implementation(group = "tools.aqua", name = "bgw-gui", version = "0.9-4-06a99c3-SNAPSHOT")
     implementation(group = "tools.aqua", name = "bgw-net-common", version = "0.9")
     implementation(group = "tools.aqua", name = "bgw-net-client", version = "0.9")
     implementation(group = "edu.udo.cs.sopra", name = "ntf", version = "1.1")
