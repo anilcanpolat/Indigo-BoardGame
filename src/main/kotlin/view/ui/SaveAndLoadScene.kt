@@ -8,6 +8,7 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
+import java.io.File
 
 /**
  * @property returnFromSaveButton creates button to return to previous menu
@@ -75,7 +76,11 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
         width = 450, height = 50,
         text = "Empty: ",
         font = Font(16)
-    )
+    ).apply {
+        if (File("savestate1.json").exists()){
+            text = "Savestate 1"
+        }
+    }
 
     val saveButtonTwo = Button(
         posX = 745, posY = 396.75,
