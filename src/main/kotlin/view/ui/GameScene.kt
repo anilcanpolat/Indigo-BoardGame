@@ -443,9 +443,4 @@ class GameScene(private val rootService: RootService,
         }
         return score
     }
-
-
-    override fun onGameFinished(players: List<Player>) {
-
-    }
 }
