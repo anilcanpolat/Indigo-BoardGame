@@ -293,8 +293,11 @@ class GameScene(private val rootService: RootService,
             visual = ImageVisual(findTilePath(tile.tileType))
             this.rotation = ((tile.rotation*60)+60).toDouble()
         }
+
         changeVisual(tile,position)
+
         highlightPlayer(nextPlayer)
+
         rotationRate = 0
         playersTile.apply { this.rotation = 90.0 }
 
@@ -336,37 +339,37 @@ class GameScene(private val rootService: RootService,
         val edgeVal = (edge-rotation) % 6
         when (gem) {
             Gem.AMBER -> {
-                when (edgeVal) {
-                    0 -> return "yellowGem0.png"
-                    1 -> return "yellowGem1.png"
-                    2 -> return "yellowGem2.png"
-                    3 -> return "yellowGem3.png"
-                    4 -> return "yellowGem4.png"
-                    5 -> return "yellowGem5.png"
-                    else -> return "yellowGem0.png"
+                return when (edgeVal) {
+                    0 -> "yellowGem0.png"
+                    1 -> "yellowGem1.png"
+                    2 -> "yellowGem2.png"
+                    3 -> "yellowGem3.png"
+                    4 -> "yellowGem4.png"
+                    5 -> "yellowGem5.png"
+                    else -> "yellowGem0.png"
                 }
             }
 
             Gem.EMERALD -> {
-                when (edgeVal) {
-                    0 -> return "greenGem0.png"
-                    1 -> return "greenGem1.png"
-                    2 -> return "greenGem2.png"
-                    3 -> return "greenGem3.png"
-                    4 -> return "greenGem4.png"
-                    5 -> return "greenGem5.png"
-                    else -> return "greenGem0.png"
+                return when (edgeVal) {
+                    0 -> "greenGem0.png"
+                    1 -> "greenGem1.png"
+                    2 -> "greenGem2.png"
+                    3 -> "greenGem3.png"
+                    4 -> "greenGem4.png"
+                    5 -> "greenGem5.png"
+                    else -> "greenGem0.png"
                 }
         }
             Gem.SAPHIRE -> {
-                when (edgeVal) {
-                    0 -> return "blueGem0.png"
-                    1 -> return "blueGem1.png"
-                    2 -> return "blueGem2.png"
-                    3 -> return "blueGem3.png"
-                    4 -> return "blueGem4.png"
-                    5 -> return "blueGem5.png"
-                    else -> return "blueGem0.png"
+                return when (edgeVal) {
+                    0 -> "blueGem0.png"
+                    1 -> "blueGem1.png"
+                    2 -> "blueGem2.png"
+                    3 -> "blueGem3.png"
+                    4 -> "blueGem4.png"
+                    5 -> "blueGem5.png"
+                    else -> "blueGem0.png"
                 }
             }
             null -> return "redo.png"
@@ -393,6 +396,9 @@ class GameScene(private val rootService: RootService,
         for (i in playerList.indices){
             scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
         }
+
+        //Gates and Players
+
     }
 
 
