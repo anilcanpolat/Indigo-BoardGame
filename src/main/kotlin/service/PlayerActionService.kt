@@ -45,16 +45,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
                 var gem = currentNeighbour.gems[connectingEdge]
 
-                if (emeraldIndex != -1 && currentNeighbour.gems[connectingEdge] != null ) {
-                    // swap the saphire with the gem at the current position. Positions on the center
-                    // tile are irrelevant, but [moveGemToEnd] requires them to be set correctly.
-                    currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
-                        currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
-                    }
+                if (emeraldIndex == -1) {
 
-                    gem = Gem.EMERALD
-                }
-                else {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
@@ -64,10 +56,9 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[saphireIndex]
                     }
 
-                    Gem.SAPHIRE
+                    gem = Gem.SAPHIRE
                 }
-
-                if (gem != null ) {
+                if (gem != null) {
                     val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
                     onAllRefreshables { onGemMove(path) }
                 }
@@ -156,6 +147,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         }
 
         val neighbours = getNeighboursOf(fromTile)
+//hnaaaaa
 
         val neighbourTile = neighbours[fromEdge]
         if (neighbourTile != null) {
