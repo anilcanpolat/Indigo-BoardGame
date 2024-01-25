@@ -248,6 +248,14 @@ class GameScene(private val rootService: RootService,
 
      override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
          playerList = players
+         gridPane[0,0]!!.isDisabled = false
+         gridPane[0,0]!!.isVisible = true
+         gridPane[0,1]!!.isDisabled = false
+         gridPane[0,1]!!.isVisible = true
+         gridPane[0,2]!!.isDisabled = false
+         gridPane[0,2]!!.isVisible = true
+         gridPane[0,3]!!.isDisabled = false
+         gridPane[0,3]!!.isVisible = true
         when(players.size){
             2 -> for (i in 2..3){
                 gridPane[0,i]!!.isDisabled = true
@@ -275,15 +283,15 @@ class GameScene(private val rootService: RootService,
              findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType)) }
 
          stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
-         changeVisual(rootService.currentGame!!.board.grid.grid[Pair(0,0)], Pair(0,0))
+         onStateChange(rootService.currentGame!!)
          app.hideMenuAndShowGame()
      }
 
     override fun onPlayerMove(player: Player, nextPlayer: Player, tile: Tile, position: Pair<Int, Int>, rotation: Int) {
         playersTile.apply { visual = ImageVisual(findTilePath(nextPlayer.currentTile!!.tileType)) }
         hexagonGrid[position.first,position.second]?.apply {
-            visual = ImageVisual(findTilePath(tile.tileType)).apply {
-                rotate((rotation*60)+60) }
+            visual = ImageVisual(findTilePath(tile.tileType))
+            this.rotation = ((tile.rotation*60)+60).toDouble()
         }
         changeVisual(tile,position)
         highlightPlayer(nextPlayer)
@@ -335,6 +343,7 @@ class GameScene(private val rootService: RootService,
                     3 -> return "yellowGem3.png"
                     4 -> return "yellowGem4.png"
                     5 -> return "yellowGem5.png"
+                    else -> return "yellowGem0.png"
                 }
             }
 
@@ -346,6 +355,7 @@ class GameScene(private val rootService: RootService,
                     3 -> return "greenGem3.png"
                     4 -> return "greenGem4.png"
                     5 -> return "greenGem5.png"
+                    else -> return "greenGem0.png"
                 }
         }
             Gem.SAPHIRE -> {
@@ -356,21 +366,34 @@ class GameScene(private val rootService: RootService,
                     3 -> return "blueGem3.png"
                     4 -> return "blueGem4.png"
                     5 -> return "blueGem5.png"
+                    else -> return "blueGem0.png"
                 }
             }
             null -> return "redo.png"
         }
-        return "redo.png"
     }
 
     override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
-        println("Gem Removed")
         for (i in playerList.indices){
             scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
         }
         changeVisual(rootService.currentGame!!.board.grid.grid[fromTile], fromTile)
     }
 
+    override fun onStateChange(newGameState: GameState) {
+        playerList = newGameState.players
+        playersTile.apply { visual = ImageVisual(
+            findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType)) }
+        for (i in hexagonGrid.components){
+            i.apply { visual = ColorVisual(250,240,202 ) }
+        }
+        for ((key, value) in newGameState.board.grid.grid) {
+           changeVisual(value,key)
+        }
+        for (i in playerList.indices){
+            scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
+        }
+    }
 
 
     private fun placeTiles(){
