@@ -45,8 +45,8 @@ class WelcomeScene : MenuScene(1920, 1080,
         text = "Play as Guest",
         font = Font(20, Color.BLACK, fontStyle = Font.FontStyle.ITALIC),
         visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
-            borderRadius = BorderRadius(30)
-            borderWidth = BorderWidth(30)
+            borderRadius = BorderRadius(5)
+            borderWidth = BorderWidth(2)
             borderColor = BorderColor(ColorEnum.EngOrange.toRgbValue())
         }
     )
