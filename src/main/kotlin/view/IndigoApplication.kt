@@ -379,7 +379,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                 endGameScene.winnerFour.text = list[3].name + ": " +  calcScore(list[3].collectedGems).toString()
             }
         }
-        this.showMenuScene(endGameScene)
+        this@IndigoApplication.showMenuScene(endGameScene)
     }
 
 
