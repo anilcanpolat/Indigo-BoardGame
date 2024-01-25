@@ -275,7 +275,7 @@ class GameScene(private val rootService: RootService,
              findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType)) }
 
          stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
-
+         changeVisual(rootService.currentGame!!.board.grid.grid[Pair(0,0)], Pair(0,0))
          app.hideMenuAndShowGame()
      }
 
@@ -358,9 +358,9 @@ class GameScene(private val rootService: RootService,
                     5 -> return "blueGem5.png"
                 }
             }
-            null -> return ""
+            null -> return "redo.png"
         }
-        return ""
+        return "redo.png"
     }
 
     override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
@@ -406,8 +406,7 @@ class GameScene(private val rootService: RootService,
             ImageVisual(path = "TreasureTileOutside.png"),
             ImageVisual(path = "yellowGem0.png"),
         ).apply { rotate(-60) } }
-        //center
-        hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
+        //center hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
 
 
     }
