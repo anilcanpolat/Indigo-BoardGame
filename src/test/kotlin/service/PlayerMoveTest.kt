@@ -99,21 +99,26 @@ class PlayerMoveTest {
         @Test
         fun saphireMoveTest() {
             val positions = listOf(
-                Pair(0, 1), Pair(0, -1), Pair(1, 0),
-                Pair(-1, 0), Pair(1, -1), Pair(-1, 1)
+                Pair(-1, 1), Pair(-1, 0), Pair(0, 1),
+		Pair(0, -1), Pair(1, -1), Pair(1, 0)
             )
-            assertTrue {getTileAt(Pair(0, 0)).gems.contains(Gem.SAPHIRE)  }
+
+            assertTrue(getTileAt(Pair(1, 0)).gems.contains(Gem.SAPHIRE))
+
             positions.forEach {
                 playerService.playerMove(Pair(currentTile(), 0), it)
             }
-            var count =0
+
+            var count = 0
+
             positions.subList(0, 6).forEach {
-                if(getTileAt(it).gems.contains(Gem.EMERALD)){
-                    count +=1
+                if (getTileAt(it).gems.contains(Gem.EMERALD)) {
+                    count += 1
                 }
             }
-            assertEquals(count,5)
-            assertFalse {getTileAt(Pair(0, 0)).gems.contains(Gem.SAPHIRE)  }
+
+            assertEquals(count, 5)
+            assertTrue(getTileAt(Pair(1,0)).gems.contains(Gem.SAPHIRE))
         }
 
         /** assert that gems move over multiple tiles after a connecting piece is placed */
@@ -139,7 +144,9 @@ class PlayerMoveTest {
         @Test
         fun testGemEliminationTest() {
             val positions = listOf(
-                Pair(3, -3), Pair(2, -2), Pair(1, -1)
+                //Pair(1, -1),Pair(3, -3), Pair(2, -2)
+                        Pair(3, -3), Pair(2, -2), Pair(1, -1)
+
 
             )
              positions.forEach {
@@ -157,11 +164,15 @@ class PlayerMoveTest {
 
         }
 
-
+        /**
+         * assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         */
         @Test
         fun testGemEliminationDirectCenterContact() {
             val positions = listOf(
-                Pair(-3, 3), Pair(-1, 1), Pair(-2, 2)
+                Pair(-3, 3), Pair(-2, 2), Pair(-1, 1)
+
 
             )
 
@@ -176,7 +187,30 @@ class PlayerMoveTest {
             assertTrue(getTileAt(Pair(-4, 4)).gems.all { it == null })
             assertTrue(getTileAt(Pair(0, 0)).gems.any { it == null })
         }
+        /**
+         * assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         */
+        @Test
+        fun testGemEliminationCenterContact() {
+            val positions = listOf(
+                 Pair(0, -2), Pair(0, -1),Pair(0, -3),
+            )
+
+            positions.forEach {
+                playerService.playerMove(Pair(currentTile(), 0), it)
+            }
+
+            positions.forEach {
+                assertTrue(getTileAt(it).gems.all { gem -> gem == null})
+            }
+
+            assertTrue(getTileAt(Pair(0, -4)).gems.all { it == null })
+            assertTrue(getTileAt(Pair(0, 0)).gems.any { it == null })
+        }
     }
+
+
 
     /**
      * Connect the uppermost treasure tile to the next gateway using one [TileType.CORNERS_ONLY]
