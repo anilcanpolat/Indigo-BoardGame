@@ -87,28 +87,44 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
         width = 450, height = 50,
         text = "Empty: ",
         font = Font(16)
-    )
+    ).apply {
+        if (File("savestate2.json").exists()){
+            text = "Savestate 2"
+        }
+    }
 
     val saveButtonThree = Button(
         posX = 745, posY = 546.75,
         width = 450, height = 50,
         text = "Empty: ",
         font = Font(16)
-    )
+    ).apply {
+        if (File("savestate3.json").exists()){
+            text = "Savestate 3"
+        }
+    }
 
     val saveButtonFour = Button(
         posX = 745, posY = 696.75,
         width = 450, height = 50,
         text = "Empty: ",
         font = Font(16)
-    )
+    ).apply {
+        if (File("savestate4.json").exists()){
+            text = "Savestate 4"
+        }
+    }
 
     val saveButtonFive = Button(
         posX = 745, posY = 846.75,
         width = 450, height = 50,
         text = "Empty: ",
         font = Font(16)
-    )
+    ).apply {
+        if (File("savestate5.json").exists()){
+            text = "Savestate 5"
+        }
+    }
 
     val deleteButtonOne = Button(
         posX = 1163, posY = 250,
