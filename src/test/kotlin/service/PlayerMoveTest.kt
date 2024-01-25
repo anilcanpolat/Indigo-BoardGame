@@ -99,8 +99,8 @@ class PlayerMoveTest {
         @Test
         fun saphireMoveTest() {
             val positions = listOf(
-                Pair(0, 1), Pair(0, -1), Pair(1, 0),
-                Pair(-1, 0), Pair(1, -1), Pair(-1, 1)
+                Pair(-1, 1),Pair(-1, 0),Pair(0, 1), Pair(0, -1),
+                 Pair(1, -1),Pair(1, 0)
             )
             assertTrue {getTileAt(Pair(0, 0)).gems.contains(Gem.SAPHIRE)  }
             positions.forEach {
@@ -113,7 +113,7 @@ class PlayerMoveTest {
                 }
             }
             assertEquals(count,5)
-            assertFalse {getTileAt(Pair(0, 0)).gems.contains(Gem.SAPHIRE)  }
+            assertTrue {getTileAt(Pair(1,0)).gems.contains(Gem.SAPHIRE)  }
         }
 
         /** assert that gems move over multiple tiles after a connecting piece is placed */
@@ -139,7 +139,9 @@ class PlayerMoveTest {
         @Test
         fun testGemEliminationTest() {
             val positions = listOf(
-                Pair(3, -3), Pair(2, -2), Pair(1, -1)
+                //Pair(1, -1),Pair(3, -3), Pair(2, -2)
+                        Pair(3, -3), Pair(2, -2), Pair(1, -1)
+
 
             )
              positions.forEach {
@@ -161,7 +163,7 @@ class PlayerMoveTest {
         @Test
         fun testGemEliminationDirectCenterContact() {
             val positions = listOf(
-                Pair(-3, 3), Pair(-1, 1), Pair(-2, 2)
+                Pair(-3, 3), Pair(-2, 2), Pair(-1, 1)
 
             )
 
