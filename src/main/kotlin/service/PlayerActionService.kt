@@ -20,6 +20,8 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         val gameCopy = game.deepCopy()
         gameCopy.nextState = game
 
+        check(!gameIsFinished()) { "cannot perform any moves in a finished game" }
+
         check(CommonMethods.distanceToCenter(position) <= 4) { "invalid position" }
 
         // prevent double placement of tiles
@@ -88,7 +90,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         game.currentPlayer.currentTile = null
 
-        if (game.drawPile.isNotEmpty()) {
+        if (!gameIsFinished()) {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
         } else {
             onAllRefreshables { onGameFinished(game.players) }
@@ -188,6 +190,46 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         return listOf(Pair(currentPosition, fromEdge))
     }
+
+    /**
+     * Test whether the game has finished. A game is considered to be finished if
+     * - No more tiles are on the draw pile
+     * - There are no more gems on the board
+     * - No valid move can be executed by the next player
+     */
+    private fun gameIsFinished(): Boolean {
+        val gameState = checkNotNull(rootService.currentGame).deepCopy()
+
+        val anyGemsOnBoard = gameState.board.grid.grid.values.any {
+            it.gems.any { gem -> gem != null }
+        }
+
+        if (!anyGemsOnBoard) { return true }
+        if (gameState.drawPile.isEmpty()) { return true }
+
+        val player = gameState.currentPlayer
+        val tile = player.currentTile ?: gameState.drawPile.removeLast()
+
+        player.currentTile = tile
+
+        val validMoveExists = allCoordinates().any { pos ->
+            (0..5).any { rot ->
+                CommonMethods.isValidMove(gameState, tile, rot, pos)
+            }
+        }
+
+        return !validMoveExists
+    }
+
+    private fun allCoordinates(): List<Pair<Int, Int>> =
+        (-4..4).flatMap { q ->
+            (-4..4).map { r ->
+                Pair(q, r)
+            }
+        }.filter {
+            CommonMethods.distanceToCenter(it) <= 4
+        }
+
 
     /**
      * Get the gate bordering a given tiles edge, if any exist.
