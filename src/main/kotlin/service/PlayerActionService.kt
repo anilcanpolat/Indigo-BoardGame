@@ -1,4 +1,5 @@
 package service
+
 import entity.*
 
 /**
@@ -6,7 +7,7 @@ import entity.*
  *
  * @param rootService the [RootService] connects the view with the service layer and the entity layer
  */
-class PlayerActionService( private val rootService: RootService) : AbstractRefreshingService() {
+class PlayerActionService(private val rootService: RootService) : AbstractRefreshingService() {
     /**
      * place a tile on indigos board and move/award/eliminate gems if applicable
      * @param move pair of the tile to place and the chosen rotation
@@ -42,9 +43,9 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
             if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
-                var gem =currentNeighbour.gems[connectingEdge]
+                var gem = currentNeighbour.gems[connectingEdge]
 
-                 if (emeraldIndex == -1) {
+                if (emeraldIndex == -1) {
 
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
@@ -55,7 +56,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[saphireIndex]
                     }
 
-                     gem = Gem.SAPHIRE
+                    gem = Gem.SAPHIRE
                 }
                 if (gem != null) {
                     val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
@@ -109,7 +110,9 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
             val player = state.currentPlayer
 
-            if (player.playerType != PlayerType.COMPUTER) { break }
+            if (player.playerType != PlayerType.COMPUTER) {
+                break
+            }
 
             // currently only random ai works, because I implemented it myself
             val move = CommonMethods.calculateRandomAIMove(state)
@@ -147,7 +150,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 //hnaaaaa
 
         val neighbourTile = neighbours[fromEdge]
-        if(neighbourTile!=null){
+        if (neighbourTile != null) {
             // Check for collision of gems
             if (neighbourTile.gems[(fromEdge + 3) % 6] != null) {
                 val neighbourPosition = checkNotNull(getTilePosition(neighbourTile))
