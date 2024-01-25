@@ -4,10 +4,7 @@ import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
-import tools.aqua.bgw.style.BorderColor
-import tools.aqua.bgw.style.BorderRadius
-import tools.aqua.bgw.style.BorderStyle
-import tools.aqua.bgw.style.BorderWidth
+import tools.aqua.bgw.style.*
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.ImageVisual
@@ -45,8 +42,8 @@ class WelcomeScene : MenuScene(1920, 1080,
         text = "Play as Guest",
         font = Font(20, Color.BLACK, fontStyle = Font.FontStyle.ITALIC),
         visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
-            borderRadius = BorderRadius(5)
-            borderWidth = BorderWidth(2)
+            backgroundRadius = BackgroundRadius(5)
+            borderWidth = BorderWidth(5)
             borderColor = BorderColor(ColorEnum.EngOrange.toRgbValue())
         }
     )
@@ -74,9 +71,9 @@ class WelcomeScene : MenuScene(1920, 1080,
     width = 100, height = 35,
         text = "Quit.", font = Font(20)
     ).apply { visual = ColorVisual(ColorEnum.EngOrange.toRgbValue()).apply {
-                borderStyle = BorderStyle.DOTTED
-                borderWidth = BorderWidth(100)
-                borderColor = BorderColor(Color.WHITE)
+                backgroundRadius = BackgroundRadius(20)
+                borderWidth = BorderWidth(3)
+                borderColor = BorderColor.CYAN
         }
     }
 
