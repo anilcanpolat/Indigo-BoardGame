@@ -1,7 +1,7 @@
 package service
 
 import entity.*
-import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.*
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import service.CommonMethods.neighbouringPositions
@@ -29,7 +29,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
      * @return A Pair, where the first element is a Pair of coordinates representing the position on the board
      * for the chosen tile, and the second element is an Int representing the rotation of the tile.
      */
-    fun randomMove(): Pair<Pair<Int, Int>, Int> {
+    fun randomMove(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+
         val game = rootService.currentGame ?: throw IllegalStateException("Game not initialized")
 
         val possibleMoves = mutableListOf<Pair<Pair<Int, Int>, Int>>()
@@ -57,11 +58,29 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         val selectedMove = possibleMoves.random()
 
         //Position und Rotation
-        return Pair(selectedMove.first, selectedMove.second)
+        return Pair(Pair(game.currentPlayer.currentTile!!, selectedMove.second), selectedMove.first)
     }
     /**
      * -----------------------------------------------------------------------------------------------------------------
      */
+
+    /**
+     * Calculates the best move for the current player with a timeout constraint.
+     *
+     * This function asynchronously computes the most strategic move for the current player based on the current state of the game and the current tile.
+     * It utilizes the `properMoveForAI` function to perform the calculation. However, if `properMoveForAI` does not complete within 10 seconds,
+     * the computation is aborted, and a random move is selected as a fallback.
+     * @return A Pair, where the first element is a Pair of the Tile and an Int representing the rotation of the tile,
+     * and the second element is a Pair of coordinates representing the position on the board for the chosen tile.
+     * If the strategic move calculation does not complete within the timeout period, a random move is returned.
+     * @throws IllegalStateException if the game is not initialized.
+     */
+    suspend fun calculateBestMoveWithTimeout(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+
+        return withTimeoutOrNull(10_000) { // 10 seconds timeout
+            properMoveForAI()
+        } ?: randomMove() // Fallback to a random move
+    }
 
     /**
      * Calculates the most strategic move for the current player based on the current game state and the current tile.
@@ -74,7 +93,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
      * where the first element is a Pair of the current Tile and an Int representing the rotation of the tile,
      * and the second element is a Pair of coordinates representing the position on the board for the chosen tile.
      */
-    fun properMoveForAI(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
+    fun properMoveForAI(): Pair<Pair<Tile, Int>, Pair<Int, Int>>  {
         val game = rootService.currentGame!!
         val currentTile = game.currentPlayer.currentTile!!
         var bestScore = Int.MIN_VALUE
@@ -99,8 +118,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         }
 
         if (bestMove == null) {
-            val fallbackMove = randomMove()
-            return Pair(Pair(currentTile, fallbackMove.second), fallbackMove.first)
+            return randomMove()
         }
 
         return Pair(Pair(currentTile, bestMove.second), bestMove.first)
