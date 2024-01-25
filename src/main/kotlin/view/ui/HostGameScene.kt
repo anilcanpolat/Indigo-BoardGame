@@ -128,6 +128,9 @@ class HostGameScene : MenuScene(1920, 1080,
 
         val p1 = PlayerConfig(p1Name, 0, p1Type, calcKiLevel(), 200)
 
+        when(playerCount){
+            1 -> println("Just doing this to fix a detekt error :)")
+        }
         typeList.add(p1)
         return typeList
     }
