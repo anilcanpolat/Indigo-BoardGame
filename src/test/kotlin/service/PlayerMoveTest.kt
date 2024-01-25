@@ -159,11 +159,15 @@ class PlayerMoveTest {
 
         }
 
-
+        /**
+         * assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         */
         @Test
         fun testGemEliminationDirectCenterContact() {
             val positions = listOf(
                 Pair(-3, 3), Pair(-2, 2), Pair(-1, 1)
+
 
             )
 
@@ -178,7 +182,30 @@ class PlayerMoveTest {
             assertTrue(getTileAt(Pair(-4, 4)).gems.all { it == null })
             assertTrue(getTileAt(Pair(0, 0)).gems.any { it == null })
         }
+        /**
+         * assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         */
+        @Test
+        fun testGemEliminationCenterContact() {
+            val positions = listOf(
+                 Pair(0, -2), Pair(0, -1),Pair(0, -3),
+            )
+
+            positions.forEach {
+                playerService.playerMove(Pair(currentTile(), 0), it)
+            }
+
+            positions.forEach {
+                assertTrue(getTileAt(it).gems.all { gem -> gem == null})
+            }
+
+            assertTrue(getTileAt(Pair(0, -4)).gems.all { it == null })
+            assertTrue(getTileAt(Pair(0, 0)).gems.any { it == null })
+        }
     }
+
+
 
     /**
      * Connect the uppermost treasure tile to the next gateway using one [TileType.CORNERS_ONLY]
