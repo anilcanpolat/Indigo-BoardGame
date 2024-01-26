@@ -63,7 +63,7 @@ class HostMessageHandler(private val rootService: RootService,
 
         val tiles = (firstTiles + otherTiles).map {
             convertTileType(it.tileType)
-        }
+        }.reversed()
 
         val players = state.players.map {
             Player(it.name, convertPlayerToken(it.playerToken))
