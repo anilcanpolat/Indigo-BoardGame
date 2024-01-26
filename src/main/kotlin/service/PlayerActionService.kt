@@ -97,12 +97,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         game.currentPlayer.currentTile = null
 
-        if (!gameIsFinished()) {
+        if (game.drawPile.isNotEmpty()) {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
-        } else {
-            refreshList.add {
-                onAllRefreshables { onGameFinished(game.players) }
-            }
         }
 
         game.currentPlayer = nextPlayer
@@ -110,6 +106,14 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         game.previousState = gameCopy
         game.nextState = null
         gameCopy.nextState = game
+
+        if (gameIsFinished()) {
+            refreshList.add {
+                onAllRefreshables {
+                    onGameFinished(game.players)
+                }
+            }
+        }
 
         // run refreshes only after the state has been fully updated
         for (refresh in refreshList) {
