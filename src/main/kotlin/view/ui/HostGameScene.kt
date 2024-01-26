@@ -55,7 +55,8 @@ class HostGameScene : MenuScene(1920, 1080,
     val hostNameTextfield = TextField(
         posX = 790, posY = 175,
         width = 250, height = 50,
-        font = Font(18)
+        font = Font(18),
+        prompt = "Enter your name: "
     )
 
     private var kiLevelA = 0

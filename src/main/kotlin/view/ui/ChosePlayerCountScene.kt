@@ -29,7 +29,7 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
     private val buttonLabel = Label(
         width = 400, height = 400,
         posX = 760, posY = 275,
-        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()). apply {
+        visual = ColorVisual(ColorEnum.Papaya.toRgbValue()). apply {
             backgroundRadius = BackgroundRadius(10)
         }
     )
@@ -39,7 +39,7 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
         posX = 860, posY = 300,
         text = "2 Player",
         font = Font(18),
-        visual = ColorVisual(ColorEnum.Papaya.toRgbValue()).apply {
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
             backgroundRadius = BackgroundRadius(5)
         }
     )
@@ -49,7 +49,7 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
         posX = 840, posY = 400,
         text = "3 Player (Shared Gates)",
         font = Font(18),
-        visual = ColorVisual(ColorEnum.Papaya.toRgbValue()).apply {
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
             backgroundRadius = BackgroundRadius(5)
         }
     )
@@ -59,7 +59,7 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
         posX = 860, posY = 500,
         text = "3 Player (Own Gates)",
         font = Font(18),
-        visual = ColorVisual(ColorEnum.Papaya.toRgbValue()).apply {
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
             backgroundRadius = BackgroundRadius(5)
         }
     )
@@ -70,7 +70,7 @@ class ChosePlayerCountScene : MenuScene(1920, 1080,
         posX = 860, posY = 600,
         text = "4 Player",
         font = Font(18),
-        visual = ColorVisual(ColorEnum.Papaya.toRgbValue()).apply {
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
                 backgroundRadius = BackgroundRadius(5)
             }
     )
