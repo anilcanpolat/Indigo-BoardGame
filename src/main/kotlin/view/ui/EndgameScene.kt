@@ -6,6 +6,7 @@ import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -46,12 +47,13 @@ class EndgameScene : MenuScene(1920, 1080,
     )
 
     val quitButton = Button(
-        width = 150, height = 50,
+        width = 100, height = 50,
         posX = 695, posY = 850,
-        text = "Quit"
-    ).apply {
-        visual = ColorVisual(221, 136, 136)
-    }
+        text = "Quit",
+        visual = ColorVisual(ColorEnum.EngOrange.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(20)
+        }
+    )
 
     val startGameButton = Button(
         width = 150, height = 50,

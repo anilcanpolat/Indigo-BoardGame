@@ -351,8 +351,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     var list: List<Player> = listOf()
     override fun onGameFinished(players: List<Player>) {
-        list = players
-        list.sortedByDescending { calcScore(it.collectedGems)  }
+        list = players.sortedByDescending { calcScore(it.collectedGems) }
         when(list.size){
             2 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
