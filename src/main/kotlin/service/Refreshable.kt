@@ -59,11 +59,12 @@ interface Refreshable {
     fun onGameFinished(players: List<Player>) {}
 
     /**
-     * used whenever a player joins our lobby scene, to show there name and
-     * let the host know how many players have joined.
+     * Refresh called when a remote player joins a lobby the local player
+     * created or joined. In the latter case this method is also called
+     * for each player already in the lobby directly after the local player
+     * joined.
+     * @param playerConfig object holding the name and type of the joined player
      */
-    fun onPlayerJoinedGame(playerConfig: PlayerConfig){
-
-    }
+    fun onPlayerJoinedGame(playerConfig: PlayerConfig){}
 
 }
