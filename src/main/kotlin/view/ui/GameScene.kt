@@ -279,7 +279,7 @@ class GameScene(
                 val hexagon = HexagonView(visual = ColorVisual(250, 240, 202), size = 65).apply {
                     onMouseClicked = {
                         rootService.playerService.playerMove(
-                            Pair(rootService.currentGame!!.currentPlayer.currentTile!!, rotationRate), Pair(col, row)
+                            Pair(rootService.currentGame!!.currentPlayer.currentTile!!, rotationRate.mod(6)), Pair(col, row)
                         )
                     }
 
