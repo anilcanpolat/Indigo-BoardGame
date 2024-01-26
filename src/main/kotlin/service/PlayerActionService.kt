@@ -81,21 +81,28 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
             }
         }
 
+        val refreshList: MutableList<() -> Unit> = mutableListOf()
+
         val nextPlayerIndex = (game.players.indexOf(game.currentPlayer) + 1) % game.players.size
         val nextPlayer = game.players[nextPlayerIndex]
+        val currentPlayer = game.currentPlayer
 
         if (!isRemote && isNetworkGame()) {
             rootService.networkService.sendTilePlaced(move.second, position)
         }
 
-        onAllRefreshables { onPlayerMove(game.currentPlayer, nextPlayer, move.first, position, move.second) }
+        refreshList.add {
+            onAllRefreshables { onPlayerMove(currentPlayer, nextPlayer, move.first, position, move.second) }
+        }
 
         game.currentPlayer.currentTile = null
 
         if (!gameIsFinished()) {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
         } else {
-            onAllRefreshables { onGameFinished(game.players) }
+            refreshList.add {
+                onAllRefreshables { onGameFinished(game.players) }
+            }
         }
 
         game.currentPlayer = nextPlayer
@@ -103,6 +110,11 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         game.previousState = gameCopy
         game.nextState = null
         gameCopy.nextState = game
+
+        // run refreshes only after the state has been fully updated
+        for (refresh in refreshList) {
+            refresh()
+        }
 
         if (!isAI) {
             processAllAIMoves()
