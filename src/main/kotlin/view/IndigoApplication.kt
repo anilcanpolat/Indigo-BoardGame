@@ -356,11 +356,14 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             2 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
                 endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
+                endGameScene.winnerThree.isVisible = false
+                endGameScene.winnerFour.isVisible = false
             }
             3 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
                 endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
                 endGameScene.winnerThree.text = list[2].name + ": " + calcScore(list[2].collectedGems).toString()
+                endGameScene.winnerFour.isVisible = false
             }
             4 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
