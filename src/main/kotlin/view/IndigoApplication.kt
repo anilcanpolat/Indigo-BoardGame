@@ -145,7 +145,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             rootService.networkService.createGame(id,
                 remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
             lobbyScene.lobbyId.text = id
-            lobbyScene.disableLabels(3)
+            lobbyScene.disableLabels(4)
             lobbyScene.hostNameLabel.text = hostNameTextfield.text
             this@IndigoApplication.showMenuScene(lobbyScene)
         }
@@ -378,7 +378,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         rootService.addRefreshable(saveAndLoadScene)
         rootService.addRefreshable(lobbyScene)
         rootService.playerService.addRefreshable(lobbyScene)
-        this.showMenuScene(welcomeScene)
+        this.showMenuScene(lobbyScene)
     }
 
 }

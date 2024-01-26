@@ -7,6 +7,7 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -35,10 +36,11 @@ class GuestButtonScene(networkService: NetworkService,
         posX = 780, posY = 150,
         width = 400, height = 150,
         text = "Join a networkgame: ",
-        font = Font(40)
-    ).apply {
-        visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
-    }
+        font = Font(40),
+        visual = ColorVisual(ColorEnum.Olivine.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(15)
+        }
+    )
 
     private val playerATextBox = TextField(
         posX = 780, posY = 380,

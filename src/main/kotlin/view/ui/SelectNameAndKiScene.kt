@@ -7,6 +7,7 @@ import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -30,19 +31,21 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
     )
 
     private val headerLabel = Label(
-        posX = 760, posY = 45,
-        width = 400, height = 75,
-        text = "Choose your settings", font = Font(25)
-    ).apply {
-        visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
-    }
+        posX = 710, posY = 45,
+        width = 500, height = 95,
+        text = "Choose your settings", font = Font(35),
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(10)
+        }
+    )
 
 
     //textfield for player names
     private val playerATextBox = TextField(
         posX = 760, posY = 200,
         width = 250, height = 50,
-        font = Font(16)
+        font = Font(16),
+        prompt = "Put in Name! "
     ).apply {
         onKeyTyped = {
             startGameButton.isDisabled = !checkIfBlank()

@@ -4,6 +4,7 @@ import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -33,13 +34,14 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
     )
 
     private val headerLabel = Label(
-        posX = 745, posY = 87.5,
-        width = 450, height = 75,
+        posX = 735, posY = 87.5,
+        width = 500, height = 75,
         text = "Save & Load a game state: ",
-        font = Font(30)
-    ).apply {
-        visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
-    }
+        font = Font(35),
+        visual = ColorVisual(ColorEnum.Olivine.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(10)
+        }
+    )
 
     private val labelOne = Label(
         posX = 715, posY = 259.25,
