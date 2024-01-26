@@ -402,7 +402,12 @@ class GameScene(
             if (tile.gems[i] == null) {
                 visualList.add(ColorVisual.TRANSPARENT)
             } else {
-                visualList.add(ImageVisual(findGemPath(tile.gems[i], i, tile.rotation)))
+                if (hexCord == Pair(0,-4) || hexCord == Pair(0,4) || hexCord == Pair(-4,4) || hexCord == Pair(-4,0)
+                    || hexCord == Pair(4,0) || hexCord == Pair(4,-4)){
+                    visualList.add(ImageVisual(findGemPath(tile.gems[i], i, tile.rotation-1)))
+                }
+                else{
+                visualList.add(ImageVisual(findGemPath(tile.gems[i], i, tile.rotation)))}
             }
         }
 
@@ -483,7 +488,7 @@ class GameScene(
             scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
         }
 
-        //Gates and Players
+
 
     }
 
@@ -494,28 +499,28 @@ class GameScene(
             visual = CompoundVisual(
                 ImageVisual(path = "TreasureTileOutside.png"),
                 ImageVisual(path = "yellowGem0.png"),
-            ).apply { rotate(240) }
+            ).apply { rotation=240.0 }
         }
         //down
         hexagonGrid[0, 4]?.apply {
             visual = CompoundVisual(
                 ImageVisual(path = "TreasureTileOutside.png"),
                 ImageVisual(path = "yellowGem0.png"),
-            ).apply { rotate(60) }
+            ).apply { rotation = 60.0 }
         }
         //down left
         hexagonGrid[-4, 4]!!.apply {
             visual = CompoundVisual(
                 ImageVisual(path = "TreasureTileOutside.png"),
                 ImageVisual(path = "yellowGem0.png"),
-            ).apply { rotate(120) }
+            ).apply { rotation = 120.0 }
         }
         //up left
         hexagonGrid[-4, 0]!!.apply {
             visual = CompoundVisual(
                 ImageVisual(path = "TreasureTileOutside.png"),
                 ImageVisual(path = "yellowGem0.png"),
-            ).apply { rotate(180) }
+            ).apply { rotation = 180.0 }
         }
         //down right
         hexagonGrid[4, 0]!!.apply {
@@ -529,9 +534,8 @@ class GameScene(
             visual = CompoundVisual(
                 ImageVisual(path = "TreasureTileOutside.png"),
                 ImageVisual(path = "yellowGem0.png"),
-            ).apply { rotate(-60) }
+            ).apply { rotation = -60.0 }
         }
-        //center hexagonGrid[0,0]!!.apply { visual = ImageVisual(path = "TreasureTileInside.png") }
 
 
     }
