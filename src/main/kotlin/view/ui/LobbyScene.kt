@@ -32,14 +32,14 @@ class LobbyScene : MenuScene(1920, 1080,
 
     private val headLabel = Label(
         width = 350, height = 90,
-        posX = 810, posY = 95,
+        posX = 785, posY = 95,
         text = "Lobby",
         font = Font(size = 40)
     )
 
     private  val headLabelBackground = Label(
         width = 350, height = 300,
-        posX = 810, posY = 105,
+        posX = 785, posY = 105,
         visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
             backgroundRadius = BackgroundRadius(10)
         }
@@ -48,7 +48,7 @@ class LobbyScene : MenuScene(1920, 1080,
 
     var lobbyId = Label(
         width = 200, height = 100,
-        posX = 910, posY = 525,
+        posX = 860, posY = 525,
         text = "LobbyId",
         font = Font(40),
         visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
