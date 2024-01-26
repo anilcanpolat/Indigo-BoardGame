@@ -289,7 +289,6 @@ class GameScene(
             }
         }
         //For the images of TreasureTiles
-        placeTiles()
         background = ColorVisual.LIGHT_GRAY
 
 
@@ -346,6 +345,7 @@ class GameScene(
 
         stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
         onStateChange(rootService.currentGame!!)
+        placeTiles()
 
         for (i in hexagonGrid.components) {
 
