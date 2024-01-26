@@ -4,7 +4,6 @@ package view.ui
 
 import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
-import tools.aqua.bgw.components.uicomponents.ColorPicker
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.style.BackgroundRadius
@@ -12,7 +11,6 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
-import java.awt.Color
 
 
 /**
