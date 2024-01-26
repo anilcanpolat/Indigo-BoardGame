@@ -68,6 +68,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
 
     private val chosePlayerCountScene : ChosePlayerCountScene = ChosePlayerCountScene().apply {
+        opacity = 0.9
 
         backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -153,6 +154,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     //Select the name and Ki level for a game in the Hotseat mode
     private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene().apply {
+        opacity = 0.9
+
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
             kiA = false
@@ -288,6 +291,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
     private val lobbyScene : LobbyScene = LobbyScene().apply {
+        opacity = 0.9
+
         backFromLobbyScene.onMouseClicked = {
             hotSeat = true
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -308,6 +313,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private val guestButtonScene : GuestButtonScene =
         GuestButtonScene(rootService.networkService, this).apply {
+            opacity = 0.9
 
         returnGuestButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -378,7 +384,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         rootService.addRefreshable(saveAndLoadScene)
         rootService.addRefreshable(lobbyScene)
         rootService.playerService.addRefreshable(lobbyScene)
-        this.showMenuScene(lobbyScene)
+        this.showMenuScene(welcomeScene)
     }
 
 }
