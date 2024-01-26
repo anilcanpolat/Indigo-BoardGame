@@ -1,4 +1,5 @@
 package service
+
 import entity.*
 
 /**
@@ -6,7 +7,7 @@ import entity.*
  *
  * @param rootService the [RootService] connects the view with the service layer and the entity layer
  */
-class PlayerActionService( private val rootService: RootService) : AbstractRefreshingService() {
+class PlayerActionService(private val rootService: RootService) : AbstractRefreshingService() {
     /**
      * place a tile on indigos board and move/award/eliminate gems if applicable
      * @param move pair of the tile to place and the chosen rotation
@@ -45,16 +46,16 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
             if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
+                var gem = currentNeighbour.gems[connectingEdge]
 
-                val gem = if (emeraldIndex != -1) {
-                    // swap the emerald with the gem at the current position. Positions on the center
-                    // tile are irrelevant, but [moveGemToEnd] requires them to be set correctly.
+                if (emeraldIndex != -1 && currentNeighbour.gems[connectingEdge] != null ) {
+
                     currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
                     }
 
-                    Gem.EMERALD
-                } else {
+                    gem = Gem.EMERALD
+                }else {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
@@ -63,12 +64,13 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                     currentNeighbour.gems[saphireIndex] = currentNeighbour.gems[connectingEdge].also {
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[saphireIndex]
                     }
-
                     Gem.SAPHIRE
                 }
 
-                val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
-                onAllRefreshables { onGemMove(path) }
+                    if (gem != null) {
+                    val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
+                    onAllRefreshables { onGemMove(path) }
+                }
             } else {
                 val gem = currentNeighbour.gems[connectingEdge]
 
@@ -124,7 +126,9 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
             val player = state.currentPlayer
 
-            if (player.playerType != PlayerType.COMPUTER) { break }
+            if (player.playerType != PlayerType.COMPUTER) {
+                break
+            }
 
             // currently only random ai works, because I implemented it myself
             val move = CommonMethods.calculateRandomAIMove(state)
@@ -159,8 +163,8 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         }
 
         val neighbours = getNeighboursOf(fromTile)
-
-        neighbours[fromEdge]?.let { neighbourTile ->
+        val neighbourTile = neighbours[fromEdge]
+        if (neighbourTile != null) {
             // Check for collision of gems
             if (neighbourTile.gems[(fromEdge + 3) % 6] != null) {
                 val neighbourPosition = checkNotNull(getTilePosition(neighbourTile))
