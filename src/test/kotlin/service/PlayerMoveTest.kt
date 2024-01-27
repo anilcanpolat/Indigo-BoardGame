@@ -176,7 +176,77 @@ class PlayerMoveTest {
             assertTrue(getTileAt(Pair(-4, 4)).gems.all { it == null })
             assertTrue(getTileAt(Pair(0, 0)).gems.any { it == null })
         }
+        /** place the same tiles as in the Test testGemEliminationTest but in different order
+         * assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         * and check that the SAPHIRE is still in the center tile
+         */
+        @Test
+        fun testGemEliminationTest01() {
+            val positions = listOf(
+                Pair(3, -3),Pair(1,-1), Pair(2,-2)
+            )
+
+            positions.forEach {
+                playerService.playerMove(Pair(currentTile(), 0), it)
+            }
+            positions.forEach {
+                assertTrue(getTileAt(it).gems.all { gem -> gem == null })
+            }
+
+            assertTrue(getTileAt(Pair(4, -4)).gems.all { it == null })
+
+            assertEquals(getTileAt(Pair(0, 0)).gems.count { it != null }, 5)
+            assertContains(getTileAt(Pair(0, 0)).gems, Gem.SAPHIRE)
+        }
+        /** assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         * and check that the SAPHIRE is still in the center tile
+         */
+        @Test
+        fun testGemEliminationTest02() {
+            val positions = listOf(
+                Pair(-3, 3),Pair(-2, 2), Pair(-1, 1)
+            )
+
+            positions.forEach {
+                playerService.playerMove(Pair(currentTile(), 0), it)
+            }
+            positions.forEach {
+                assertTrue(getTileAt(it).gems.all { gem -> gem == null })
+            }
+
+            assertTrue(getTileAt(Pair(-4,4)).gems.all { it == null })
+
+            assertEquals(getTileAt(Pair(0, 0)).gems.count { it != null }, 5)
+            assertContains(getTileAt(Pair(0, 0)).gems, Gem.SAPHIRE)
+        }
+
+        /** assert that placing a straight path between the outer and inner treasure will cause
+         * two gems to be eliminated from the board
+         * and check that the SAPHIRE is still in the center tile
+         */
+        @Test
+        fun testGemEliminationTest03() {
+            val positions = listOf(
+                Pair(0, -3),Pair(0, -2), Pair(0, -1)
+            )
+
+            positions.forEach {
+                playerService.playerMove(Pair(currentTile(), 0), it)
+            }
+            positions.forEach {
+                assertTrue(getTileAt(it).gems.all { gem -> gem == null })
+            }
+
+            assertTrue(getTileAt(Pair(0,-4)).gems.all { it == null })
+
+            assertEquals(getTileAt(Pair(0, 0)).gems.count { it != null }, 5)
+            assertContains(getTileAt(Pair(0, 0)).gems, Gem.SAPHIRE)
+        }
     }
+
+
 
     /**
      * Connect the uppermost treasure tile to the next gateway using one [TileType.CORNERS_ONLY]
