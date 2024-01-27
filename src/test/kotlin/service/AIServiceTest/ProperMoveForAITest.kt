@@ -46,7 +46,7 @@ class ProperMoveForAITest {
         //rootService.playerService.playerMove(betterMove.first, betterMove.second)
         //gameState.currentPlayer.currentTile = Tile(TileType.CURVES_TO_CORNER)
 
-        for(i in 1..20) {
+        for(i in 1..26) {
 
             print("Round: ")
             println(i)
@@ -93,7 +93,7 @@ class ProperMoveForAITest {
 
         print("Player1: ")
         print(point1)
-        print(", player2: ")
+        print(", Player2: ")
         println(point2)
         //Assertion and fine-tuning can be done when bugs in PlayerActionService are fixed.
         assertTrue { point1 >= point2 }

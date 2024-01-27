@@ -120,7 +120,6 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         println(bestScore)
         if (bestMove == null) return randomMove()
 
-        println(possibleMoves.last())
         return Pair(Pair(currentTile, bestMove.second), bestMove.first)
     }
 
