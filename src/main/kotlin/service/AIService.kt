@@ -116,6 +116,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
             }
         }
 
+        print("BestScore: ")
+        println(bestScore)
         if (bestMove == null) return randomMove()
 
         println(possibleMoves.last())

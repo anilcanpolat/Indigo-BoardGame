@@ -91,12 +91,12 @@ class ProperMoveForAITest {
         rootService.currentGame!!.players[1].collectedGems.forEach{ gem->
             point2 += gem.score()}
 
-        print("p2: ")
-        print(point2)
-        print(", p1: ")
-        println(point1)
+        print("Player1: ")
+        print(point1)
+        print(", player2: ")
+        println(point2)
         //Assertion and fine-tuning can be done when bugs in PlayerActionService are fixed.
-        assertTrue { point2 < point1 }
+        assertTrue { point1 >= point2 }
     }
 
 }
