@@ -222,6 +222,7 @@ class PlayerMoveTest {
             assertContains(getTileAt(Pair(0, 0)).gems, Gem.SAPHIRE)
         }
 
+
         /** assert that placing a straight path between the outer and inner treasure will cause
          * two gems to be eliminated from the board
          * and check that the SAPHIRE is still in the center tile
