@@ -28,11 +28,14 @@ class ProperMoveForAITest {
 
     @Test
     fun `test properMoveForAI with ideal conditions`() {
-        players = listOf(player1, player2, player3)
-        rootService.startGame(players, GameMode.THREE_PLAYERS)
+        players = listOf(player1, player2)
+        rootService.startGame(players, GameMode.TWO_PLAYERS)
 
         aiService = AIService(rootService)
         gameState = rootService.currentGame!!
+
+        //Manual Moves zur Verfügung
+
         //gameState.currentPlayer.currentTile = Tile(TileType.STRAIGHT_NOCROSS)
         //var betterMove = aiService.properMoveForAI()
         //rootService.playerService.playerMove(betterMove.first, betterMove.second)
@@ -43,35 +46,42 @@ class ProperMoveForAITest {
         //rootService.playerService.playerMove(betterMove.first, betterMove.second)
         //gameState.currentPlayer.currentTile = Tile(TileType.CURVES_TO_CORNER)
 
-
-        for(i in 0..20) {
+        for(i in 1..20) {
 
             print("Round: ")
             println(i)
 
-            print("Current Player: ")
-            println(gameState.currentPlayer.name)
             //RandomAI
-            var randomMove = aiService.randomMove()
+            print("Current Player(RandomAI/Red): ")
+            println(gameState.currentPlayer.name)
+            print("Collected before the move: ")
+            println(gameState.currentPlayer.collectedGems)
+            val randomMove = aiService.randomMove()
             print("Tile Type: ")
             print(randomMove.first.first.tileType)
             print(" , Rotation and Coordinates: ")
             print(randomMove.first.second)
             print(", ")
             println(randomMove.second)
-            //rootService.playerService.playerMove(randomMove.first, randomMove.second)
-            print("Current Player: ")
-            println(gameState.currentPlayer.toString())
+            rootService.playerService.playerMove(randomMove.first, randomMove.second)
 
             //Better AI
-            var betterMove = aiService.properMoveForAI()
+            print("Current Player(BetterAI/Cyan): ")
+            println(gameState.currentPlayer.name)
+            print("Collected before the move: ")
+            println(gameState.currentPlayer.collectedGems)
+            val betterMove = aiService.properMoveForAI()
             print("Tile Type: ")
             print(betterMove.first.first.tileType)
             print(" , Rotation and Coordinates: ")
             print(betterMove.first.second)
             print(", ")
             println(betterMove.second)
-            //rootService.playerService.playerMove(betterMove.first, betterMove.second) //Path leads to a tile with no connecting path
+            rootService.playerService.playerMove(betterMove.first, betterMove.second) //Path leads to a tile with no connecting path
+
+            /*//Player
+            print("Current Player: ")
+            println(gameState.currentPlayer.name)*/
         }
         var point1 = 0
         rootService.currentGame!!.players[0].collectedGems.forEach{ gem->
@@ -81,38 +91,12 @@ class ProperMoveForAITest {
         rootService.currentGame!!.players[1].collectedGems.forEach{ gem->
             point2 += gem.score()}
 
-        println("p2: ")
-        println(point2)
-        println(", p1: ")
+        print("p2: ")
+        print(point2)
+        print(", p1: ")
         println(point1)
         //Assertion and fine-tuning can be done when bugs in PlayerActionService are fixed.
-        //assertTrue { point2 >= point1 }
+        assertTrue { point2 < point1 }
     }
 
-    /*
-    @Test
-    fun `test properMoveForAI with no possible moves`() {
-        // Setup a game state where no moves are possible
-        // Assert that the method returns a fallback move
-    }
-
-    @Test
-    fun `test properMoveForAI with multiple equal scoring moves`() {
-        // Setup a game state where multiple moves have the same highest score
-        // Assert that the method returns one of these moves (if it's deterministic, test for the specific move; if not, just test that it's one of the high-scoring moves)
-    }
-
-    @Test
-    fun `test properMoveForAI with a complex game state`() {
-        // Setup a complex game state
-        // Assert that the method returns a valid move, though the "best" move might be subjective in this case
-    }
-
-    @Test
-    fun `test properMoveForAI verifies use of heuristic function`() {
-        // Setup a game state
-        // Mock or spy on the `calculateHeuristicScore` function to ensure it's being called correctly
-        // Assert that the method returns the expected move based on the mocked heuristic scores
-    }
-*/
 }

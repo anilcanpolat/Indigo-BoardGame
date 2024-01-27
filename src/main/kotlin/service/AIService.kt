@@ -107,20 +107,18 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         for (move in possibleMoves) {
             // Apply the move on a temporary game state
             val tempGameState = applyMove(game.deepCopy(), move)
-
             // Calculate the heuristic score considering the AI player's token
             val score = calculateHeuristicScore(tempGameState, aiPlayerToken)
 
-            if (score > bestScore) {
+            if (score >= bestScore) {
                 bestScore = score
                 bestMove = move
             }
         }
 
-        if (bestMove == null) {
-            return randomMove()
-        }
+        if (bestMove == null) return randomMove()
 
+        println(possibleMoves.last())
         return Pair(Pair(currentTile, bestMove.second), bestMove.first)
     }
 
@@ -138,16 +136,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         // Blocking the enemy
         score += calculateBlockingScore(gameState) * 50  // Medium priority
 
-        /**
-
-        //Values of the gems
-        score += calculateStoneValueScore(gameState)
-
-        //Condition of the board
-        score += calculateBoardStateScore(gameState)
-         */
-
-        //additional factors
+        //Additional methods can be added
 
         return score
     }
@@ -354,27 +343,27 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
 
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
-            val connectingEdge = (i + 3) % 6
+            val neighbourEdge = (i + 3) % 6
 
             // Handle gem movement logic similar to moveGemToEnd
-            val gem = placedTile.gems[i]
+            val gem = currentNeighbour.gems[i]
             if (gem != null) {
-                processGemMovement(gameState, placedTile, currentNeighbour, connectingEdge, gem)
+                processGemMovement(gameState, currentNeighbour, placedTile, neighbourEdge, gem)
             }
         }
     }
 
-    private fun processGemMovement(gameState: GameState, fromTile: Tile, toTile: Tile, edge: Int, gem: Gem) {
+    private fun processGemMovement(gameState: GameState, fromTile: Tile, toTile: Tile, oldEdge: Int, gem: Gem) {
         // Find the new edge for the gem to move to
-        val newEdge = toTile.paths[edge]
+        val newEdge = toTile.paths[oldEdge]
 
         if (newEdge == null || toTile.gems[newEdge] != null) {
             // Handle gem collision or end of path (e.g., scoring, removing gem)
-            handleGemCollisionOrEndOfPath(gameState, gem, fromTile, toTile, edge, newEdge)
+            handleGemCollisionOrEndOfPath(gameState, gem, fromTile, toTile, oldEdge, newEdge)
         } else {
             // Move the gem one step to the new tile and new edge
             toTile.gems[newEdge] = gem
-            fromTile.gems[edge] = null
+            fromTile.gems[oldEdge] = null
 
             // Determine the position of the toTile
             val toTilePosition = getTilePosition(toTile) ?: return // If position is null, exit the function

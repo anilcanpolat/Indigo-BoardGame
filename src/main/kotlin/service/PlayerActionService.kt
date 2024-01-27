@@ -95,30 +95,10 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         game.nextState = null
         gameCopy.nextState = game
 
-        if (!isAI) {
-            processAllAIMoves()
-        }
-
         val state = checkNotNull(rootService.currentGame)
 
         if (state.currentPlayer.playerType == PlayerType.PERSON) {
             onAllRefreshables { onWaitForInput() }
-        }
-    }
-
-    /**
-     * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
-     */
-    fun processAllAIMoves() {
-        while (true) {
-            val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
-            val player = state.currentPlayer
-
-            if (player.playerType != PlayerType.COMPUTER) { break }
-
-            // currently only random ai works, because I implemented it myself
-            val move = CommonMethods.calculateRandomAIMove(state)
-            playerMove(move.first, move.second)
         }
     }
 
