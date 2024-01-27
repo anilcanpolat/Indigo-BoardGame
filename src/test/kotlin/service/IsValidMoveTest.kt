@@ -3,9 +3,11 @@ package service
 import entity.*
 import kotlin.test.*
 
+/** Test cases for the method [CommonMethods.isValidMove] */
 class IsValidMoveTest {
     private var state: GameState? = null
 
+    /** create a gamestate with two players */
     @BeforeTest
     fun initGameState() {
         val rootService = RootService()
@@ -19,6 +21,7 @@ class IsValidMoveTest {
         state = rootService.currentGame
     }
 
+    /** make sure that gate blocking is detected */
     @Test
     fun blockingGateTest() {
         var tile = setTile(Tile(TileType.CORNERS_ONLY))

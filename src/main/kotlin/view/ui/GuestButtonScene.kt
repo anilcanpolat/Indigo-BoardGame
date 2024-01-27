@@ -105,7 +105,7 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
 
 
     private fun configureGuestPlayer() : PlayerConfig{
-        return PlayerConfig(playerATextBox.text,0,PlayerType.COMPUTER)
+        return PlayerConfig(playerATextBox.text,0,PlayerType.PERSON)
     }
 
     init {

@@ -53,7 +53,8 @@ class SendTilePlacedTest {
     @Test
     fun sendMessageTest() {
         val lock = Semaphore(0)
-        var firstCall = true
+        var firstCallHost = true
+        var firstCallGuest = true
 
         host.playerService.addRefreshable(object : Refreshable {
             override fun onPlayerMove(
@@ -63,10 +64,10 @@ class SendTilePlacedTest {
                 position: Pair<Int, Int>,
                 rotation: Int
             ) {
-                if (firstCall) {
+                if (firstCallHost) {
                     assertEquals(player.name, "Alice")
                     assertEquals(nextPlayer.name, "Bob")
-                    firstCall = false
+                    firstCallHost = false
                 } else {
                     assertEquals(player.name, "Bob")
                     assertEquals(nextPlayer.name, "Alice")
@@ -84,45 +85,29 @@ class SendTilePlacedTest {
                 position: Pair<Int, Int>,
                 rotation: Int
             ) {
-                if (firstCall) {
-                    assertEquals(player.name, "Bob")
-                    assertEquals(nextPlayer.name, "Alice")
-                    firstCall = false
-                } else {
+                if (firstCallGuest) {
                     assertEquals(player.name, "Alice")
                     assertEquals(nextPlayer.name, "Bob")
+                    firstCallGuest = false
+                } else {
+                    assertEquals(player.name, "Bob")
+                    assertEquals(nextPlayer.name, "Alice")
                 }
 
                 lock.release()
             }
         })
 
-        if (hostInTurn()) {
-            val tile = checkNotNull(checkNotNull(host.currentGame).currentPlayer.currentTile)
+        val hostTile = checkNotNull(checkNotNull(host.currentGame).currentPlayer.currentTile)
+        host.playerService.playerMove(Pair(hostTile, 0), Pair(1, 0))
 
-            host.playerService.playerMove(Pair(tile, 0), Pair(0, 1))
-            host.networkService.sendTilePlaced(0, Pair(0, 1))
+        assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+        assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
 
-            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+        val guestTile = checkNotNull(checkNotNull(guest.currentGame).currentPlayer.currentTile)
+        guest.playerService.playerMove(Pair(guestTile, 0), Pair(-1, 0))
 
-            guest.networkService.sendTilePlaced(0, Pair(1, 0))
-            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
-        } else {
-            val tile = checkNotNull(checkNotNull(guest.currentGame).currentPlayer.currentTile)
-
-            guest.playerService.playerMove(Pair(tile, 0), Pair(0, 1))
-            guest.networkService.sendTilePlaced(0, Pair(0, 1))
-
-            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
-
-            host.networkService.sendTilePlaced(0, Pair(1, 0))
-            assert(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
-        }
-    }
-
-    /** check whether the host (Alice) or the guest (Bob) is in turn */
-    private fun hostInTurn(): Boolean {
-        val hostState = checkNotNull(host.currentGame)
-        return hostState.currentPlayer.name == "Alice"
+        assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
+        assertTrue(lock.tryAcquire(NetworkConfig.TEST_TIMEOUT, TimeUnit.MILLISECONDS))
     }
 }

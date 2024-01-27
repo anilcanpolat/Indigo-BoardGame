@@ -33,9 +33,9 @@ class NetworkService(private val rootService: RootService) {
      */
     fun createGame(sessionID: String, config: PlayerConfig, gameMode: entity.GameMode) {
         val handler = HostMessageHandler(rootService, config, gameMode)
-        indigoClient = IndigoClient(handler, config.name)
+        val client = IndigoClient(handler, config.name)
 
-        val client = checkNotNull(indigoClient)
+        indigoClient = client
 
         if (client.connect()) {
             client.createGame("Indigo", sessionID, "Hello World :)")
@@ -57,9 +57,9 @@ class NetworkService(private val rootService: RootService) {
      */
     fun joinGame(sessionID: String, config: PlayerConfig) {
         val handler = GuestMessageHandler(rootService, config)
-        indigoClient = IndigoClient(handler, config.name)
+        val client = IndigoClient(handler, config.name)
 
-        val client = checkNotNull(indigoClient)
+        indigoClient = client
 
         if (client.connect()) {
             client.joinGame(sessionID, "Hello World")
