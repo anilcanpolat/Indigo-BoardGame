@@ -45,18 +45,15 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
             val connectingEdge = (i + 3) % 6
 
             if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
-
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
                 var gem = currentNeighbour.gems[connectingEdge]
 
                 if (emeraldIndex != -1 && currentNeighbour.gems[connectingEdge] != null ) {
-
                     currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
                     }
-
                     gem = Gem.EMERALD
-                }else if (count ==5)  {
+                } else if (count ==5)  {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
@@ -67,15 +64,13 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                     }
                     Gem.SAPHIRE
                 }
-
-                    if (gem != null) {
-                        count +=1
-                        val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
-                        onAllRefreshables { onGemMove(path) }
+                if (gem != null) {
+                    count +=1
+                    val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
+                    onAllRefreshables { onGemMove(path) }
                 }
             } else {
                 val gem = currentNeighbour.gems[connectingEdge]
-
                 if (gem != null) {
                     val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
                     onAllRefreshables { onGemMove(path) }
