@@ -36,7 +36,7 @@ class GuestMessageHandler(private val rootService: RootService,
     }
 
     override fun onInitMessage(client: IndigoClient, initMessage: GameInitMessage, sender: String) {
-        val tiles = initMessage.tileList.map { Tile(translateTileType(it)) }.toMutableList()
+        val tiles = initMessage.tileList.map { Tile(translateTileType(it)) }.reversed().toMutableList()
 
         val players = initMessage.players.map {
             val firstTile = tiles.removeFirst()
@@ -60,6 +60,7 @@ class GuestMessageHandler(private val rootService: RootService,
         setGameState(state)
 
         rootService.onAllRefreshables { onGameStart(players, gates.toList()) }
+        rootService.playerService.processAllAIMoves()
     }
 
     override fun onTilePlaced(client: IndigoClient, tilePlacedMessage: TilePlacedMessage, sender: String) {

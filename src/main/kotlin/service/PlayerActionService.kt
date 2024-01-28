@@ -1,4 +1,5 @@
 package service
+
 import entity.*
 
 /**
@@ -6,7 +7,7 @@ import entity.*
  *
  * @param rootService the [RootService] connects the view with the service layer and the entity layer
  */
-class PlayerActionService( private val rootService: RootService) : AbstractRefreshingService() {
+class PlayerActionService(private val rootService: RootService) : AbstractRefreshingService() {
     /**
      * place a tile on indigos board and move/award/eliminate gems if applicable
      * @param move pair of the tile to place and the chosen rotation
@@ -19,6 +20,8 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         // create a copy so that using undo/redo works
         val gameCopy = game.deepCopy()
         gameCopy.nextState = game
+
+        check(!gameIsFinished()) { "cannot perform any moves in a finished game" }
 
         check(CommonMethods.distanceToCenter(position) <= 4) { "invalid position" }
 
@@ -35,6 +38,7 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         val neighbours = getNeighboursOf(move.first)
         val isAI = game.currentPlayer.playerType == PlayerType.COMPUTER
+        val isRemote = game.currentPlayer.playerType == PlayerType.REMOTE
 
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
@@ -42,16 +46,16 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
             if (currentNeighbour.tileType == TileType.TREASURE_CENTER) {
                 val emeraldIndex = currentNeighbour.gems.indexOf(Gem.EMERALD)
+                var gem = currentNeighbour.gems[connectingEdge]
 
-                val gem = if (emeraldIndex != -1) {
-                    // swap the emerald with the gem at the current position. Positions on the center
-                    // tile are irrelevant, but [moveGemToEnd] requires them to be set correctly.
+                if (emeraldIndex != -1 && currentNeighbour.gems[connectingEdge] != null ) {
+
                     currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
                     }
 
-                    Gem.EMERALD
-                } else {
+                    gem = Gem.EMERALD
+                }else {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
@@ -60,12 +64,13 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
                     currentNeighbour.gems[saphireIndex] = currentNeighbour.gems[connectingEdge].also {
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[saphireIndex]
                     }
-
                     Gem.SAPHIRE
                 }
 
-                val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
-                onAllRefreshables { onGemMove(path) }
+                    if (gem != null) {
+                    val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
+                    onAllRefreshables { onGemMove(path) }
+                }
             } else {
                 val gem = currentNeighbour.gems[connectingEdge]
 
@@ -76,17 +81,24 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
             }
         }
 
+        val refreshList: MutableList<() -> Unit> = mutableListOf()
+
         val nextPlayerIndex = (game.players.indexOf(game.currentPlayer) + 1) % game.players.size
         val nextPlayer = game.players[nextPlayerIndex]
+        val currentPlayer = game.currentPlayer
 
-        onAllRefreshables { onPlayerMove(game.currentPlayer, nextPlayer, move.first, position, move.second) }
+        if (!isRemote && isNetworkGame()) {
+            rootService.networkService.sendTilePlaced(move.second, position)
+        }
+
+        refreshList.add {
+            onAllRefreshables { onPlayerMove(currentPlayer, nextPlayer, move.first, position, move.second) }
+        }
 
         game.currentPlayer.currentTile = null
 
         if (game.drawPile.isNotEmpty()) {
             game.currentPlayer.currentTile = game.drawPile.removeLast()
-        } else {
-            onAllRefreshables { onGameFinished(game.players) }
         }
 
         game.currentPlayer = nextPlayer
@@ -95,10 +107,48 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         game.nextState = null
         gameCopy.nextState = game
 
-        val state = checkNotNull(rootService.currentGame)
+        if (gameIsFinished()) {
+            refreshList.add {
+                onAllRefreshables {
+                    onGameFinished(game.players)
+                }
+            }
+        }
 
-        if (state.currentPlayer.playerType == PlayerType.PERSON) {
+        // run refreshes only after the state has been fully updated
+        for (refresh in refreshList) {
+            refresh()
+        }
+
+        if (!isAI) {
+            processAllAIMoves()
+        }
+
+        if (!isAI && !isRemote) {
             onAllRefreshables { onWaitForInput() }
+        }
+    }
+
+    private fun isNetworkGame(): Boolean =
+        checkNotNull(rootService.currentGame).players.any {
+            it.playerType == PlayerType.REMOTE
+        }
+
+    /**
+     * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
+     */
+    fun processAllAIMoves() {
+        while (true) {
+            val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
+            val player = state.currentPlayer
+
+            if (player.playerType != PlayerType.COMPUTER) {
+                break
+            }
+
+            // currently only random ai works, because I implemented it myself
+            val move = CommonMethods.calculateRandomAIMove(state)
+            playerMove(move.first, move.second)
         }
     }
 
@@ -129,8 +179,8 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
         }
 
         val neighbours = getNeighboursOf(fromTile)
-
-        neighbours[fromEdge]?.let { neighbourTile ->
+        val neighbourTile = neighbours[fromEdge]
+        if (neighbourTile != null) {
             // Check for collision of gems
             if (neighbourTile.gems[(fromEdge + 3) % 6] != null) {
                 val neighbourPosition = checkNotNull(getTilePosition(neighbourTile))
@@ -160,6 +210,46 @@ class PlayerActionService( private val rootService: RootService) : AbstractRefre
 
         return listOf(Pair(currentPosition, fromEdge))
     }
+
+    /**
+     * Test whether the game has finished. A game is considered to be finished if
+     * - No more tiles are on the draw pile
+     * - There are no more gems on the board
+     * - No valid move can be executed by the next player
+     */
+    private fun gameIsFinished(): Boolean {
+        val gameState = checkNotNull(rootService.currentGame).deepCopy()
+
+        val anyGemsOnBoard = gameState.board.grid.grid.values.any {
+            it.gems.any { gem -> gem != null }
+        }
+
+        if (!anyGemsOnBoard) { return true }
+        if (gameState.drawPile.isEmpty()) { return true }
+
+        val player = gameState.currentPlayer
+        val tile = player.currentTile ?: gameState.drawPile.removeLast()
+
+        player.currentTile = tile
+
+        val validMoveExists = allCoordinates().any { pos ->
+            (0..5).any { rot ->
+                CommonMethods.isValidMove(gameState, tile, rot, pos)
+            }
+        }
+
+        return !validMoveExists
+    }
+
+    private fun allCoordinates(): List<Pair<Int, Int>> =
+        (-4..4).flatMap { q ->
+            (-4..4).map { r ->
+                Pair(q, r)
+            }
+        }.filter {
+            CommonMethods.distanceToCenter(it) <= 4
+        }
+
 
     /**
      * Get the gate bordering a given tiles edge, if any exist.

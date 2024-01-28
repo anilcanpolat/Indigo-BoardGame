@@ -1,6 +1,5 @@
 package view.ui
 
-import entity.Player
 import entity.PlayerConfig
 import entity.PlayerType
 import service.NetworkService
@@ -83,6 +82,7 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
         width = 40, height = 30,
         text = "250"
     )
+
     val joinButton = Button(
         posX = 860, 700,
         200, 50,
@@ -105,7 +105,7 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
 
 
     private fun configureGuestPlayer() : PlayerConfig{
-        return PlayerConfig(playerATextBox.text,0,PlayerType.REMOTE)
+        return PlayerConfig(playerATextBox.text,0,PlayerType.PERSON)
     }
 
     init {

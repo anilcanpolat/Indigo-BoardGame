@@ -19,7 +19,7 @@ class CreateGameTest {
      * Make sure that this will start the game.
      */
     @Test
-    fun createGameTest() {
+    fun testOnGameStartCalled() {
         val host = RootService()
         val guest = RootService()
 
