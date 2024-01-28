@@ -226,7 +226,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         saveButtonThree.onMouseClicked = {
             if (!File("savestate3.json").exists()) {
                 rootService.save("savestate3.json")
-                saveButtonTwo.text = "Savestate 3"
+                saveButtonThree.text = "Savestate 3"
             }else{
                 rootService.load("savestate3.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -236,7 +236,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         saveButtonFour.onMouseClicked = {
             if (!File("savestate4.json").exists()) {
                 rootService.save("savestate4.json")
-                saveButtonTwo.text = "Savestate 4"
+                saveButtonFour.text = "Savestate 4"
             }else{
                 rootService.load("savestate4.json")
                 this@IndigoApplication.showGameScene(gameScene)
@@ -246,7 +246,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         saveButtonFive.onMouseClicked = {
             if (!File("savestate5.json").exists()) {
                 rootService.save("savestate5.json")
-                saveButtonTwo.text = "Savestate 5"
+                saveButtonFive.text = "Savestate 5"
             }else{
                 rootService.load("savestate5.json")
                 this@IndigoApplication.showGameScene(gameScene)
