@@ -23,14 +23,14 @@ class HostGameScene : MenuScene(1920, 1080,
 
     private val headLabel = Label(
         width = 350, height = 75,
-        posX = 810, posY = 105,
+        posX = 810, posY = 55,
         text = "Enter your name: ",
         font = Font(size = 35)
     )
 
     private val nameLabel = Label(
-        width = 480, height = 140,
-        posX = 750, posY = 105,
+        width = 480, height = 180,
+        posX = 750, posY = 65,
         visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
             backgroundRadius = BackgroundRadius(10)
         }
@@ -51,9 +51,8 @@ class HostGameScene : MenuScene(1920, 1080,
         }
     )
 
-
     val hostNameTextfield = TextField(
-        posX = 790, posY = 175,
+        posX = 790, posY = 125,
         width = 250, height = 50,
         font = Font(18),
         prompt = "Enter your name: "
@@ -63,7 +62,7 @@ class HostGameScene : MenuScene(1920, 1080,
     private var kiBoolean = false
 
     private val kiButtonA = Button(
-        posX = 1060, posY = 175,
+        posX = 1060, posY = 125,
         width = 60, height = 50,
         text = "Easy", font = Font(16)
     ).apply { onMouseClicked = {
@@ -79,7 +78,7 @@ class HostGameScene : MenuScene(1920, 1080,
     }
 
     private val kiButtonB = Button(
-        posX = 1130, posY = 175,
+        posX = 1130, posY = 125,
         width = 60, height = 50,
         text = "Hard", font = Font(16)
     ).apply { onMouseClicked = {
@@ -130,6 +129,24 @@ class HostGameScene : MenuScene(1920, 1080,
         )
     )
 
+    private val kiSpeedHostA = Label(
+        posX = 790, posY = 185,
+        width = 85, height = 50,
+        text = "Ki-Speed: ", font = Font(18)
+    )
+
+    private val kiSpeedHostB = Label(
+        posX = 930, posY = 185,
+        width = 50, height = 50,
+        text = "ms ", font = Font(18)
+    )
+
+    private val kiSpeedHostText = TextField(
+        posX = 885, posY = 190,
+        width = 50, height = 40,
+        text = "250", font = Font(16)
+    )
+
     private fun calcKiLevel(): Boolean{
         return kiLevelA == 1
     }
@@ -146,7 +163,13 @@ class HostGameScene : MenuScene(1920, 1080,
             p1Type = PlayerType.COMPUTER
         }
 
-        val p1 = PlayerConfig(p1Name, 0, p1Type, calcKiLevel(), 200)
+        val delay = try {
+            Integer.parseInt(kiSpeedHostText.text, 10)
+        } catch (e: NumberFormatException) {
+            println("Invalid speed value. Defaulting to 250ms!")
+            250
+        }
+        val p1 = PlayerConfig(p1Name, 0, p1Type, calcKiLevel(), delay)
 
         when(playerCount){
             1 -> println("Just doing this to fix a detekt error :)")
@@ -160,6 +183,7 @@ class HostGameScene : MenuScene(1920, 1080,
         addComponents(nameLabel, gameModeLabel,
             host2Pl, host3PlShared, host3Pl, host4Pl,
             kiButtonA, kiButtonB, headLabelB,
+            kiSpeedHostText, kiSpeedHostB, kiSpeedHostA,
             hostNameTextfield, headLabel, backFromHostGameScene)
     }
 }
