@@ -320,6 +320,39 @@ class PlayerMoveTest {
         }
     }
 
+    /** make sure that finishing the game works reliably by playing multiple games with random valid moves */
+    @Test
+    fun finishWithRandomMovesTest() {
+        for (i in 0..1000) {
+            val serv = RootService()
+
+            val players = listOf(
+                PlayerConfig("Alice", -1, PlayerType.PERSON),
+                PlayerConfig("Bob", -1, PlayerType.PERSON)
+            )
+
+            serv.startGame(players, GameMode.TWO_PLAYERS)
+
+            var gameFinished = false
+            var iterCount = 0
+
+            serv.playerService.addRefreshable(object : Refreshable {
+                override fun onGameFinished(players: List<Player>) {
+                    gameFinished = true
+                }
+            })
+
+            while (!gameFinished && iterCount < 100) {
+                val move = CommonMethods.calculateRandomAIMove(checkNotNull(serv.currentGame))
+                serv.playerService.playerMove(move.first, move.second)
+
+                iterCount += 1
+            }
+
+            assertTrue(iterCount < 100, "more iterations executed than possible")
+        }
+    }
+
     private fun createStraightTilesGame(): RootService {
         val serv = RootService()
 

@@ -39,7 +39,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         val neighbours = getNeighboursOf(move.first)
         val isAI = game.currentPlayer.playerType == PlayerType.COMPUTER
         val isRemote = game.currentPlayer.playerType == PlayerType.REMOTE
-
+        var count =0
         for (i in 0..5) {
             val currentNeighbour = neighbours[i] ?: continue
             val connectingEdge = (i + 3) % 6
@@ -49,13 +49,11 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                 var gem = currentNeighbour.gems[connectingEdge]
 
                 if (emeraldIndex != -1 && currentNeighbour.gems[connectingEdge] != null ) {
-
                     currentNeighbour.gems[emeraldIndex] = currentNeighbour.gems[connectingEdge].also {
                         currentNeighbour.gems[connectingEdge] = currentNeighbour.gems[emeraldIndex]
                     }
-
                     gem = Gem.EMERALD
-                }else {
+                } else if (count ==5)  {
                     val saphireIndex = currentNeighbour.gems.indexOf(Gem.SAPHIRE)
                     check(saphireIndex >= 0) { "more than 6 gems removed from center tile" }
 
@@ -66,14 +64,13 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                     }
                     Gem.SAPHIRE
                 }
-
-                    if (gem != null) {
+                if (gem != null) {
+                    count +=1
                     val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
                     onAllRefreshables { onGemMove(path) }
                 }
             } else {
                 val gem = currentNeighbour.gems[connectingEdge]
-
                 if (gem != null) {
                     val path = moveGemToEnd(currentNeighbour, connectingEdge, gem)
                     onAllRefreshables { onGemMove(path) }
