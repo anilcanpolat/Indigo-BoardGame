@@ -448,8 +448,8 @@ class GameScene(
     }
 
     override fun onGemRemoved(fromTile: Pair<Int, Int>, edge: Int) {
-        for (i in playerList.indices) {
-            scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
+        for (i in rootService.currentGame!!.players.indices) {
+            scoresList[i].text = calcScore(rootService.currentGame!!.players[i].collectedGems).toString()
         }
         changeVisual(rootService.currentGame!!.board.grid.grid[fromTile], fromTile)
     }
