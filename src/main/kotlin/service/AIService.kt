@@ -64,23 +64,6 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
      * -----------------------------------------------------------------------------------------------------------------
      */
 
-    /**
-     * Calculates the best move for the current player with a timeout constraint.
-     *
-     * This function asynchronously computes the most strategic move for the current player based on the current state of the game and the current tile.
-     * It utilizes the `properMoveForAI` function to perform the calculation. However, if `properMoveForAI` does not complete within 10 seconds,
-     * the computation is aborted, and a random move is selected as a fallback.
-     * @return A Pair, where the first element is a Pair of the Tile and an Int representing the rotation of the tile,
-     * and the second element is a Pair of coordinates representing the position on the board for the chosen tile.
-     * If the strategic move calculation does not complete within the timeout period, a random move is returned.
-     * @throws IllegalStateException if the game is not initialized.
-     */
-    suspend fun calculateBestMoveWithTimeout(): Pair<Pair<Tile, Int>, Pair<Int, Int>> {
-
-        return withTimeoutOrNull(10_000) { // 10 seconds timeout
-            properMoveForAI()
-        } ?: randomMove() // Fallback to a random move
-    }
 
     /**
      * Calculates the most strategic move for the current player based on the current game state and the current tile.
@@ -102,9 +85,17 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         val aiPlayer = game.currentPlayer
         val aiPlayerToken = aiPlayer.playerToken
 
+        val startTime = System.currentTimeMillis()
+        val timeLimit = 9_000 // 10 seconds in milliseconds
+
         val possibleMoves = findAllPossibleMoves(game, currentTile)
 
         for (move in possibleMoves) {
+
+            if (System.currentTimeMillis() - startTime > timeLimit) {
+                println("Time limit exceeded, choosing best move so far.")
+                return Pair(Pair(currentTile, bestMove!!.second), bestMove.first)
+            }
             // Apply the move on a temporary game state
             val tempGameState = applyMove(game.deepCopy(), move)
             // Calculate the heuristic score considering the AI player's token
@@ -153,7 +144,8 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
             val (nearestGate, nearestGateDistance) = findNearestGateAndDistance(game.board, position)
 
             // give points if it is self gate
-            if (nearestGateDistance != null && (nearestGate?.first == aiPlayerToken || nearestGate?.second == aiPlayerToken)) {
+            if (nearestGateDistance != null &&
+                (nearestGate?.first == aiPlayerToken || nearestGate?.second == aiPlayerToken)) {
                 var gateScore = MAX_SCORE - nearestGateDistance
                 gateScore += gem.score() * 2 // add gem's value
                 score += gateScore
