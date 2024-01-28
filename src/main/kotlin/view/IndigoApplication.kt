@@ -7,6 +7,7 @@ import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
 import view.ui.*
+import java.io.File
 
 
 /**
@@ -28,13 +29,20 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
     private var gameMode = 0
 
+
     private val gameScene : GameScene = GameScene(rootService, this).apply {
         quitButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
         }
+
+        saveButton.onMouseClicked = {
+            this@IndigoApplication.showMenuScene(saveAndLoadScene)
+        }
     }
 
-    private val welcomeScene : MenuScene = WelcomeScene(rootService).apply {
+    private val welcomeScene : MenuScene = WelcomeScene().apply {
+        opacity = 0.9
+
         loadGameButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(saveAndLoadScene)
                     }
@@ -60,6 +68,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
 
 
     private val chosePlayerCountScene : ChosePlayerCountScene = ChosePlayerCountScene().apply {
+        opacity = 0.9
 
         backButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -137,14 +146,16 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
             rootService.networkService.createGame(id,
                 remoteConfigList(4)[0], GameMode.FOUR_PLAYERS)
             lobbyScene.lobbyId.text = id
-            lobbyScene.disableLabels(3)
+            lobbyScene.disableLabels(4)
             lobbyScene.hostNameLabel.text = hostNameTextfield.text
             this@IndigoApplication.showMenuScene(lobbyScene)
         }
     }
 
     //Select the name and Ki level for a game in the Hotseat mode
-    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene(rootService).apply {
+    private val selectNameAndKiScene : SelectNameAndKiScene = SelectNameAndKiScene().apply {
+        opacity = 0.9
+
         returnFromNameButton.onMouseClicked = {
             resetSceneOnReturn()
             kiA = false
@@ -180,13 +191,108 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
     }
 
+    private fun deleteState(file: File){
+        file.delete()
+    }
+
+    //safe and load functionality
     private val saveAndLoadScene : SaveAndLoadScene = SaveAndLoadScene().apply {
+        opacity = 1.0
+
         returnFromSaveButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
+        }
+
+        saveButtonOne.onMouseClicked = {
+            if (!File("savestate1.json").exists()) {
+                rootService.save("savestate1.json")
+                saveButtonOne.text = "Savestate 1"
+            }else{
+                rootService.load("savestate1.json")
+                this@IndigoApplication.showGameScene(gameScene)
+                this@IndigoApplication.hideMenuScene()
+            }
+        }
+        saveButtonTwo.onMouseClicked = {
+            if (!File("savestate2.json").exists()) {
+                rootService.save("savestate2.json")
+                saveButtonTwo.text = "Savestate 2"
+            }else{
+                rootService.load("savestate2.json")
+                this@IndigoApplication.showGameScene(gameScene)
+                this@IndigoApplication.hideMenuScene()
+            }
+        }
+        saveButtonThree.onMouseClicked = {
+            if (!File("savestate3.json").exists()) {
+                rootService.save("savestate3.json")
+                saveButtonTwo.text = "Savestate 3"
+            }else{
+                rootService.load("savestate3.json")
+                this@IndigoApplication.showGameScene(gameScene)
+                this@IndigoApplication.hideMenuScene()
+            }
+        }
+        saveButtonFour.onMouseClicked = {
+            if (!File("savestate4.json").exists()) {
+                rootService.save("savestate4.json")
+                saveButtonTwo.text = "Savestate 4"
+            }else{
+                rootService.load("savestate4.json")
+                this@IndigoApplication.showGameScene(gameScene)
+                this@IndigoApplication.hideMenuScene()
+            }
+        }
+        saveButtonFive.onMouseClicked = {
+            if (!File("savestate5.json").exists()) {
+                rootService.save("savestate5.json")
+                saveButtonTwo.text = "Savestate 5"
+            }else{
+                rootService.load("savestate5.json")
+                this@IndigoApplication.showGameScene(gameScene)
+                this@IndigoApplication.hideMenuScene()
+            }
+        }
+
+        deleteButtonOne.onMouseClicked = {
+            if (File("savestate1.json").exists()){
+                deleteState(File("savestate1.json"))
+                saveButtonOne.text = "Empty: "
+            }
+        }
+
+        deleteButtonTwo.onMouseClicked = {
+            if (File("savestate2.json").exists()){
+                deleteState(File("savestate2.json"))
+                saveButtonTwo.text = "Empty: "
+            }
+        }
+
+        deleteButtonThree.onMouseClicked = {
+            if (File("savestate3.json").exists()){
+                deleteState(File("savestate3.json"))
+                saveButtonThree.text = "Empty: "
+            }
+        }
+
+        deleteButtonFour.onMouseClicked = {
+            if (File("savestate4.json").exists()){
+                deleteState(File("savestate4.json"))
+                saveButtonFour.text = "Empty: "
+            }
+        }
+
+        deleteButtonFive.onMouseClicked = {
+            if (File("savestate5.json").exists()){
+                deleteState(File("savestate5.json"))
+                saveButtonFive.text = "Empty: "
+            }
         }
     }
 
     private val lobbyScene : LobbyScene = LobbyScene().apply {
+        opacity = 0.9
+
         backFromLobbyScene.onMouseClicked = {
             hotSeat = true
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -194,6 +300,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
     private val endGameScene : EndgameScene = EndgameScene().apply {
+        opacity = 1.0
         quitButton.onMouseClicked = {
             exit()
         }
@@ -205,7 +312,8 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
     }
 
     private val guestButtonScene : GuestButtonScene =
-        GuestButtonScene(rootService.networkService).apply {
+        GuestButtonScene(rootService.networkService, this).apply {
+            opacity = 0.9
 
         returnGuestButton.onMouseClicked = {
             this@IndigoApplication.showMenuScene(welcomeScene)
@@ -217,8 +325,6 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         }
     }
 
-    var list: List<Player> = listOf()
-
     private fun calcScore(gems : MutableList<Gem>) : Int{
         var score = 0
         for (i in gems){
@@ -227,23 +333,37 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
         return score
     }
 
+    /**
+     * a help function used for refreshes to hide the scene currently shown
+     * and show the gameScene. Used for example in onGameStart.
+     */
     fun hideMenuAndShowGame(){
         this@IndigoApplication.showGameScene(gameScene)
         this@IndigoApplication.hideMenuScene()
     }
 
+    /**
+     * help function to show the lobby scene when pressing join in the guestButtonScene.
+     */
+    fun showLobbyScene(){
+        this@IndigoApplication.showMenuScene(lobbyScene)
+    }
+
+    var list: List<Player> = listOf()
     override fun onGameFinished(players: List<Player>) {
-        list = players
-        list.sortedByDescending { calcScore(it.collectedGems)  }
+        list = players.sortedByDescending { calcScore(it.collectedGems) }
         when(list.size){
             2 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
                 endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
+                endGameScene.winnerThree.isVisible = false
+                endGameScene.winnerFour.isVisible = false
             }
             3 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
                 endGameScene.winnerTwo.text = list[1].name + ": " + calcScore(list[1].collectedGems).toString()
                 endGameScene.winnerThree.text = list[2].name + ": " + calcScore(list[2].collectedGems).toString()
+                endGameScene.winnerFour.isVisible = false
             }
             4 -> {
                 endGameScene.winnerOne.text = list[0].name + ": " + calcScore(list[0].collectedGems).toString()
@@ -252,7 +372,7 @@ class IndigoApplication : BoardGameApplication("Indigo-Game"), Refreshable {
                 endGameScene.winnerFour.text = list[3].name + ": " +  calcScore(list[3].collectedGems).toString()
             }
         }
-        this.showMenuScene(welcomeScene)
+        this@IndigoApplication.showMenuScene(endGameScene)
     }
 
 

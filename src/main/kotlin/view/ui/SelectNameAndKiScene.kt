@@ -2,12 +2,12 @@ package view.ui
 
 import entity.PlayerConfig
 import entity.PlayerType
-import service.RootService
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -18,7 +18,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * required for the game to start. only shows properties that are required for
  * the amount of players selected. also gives us control over KI.
  */
-class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
+class SelectNameAndKiScene : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {
 
     val returnFromNameButton = Button(
@@ -30,10 +30,22 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         )
     )
 
+    private val headerLabel = Label(
+        posX = 710, posY = 45,
+        width = 500, height = 95,
+        text = "Choose your settings", font = Font(35),
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(10)
+        }
+    )
+
+
     //textfield for player names
     private val playerATextBox = TextField(
         posX = 760, posY = 200,
-        width = 250, height = 50
+        width = 250, height = 50,
+        font = Font(16),
+        prompt = "Put in Name! "
     ).apply {
         onKeyTyped = {
             startGameButton.isDisabled = !checkIfBlank()
@@ -43,7 +55,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerBTextBox = TextField(
         posX = 760, posY = 350,
         width = 250, height = 50,
-        prompt = "Put in Name! "
+        prompt = "Put in Name! ",
+        font = Font(16)
     ).apply {
         onKeyTyped = {
             startGameButton.isDisabled = !checkIfBlank()
@@ -53,7 +66,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerCTextBox = TextField(
         posX = 760, posY = 500,
         width = 250, height = 50,
-        prompt = "Put in Name! "
+        prompt = "Put in Name! ",
+        font = Font(16)
     ).apply {
         onKeyTyped = {
             startGameButton.isDisabled = !checkIfBlank()
@@ -63,7 +77,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerDTextBox = TextField(
         posX = 760, posY = 650,
         width = 250, height = 50,
-        prompt = "Put in Name! "
+        prompt = "Put in Name! ",
+        font = Font(16)
     ).apply {
         onKeyTyped = {
             startGameButton.isDisabled = !checkIfBlank()
@@ -72,9 +87,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
 
     // KI Buttons
     private val kiButtonA = Button(
-        posX = 1035, posY = 200,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1030, posY = 200,
+        width = 70, height = 50,
+        text = "Add Ki",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
          onMouseClicked = {
              kiA = setKILevel(kiLevelA)
@@ -85,9 +101,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     }
 
     private val kiButtonB = Button(
-        posX = 1035, posY = 350,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1030, posY = 350,
+        width = 70, height = 50,
+        text = "Add Ki",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiB = setKILevel(kiLevelB)
@@ -98,9 +115,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     }
 
     private val kiButtonC = Button(
-        posX = 1035, posY = 500,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1030, posY = 500,
+        width = 70, height = 50,
+        text = "Add Ki",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiC = setKILevel(kiLevelC)
@@ -111,9 +129,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     }
 
     private val kiButtonD = Button(
-        posX = 1035, posY = 650,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1030, posY = 650,
+        width = 70, height = 50,
+        text = "Add Ki",
+        font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
             kiD = setKILevel(kiLevelD)
@@ -124,10 +143,10 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     }
 
     //var for level of Ki
-    private var kiLevelA = 0
-    private var kiLevelB = 0
-    private var kiLevelC = 0
-    private var kiLevelD = 0
+    private var kiLevelA = 1
+    private var kiLevelB = 1
+    private var kiLevelC = 1
+    private var kiLevelD = 1
 
     var kiA : Boolean = false
     var kiB : Boolean = false
@@ -138,7 +157,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerSequenzAButton = Button(
         posX = 1110, posY = 200,
         width = 50, height = 50,
-        text = "1: "
+        text = "1: ",
+        font = Font(20)
     ).apply { visual = ColorVisual(90, 74, 240)
     onMouseClicked = {
             playerAPos = cycleThroughPlayerSequence(playerAPos)
@@ -149,7 +169,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerSequenzBButton = Button(
         posX = 1110, posY = 350,
         width = 50, height = 50,
-        text = "2: "
+        text = "2: ",
+        font = Font(20)
     ).apply { visual = ColorVisual(90, 74, 240)
         onMouseClicked = {
             playerBPos = cycleThroughPlayerSequence(playerBPos)
@@ -160,7 +181,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerSequenzCButton = Button(
         posX = 1110, posY = 500,
         width = 50, height = 50,
-        text = "3: "
+        text = "3: ",
+        font = Font(20)
     ).apply { visual = ColorVisual(90, 74, 240)
         onMouseClicked = {
             playerCPos = cycleThroughPlayerSequence(playerCPos)
@@ -171,7 +193,8 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private val playerSequenzDButton = Button(
         posX = 1110, posY = 650,
         width = 50, height = 50,
-        text = "4: "
+        text = "4: ",
+        font = Font(20)
     ).apply { visual = ColorVisual(90, 74, 240)
         onMouseClicked = {
             playerDPos = cycleThroughPlayerSequence(playerDPos)
@@ -180,6 +203,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     }
 
     //var for sequence
+    private var overAllPosArray : BooleanArray = BooleanArray(5)
     private var overAllPos = 0
     private var playerAPos = 0
     private var playerBPos = 0
@@ -295,9 +319,16 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
     private fun cycleThroughPlayerSequence(pos : Int) : Int{
         var posToReturn = 0
         if(pos == 0){
-            overAllPos++
-            posToReturn = overAllPos
+            for(i in 1 .. 4){
+                if(!overAllPosArray[i]){
+                    overAllPosArray[i] = true
+                    posToReturn = i
+                    overAllPos++
+                    break
+                }
+            }
         } else{
+            overAllPosArray[pos] = false
             overAllPos--
             posToReturn = 0
         }
@@ -361,8 +392,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
         startGameButton.isDisabled = true
     }
 
-    private fun sequenceTheListForReturn(playerCount: Int,
-                                         p1 : PlayerConfig,
+    private fun sequenceTheListForReturn(playerCount: Int, p1 : PlayerConfig,
                                          p2 : PlayerConfig,
                                          p3 : PlayerConfig,
                                          p4 : PlayerConfig) : MutableList<PlayerConfig>{
@@ -501,7 +531,7 @@ class SelectNameAndKiScene(rootService: RootService) : MenuScene(1920, 1080,
 
     init {
         addComponents(
-            returnFromNameButton,
+            returnFromNameButton, headerLabel,
             playerATextBox, playerBTextBox,
             playerCTextBox, playerDTextBox,
             kiButtonA, kiButtonB, kiButtonC, kiButtonD,

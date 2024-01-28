@@ -6,6 +6,7 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
@@ -14,7 +15,8 @@ import java.awt.Color
 
 
 /**
- * creates a selection menu for the different numbers of players
+ * creates a selection menu for the different numbers of players,
+ * for a network game.
  */
 class HostGameScene : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")) {
@@ -22,22 +24,48 @@ class HostGameScene : MenuScene(1920, 1080,
     private val headLabel = Label(
         width = 350, height = 75,
         posX = 810, posY = 105,
-        text = "Put in your name and chose a gamemode",
-        font = Font(size = 18)
+        text = "Enter your name: ",
+        font = Font(size = 35)
     )
 
+    private val nameLabel = Label(
+        width = 480, height = 140,
+        posX = 750, posY = 105,
+        visual = ColorVisual(ColorEnum.Wheat.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(10)
+        }
+    )
+
+    private val headLabelB = Label(
+        width = 450, height = 75,
+        posX = 760, posY = 300,
+        text = "And choose a Game mode: ",
+        font = Font(size = 35)
+    )
+
+    private val gameModeLabel = Label(
+        width = 450, height = 500,
+        posX = 760, posY = 300,
+        visual = ColorVisual(ColorEnum.Papaya.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(10)
+        }
+    )
+
+
     val hostNameTextfield = TextField(
-        posX = 835, posY = 175,
-        width = 250, height = 50
+        posX = 790, posY = 175,
+        width = 250, height = 50,
+        font = Font(18),
+        prompt = "Enter your name: "
     )
 
     private var kiLevelA = 0
     private var kiBoolean = false
 
     private val kiButtonA = Button(
-        posX = 1100, posY = 175,
+        posX = 1060, posY = 175,
         width = 60, height = 50,
-        text = "Add Ki"
+        text = "Easy", font = Font(16)
     ).apply { onMouseClicked = {
         if(kiLevelA == 0){
             kiLevelA = 1
@@ -51,9 +79,9 @@ class HostGameScene : MenuScene(1920, 1080,
     }
 
     private val kiButtonB = Button(
-        posX = 1170, posY = 175,
+        posX = 1130, posY = 175,
         width = 60, height = 50,
-        text = "Add Ki"
+        text = "Hard", font = Font(16)
     ).apply { onMouseClicked = {
         if(kiLevelA == 0){
             kiLevelA = 1
@@ -68,27 +96,31 @@ class HostGameScene : MenuScene(1920, 1080,
 
     val host2Pl = Button(
         width = 200, height = 50,
-        posX = 860, posY = 400,
-        text = "2 Player"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue()) }
+        posX = 890, posY = 400,
+        text = "2 Player",
+        font = Font(16)
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue()) }
 
     val host3PlShared = Button(
         width = 200, height = 50,
-        posX = 860, posY = 500,
-        text = "3 Player (Shared Gates)"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
+        posX = 890, posY = 500,
+        text = "3 Player (Shared Gates)",
+        font = Font(16)
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())}
 
     val host3Pl = Button(
         width = 200, height = 50,
-        posX = 860, posY = 600,
-        text = "3 Player (Own Gates)"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
+        posX = 890, posY = 600,
+        text = "3 Player (Own Gates)",
+        font = Font(16)
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())}
 
     val host4Pl = Button(
         width = 200, height = 50,
-        posX = 860, posY = 700,
-        text = "4 Player"
-    ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())}
+        posX = 890, posY = 700,
+        text = "4 Player",
+        font = Font(16)
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())}
 
     val backFromHostGameScene = Button(width = 40, height = 40,
         posX = 1, posY = 1, visual = CompoundVisual(
@@ -116,14 +148,18 @@ class HostGameScene : MenuScene(1920, 1080,
 
         val p1 = PlayerConfig(p1Name, 0, p1Type, calcKiLevel(), 200)
 
+        when(playerCount){
+            1 -> println("Just doing this to fix a detekt error :)")
+        }
         typeList.add(p1)
         return typeList
     }
 
     init {
-        opacity = 0.5
-        addComponents(host2Pl, host3PlShared, host3Pl, host4Pl,
-            kiButtonA, kiButtonB,
+        opacity = 0.9
+        addComponents(nameLabel, gameModeLabel,
+            host2Pl, host3PlShared, host3Pl, host4Pl,
+            kiButtonA, kiButtonB, headLabelB,
             hostNameTextfield, headLabel, backFromHostGameScene)
     }
 }

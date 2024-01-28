@@ -7,12 +7,20 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
+import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
+import view.IndigoApplication
 import java.awt.Color
 
-class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
+/**
+ * this class is used to join a network game, it allows to input a game-id and
+ * players name, then via join the players makes the call to join the game through the server
+ */
+class GuestButtonScene(networkService: NetworkService,
+                       private val indigoApp: IndigoApplication) : MenuScene(1920, 1080,
     background = ImageVisual("cecihoney-background-desert-full.jpg")){
 
     val returnGuestButton = Button(
@@ -24,19 +32,30 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
         )
     )
 
+    private val header = Label(
+        posX = 780, posY = 150,
+        width = 400, height = 150,
+        text = "Join a networkgame: ",
+        font = Font(40),
+        visual = ColorVisual(ColorEnum.Olivine.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(15)
+        }
+    )
+
     private val playerATextBox = TextField(
-        posX = 760, posY = 500,
+        posX = 780, posY = 380,
         width = 250, height = 50,
-        text = "Enter Name: "
+        prompt = "Enter Name: ",
+        text = "", font = Font(16)
     )
 
     private var kiLevelA = 0
     private var kiBoolean = false
 
     private val kiButtonA = Button(
-        posX = 1030, posY = 500,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1040, posY = 380,
+        width = 70, height = 50,
+        text = "Easy", font = Font(16)
     ).apply { onMouseClicked = {
             if(kiLevelA == 0){
                 kiLevelA = 1
@@ -50,9 +69,9 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
     }
 
     private val kiButtonB = Button(
-        posX = 1100, posY = 500,
-        width = 60, height = 50,
-        text = "Add Ki"
+        posX = 1120, posY = 380,
+        width = 70, height = 50,
+        text = "Hard", font = Font(16)
     ).apply { onMouseClicked = {
         if(kiLevelA == 0){
             kiLevelA = 1
@@ -66,55 +85,74 @@ class GuestButtonScene(networkService: NetworkService) : MenuScene(1920, 1080,
     }
 
     private val kiSpeedGuestA = Label(
-        posX = 770, posY = 650,
+        posX = 790, posY = 440,
         width = 75, height = 50,
-        text = "Ki-Speed: "
+        text = "Ki-Speed: ", font = Font(16)
     )
 
     private val kiSpeedGuestB = Label(
-        posX = 895, posY = 650,
+        posX = 915, posY = 440,
         width = 50, height = 50,
-        text = "ms "
+        text = "ms ", font = Font(16)
     )
 
     private val kiSpeedGuestText = TextField(
-        posX = 855, posY = 650,
+        posX = 875, posY = 450,
         width = 40, height = 30,
-        text = "250"
+        text = "250", font = Font(14)
     )
 
     val joinButton = Button(
-        posX = 860, 700,
-        200, 50,
-        text = "Join "
+        posX = 865, 600,
+        250, 50,
+        text = "Join ", font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
     onMouseClicked ={
         val player  = configureGuestPlayer()
         networkService.joinGame(guestIdField.text, player)
+        indigoApp.showLobbyScene()
+        }
+    }
 
-    }}
+    private val guestIdLabel = Label(
+        posX = 970, posY = 450,
+        width = 40, height = 40,
+        text = "Id: ", font = Font(16)
+    ).apply {
+        visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
+    }
 
     private val guestIdField = TextField(
-        posX = 885, 600,
-        150, 30,
-        prompt = "Enter id: "
-    ).apply { visual = ColorVisual(ColorEnum.Wheat.toRgbValue())
-        onKeyTyped = {
-        }
+        posX = 1020, 450,
+        80, 40,
+        prompt = "Enter id: ", font = Font(16)
+    ).apply { visual = ColorVisual(ColorEnum.Olivine.toRgbValue())
     }
 
 
     private fun configureGuestPlayer() : PlayerConfig{
-        return PlayerConfig(playerATextBox.text,0,PlayerType.PERSON)
+        var isRandomKi = false
+        var isPerson = PlayerType.PERSON
+        if(kiLevelA == 2){
+            isRandomKi = true
+        }
+
+        if(kiBoolean){
+            isPerson = PlayerType.COMPUTER
+        }
+
+        return PlayerConfig(playerATextBox.text,0,isPerson,
+            isRandomKi, 250)
     }
 
     init {
         addComponents(
-            returnGuestButton,
+            returnGuestButton, header,
             playerATextBox,
             kiButtonA, kiButtonB,
             kiSpeedGuestA, kiSpeedGuestB,
-            kiSpeedGuestText,joinButton, guestIdField
+            kiSpeedGuestText,joinButton,
+            guestIdField, guestIdLabel
         )
     }
 }

@@ -4,9 +4,12 @@ import service.Refreshable
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
+import tools.aqua.bgw.style.BackgroundRadius
+import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.CompoundVisual
 import tools.aqua.bgw.visual.ImageVisual
+import java.io.File
 
 /**
  * @property returnFromSaveButton creates button to return to previous menu
@@ -30,135 +33,170 @@ class SaveAndLoadScene : MenuScene(1920, 1080,
         )
     )
 
+    private val headerLabel = Label(
+        posX = 735, posY = 87.5,
+        width = 500, height = 75,
+        text = "Save & Load a game state: ",
+        font = Font(35),
+        visual = ColorVisual(ColorEnum.Olivine.toRgbValue()).apply {
+            backgroundRadius = BackgroundRadius(10)
+        }
+    )
 
     private val labelOne = Label(
-        posX = 715, posY = 100,
+        posX = 715, posY = 259.25,
         width = 25, height = 25,
-        text = "1: "
+        text = "1: ", font = Font(20)
     )
 
     private val labelTwo = Label(
-        posX = 715, posY = 250,
+        posX = 715, posY = 409.25,
         width = 25, height = 25,
-        text = "2: "
+        text = "2: ", font = Font(20)
     )
 
     private val labelThree = Label(
-        posX = 715, posY = 400,
+        posX = 715, posY = 559.25,
         width = 25, height = 25,
-        text = "3: "
+        text = "3: ", font = Font(20)
     )
 
     private val labelFour = Label(
-        posX = 715, posY = 550,
+        posX = 715, posY = 709.25,
         width = 25, height = 25,
-        text = "4: "
+        text = "4: ", font = Font(20)
     )
 
     private val labelFive = Label(
-        posX = 715, posY = 700,
+        posX = 715, posY = 859.25,
         width = 25, height = 25,
-        text = "5: "
+        text = "5: ", font = Font(20)
     )
 
-    private val saveButtonOne = Button(
-        posX = 745, posY = 87.5,
+    val saveButtonOne = Button(
+        posX = 745, posY = 246.75,
         width = 450, height = 50,
-        text = "Game from: "
-    )
+        text = "Empty: ",
+        font = Font(16)
+    ).apply {
+        if (File("savestate1.json").exists()){
+            text = "Savestate 1"
+        }
+    }
 
-    private val saveButtonTwo = Button(
-        posX = 745, posY = 240,
+    val saveButtonTwo = Button(
+        posX = 745, posY = 396.75,
         width = 450, height = 50,
-        text = "Game from: "
-    )
+        text = "Empty: ",
+        font = Font(16)
+    ).apply {
+        if (File("savestate2.json").exists()){
+            text = "Savestate 2"
+        }
+    }
 
-    private val saveButtonThree = Button(
-        posX = 745, posY = 388.5,
+    val saveButtonThree = Button(
+        posX = 745, posY = 546.75,
         width = 450, height = 50,
-        text = "Empty: "
-    )
+        text = "Empty: ",
+        font = Font(16)
+    ).apply {
+        if (File("savestate3.json").exists()){
+            text = "Savestate 3"
+        }
+    }
 
-    private val saveButtonFour = Button(
-        posX = 745, posY = 538.5,
+    val saveButtonFour = Button(
+        posX = 745, posY = 696.75,
         width = 450, height = 50,
-        text = "Empty: "
-    )
+        text = "Empty: ",
+        font = Font(16)
+    ).apply {
+        if (File("savestate4.json").exists()){
+            text = "Savestate 4"
+        }
+    }
 
-    private val saveButtonFive = Button(
-        posX = 745, posY = 688.5,
+    val saveButtonFive = Button(
+        posX = 745, posY = 846.75,
         width = 450, height = 50,
-        text = "Empty: "
-    )
+        text = "Empty: ",
+        font = Font(16)
+    ).apply {
+        if (File("savestate5.json").exists()){
+            text = "Savestate 5"
+        }
+    }
 
-    private val deleteButtonOne = Button(
-        posX = 1163, posY = 90,
+    val deleteButtonOne = Button(
+        posX = 1163, posY = 250,
         width = 30, height = 45,
-        text = "D"
+        text = "D", font = Font(16)
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonTwo = Button(
-        posX = 1163, posY = 242.5,
+    val deleteButtonTwo = Button(
+        posX = 1163, posY = 400,
         width = 30, height = 45,
-        text = "D"
+        text = "D", font = Font(16)
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonThree = Button(
-        posX = 1163, posY = 390,
+    val deleteButtonThree = Button(
+        posX = 1163, posY = 550,
         width = 30, height = 45,
-        text = "D"
+        text = "D", font = Font(16)
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonFour = Button(
-        posX = 1163, posY = 540,
+    val deleteButtonFour = Button(
+        posX = 1163, posY = 697.5,
         width = 30, height = 47.5,
-        text = "D"
+        text = "D", font = Font(16)
     ).apply { visual = ColorVisual(193, 74, 240)}
 
-    private val deleteButtonFive = Button(
-        posX = 1163, posY = 690,
+    val deleteButtonFive = Button(
+        posX = 1163, posY = 850,
         width = 30, height = 45,
-        text = "D"
+        text = "D", font = Font(16)
     ).apply { visual = ColorVisual(193, 74, 240)}
 
     private val labelDateOne = Label(
-        posX = 1205, posY = 87.5,
+        posX = 1205, posY = 246.75,
         width = 60, height = 50,
-        text = "Date: ",
+        text = "Date: ", font = Font(16),
         visual = ColorVisual(135, 135, 135)
     )
 
     private val labelDateTwo = Label(
-        posX = 1205, posY = 240,
+        posX = 1205, posY = 396.75,
         width = 60, height = 50,
-        text = "Date: ",
+        text = "Date: ", font = Font(16),
         visual = ColorVisual(135, 135, 135)
     )
 
     private val labelDateThree = Label(
-        posX = 1205, posY = 388.5,
+        posX = 1205, posY = 546.75,
         width = 60, height = 50,
-        text = "Date: ",
+        text = "Date: ", font = Font(16),
         visual = ColorVisual(135, 135, 135)
     )
 
     private val labelDateFour = Label(
-        posX = 1205, posY = 538.5,
+        posX = 1205, posY = 696,
         width = 60, height = 50,
-        text = "Date: ",
+        text = "Date: ", font = Font(16),
         visual = ColorVisual(135, 135, 135)
     )
 
     private val labelDateFive = Label(
-        posX = 1205, posY = 688.5,
+        posX = 1205, posY = 849,
         width = 60, height = 50,
-        text = "Date: ",
+        text = "Date: ", font = Font(16),
         visual = ColorVisual(135, 135, 135)
     )
 
     init {
         addComponents(
             returnFromSaveButton,
+            headerLabel,
             labelOne, labelTwo,
             labelThree, labelFour,
             saveButtonOne, saveButtonTwo,
