@@ -1,5 +1,6 @@
 package service
 
+import java.lang.Thread
 import entity.*
 
 /**
@@ -136,7 +137,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
      * Execute moves calculated by AI until the current player is no longer of type [PlayerType.COMPUTER]
      */
     fun processAllAIMoves() {
-        while (true) {
+        while (!gameIsFinished()) {
             val state = checkNotNull(rootService.currentGame) { "game state not initialized" }
             val player = state.currentPlayer
 
@@ -144,9 +145,15 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                 break
             }
 
-            // currently only random ai works, because I implemented it myself
-            val move = CommonMethods.calculateRandomAIMove(state)
+            val move: Pair<Pair<Tile, Int>, Pair<Int, Int>> = if (player.useRandomAI) {
+                AIService(rootService).randomMove()
+            } else {
+                AIService(rootService).properMoveForAI()
+            }
+
+            Thread.sleep(player.aiDelay.toLong())
             playerMove(move.first, move.second)
+
         }
     }
 

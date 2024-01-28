@@ -45,7 +45,7 @@ class RootService : AbstractRefreshingService() {
             val token = tokens.removeFirst()
             val tile = tiles.removeFirst()
 
-            Player(it.name, it.age, it.type, token, tile)
+            Player(it.name, it.age, it.type, token, tile, useRandomAI = it.useRandomAI, aiDelay = it.aiDelay)
         }
 
         val treasureTiles = hashMapOf(
