@@ -195,6 +195,10 @@ class RootService : AbstractRefreshingService() {
             }
 
             currentIndex += 1
+
+            s.currentPlayer = checkNotNull(s.players.find { player ->
+                it.currentPlayer == player
+            })
         }
 
         if (currentGame != null) {
