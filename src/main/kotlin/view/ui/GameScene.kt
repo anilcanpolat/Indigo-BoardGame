@@ -279,7 +279,8 @@ class GameScene(
                 val hexagon = HexagonView(visual = ColorVisual(250, 240, 202), size = 65).apply {
                     onMouseClicked = {
                         rootService.playerService.playerMove(
-                            Pair(rootService.currentGame!!.currentPlayer.currentTile!!, rotationRate.mod(6)), Pair(col, row)
+                            Pair(rootService.currentGame!!.currentPlayer.currentTile!!, rotationRate.mod(6)),
+                            Pair(col, row)
                         )
                     }
 
@@ -306,36 +307,7 @@ class GameScene(
 
     override fun onGameStart(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>) {
         playerList = players
-        gridPane[0, 0]!!.isDisabled = false
-        gridPane[0, 0]!!.isVisible = true
-        gridPane[0, 1]!!.isDisabled = false
-        gridPane[0, 1]!!.isVisible = true
-        gridPane[0, 2]!!.isDisabled = false
-        gridPane[0, 2]!!.isVisible = true
-        gridPane[0, 3]!!.isDisabled = false
-        gridPane[0, 3]!!.isVisible = true
-        when (players.size) {
-            2 -> for (i in 2..3) {
-                gridPane[0, i]!!.isDisabled = true
-                gridPane[0, i]!!.isVisible = false
-            }
-
-            3 -> {
-                gridPane[0, 3]!!.isDisabled = true
-                gridPane[0, 3]!!.isVisible = false
-            }
-        }
-        for (i in players.indices) {
-            playerNameList[i].text = players[i].name
-            playerTokenList[i].visual = ImageVisual(path = "PlayerColor" + players[i].playerToken.toString() + ".png")
-
-        }
-
-        var index = 0
-        for (i in gates.indices) {
-            gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor" + gates[i].first.toString() + ".png")
-            gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor" + gates[i].second.toString() + ".png")
-        }
+        changePlayerNamesAndGates(players,gates)
         highlightPlayer(rootService.currentGame!!.currentPlayer)
         playersTile.apply {
             visual = ImageVisual(
@@ -416,7 +388,18 @@ class GameScene(
             visualList[0], visualList[1], visualList[2], visualList[3], visualList[4], visualList[5], visualList[5]
         )
 
-        hexagonGrid[hexCord.first, hexCord.second]!!.apply { visual = compoundVisual }
+        if (hexCord == Pair(0, -4) || hexCord == Pair(0, 4) || hexCord == Pair(-4, 4) || hexCord == Pair(-4, 0)
+            || hexCord == Pair(4, 0) || hexCord == Pair(4, -4)
+        ) {
+            hexagonGrid[hexCord.first, hexCord.second]!!.apply {
+                visual = compoundVisual
+            }
+        } else {
+            hexagonGrid[hexCord.first, hexCord.second]!!.apply {
+                visual = compoundVisual
+                this.rotation = ((tile.rotation * 60) + 60).toDouble()
+            }
+        }
 
     }
 
@@ -472,21 +455,26 @@ class GameScene(
     }
 
     override fun onStateChange(newGameState: GameState) {
+
         playerList = newGameState.players
+        changePlayerNamesAndGates(playerList, newGameState.board.gates.toList())
         playersTile.apply {
             visual = ImageVisual(
-                findTilePath(rootService.currentGame!!.currentPlayer.currentTile!!.tileType)
+                findTilePath(newGameState.currentPlayer.currentTile!!.tileType)
             )
         }
         for (i in hexagonGrid.components) {
             i.apply { visual = ColorVisual(250, 240, 202) }
         }
+        placeTiles()
         for ((key, value) in newGameState.board.grid.grid) {
             changeVisual(value, key)
         }
+
         for (i in playerList.indices) {
             scoresList[i].text = calcScore(playerList[i].collectedGems).toString()
         }
+        stackSize.apply { text = newGameState.drawPile.size.toString() }
 
 
 
@@ -568,5 +556,38 @@ class GameScene(
             score += i.score()
         }
         return score
+    }
+
+    private fun changePlayerNamesAndGates(players: List<Player>, gates: List<Pair<PlayerToken, PlayerToken>>){
+        gridPane[0, 0]!!.isDisabled = false
+        gridPane[0, 0]!!.isVisible = true
+        gridPane[0, 1]!!.isDisabled = false
+        gridPane[0, 1]!!.isVisible = true
+        gridPane[0, 2]!!.isDisabled = false
+        gridPane[0, 2]!!.isVisible = true
+        gridPane[0, 3]!!.isDisabled = false
+        gridPane[0, 3]!!.isVisible = true
+        when (players.size) {
+            2 -> for (i in 2..3) {
+                gridPane[0, i]!!.isDisabled = true
+                gridPane[0, i]!!.isVisible = false
+            }
+
+            3 -> {
+                gridPane[0, 3]!!.isDisabled = true
+                gridPane[0, 3]!!.isVisible = false
+            }
+        }
+        for (i in players.indices) {
+            playerNameList[i].text = players[i].name
+            playerTokenList[i].visual = ImageVisual(path = "PlayerColor" + players[i].playerToken.toString() + ".png")
+
+        }
+
+        var index = 0
+        for (i in gates.indices) {
+            gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor" + gates[i].first.toString() + ".png")
+            gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor" + gates[i].second.toString() + ".png")
+        }
     }
 }
