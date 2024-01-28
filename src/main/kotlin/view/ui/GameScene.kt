@@ -318,13 +318,35 @@ class GameScene(
         stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
         onStateChange(rootService.currentGame!!)
         placeTiles()
-
+        val isPlayerRemote = players[0].playerType == PlayerType.REMOTE
         for (i in hexagonGrid.components) {
 
-            if (players[0].playerType == PlayerType.REMOTE) {
+            if (isPlayerRemote) {
                 i.apply { isDisabled = true }
             } else {
                 i.apply { isDisabled = false }
+            }
+        }
+        if (isPlayerRemote) {
+            rotateLeftButton.apply { isDisabled = true }
+            rotateRightButton.apply { isDisabled = true }
+        } else {
+            rotateLeftButton.apply { isDisabled = false }
+            rotateRightButton.apply { isDisabled = false }
+        }
+
+        if (isNetworkGame()) {
+            undoButton.apply {
+                isDisabled = true
+                isVisible = false
+            }
+            redoButton.apply {
+                isDisabled = true
+                isVisible = false
+            }
+            saveButton.apply {
+                isDisabled = true
+                isVisible = false
             }
         }
 
@@ -347,13 +369,22 @@ class GameScene(
 
         stackSize.apply { text = rootService.currentGame!!.drawPile.size.toString() }
 
+        val isPlayerRemote = nextPlayer.playerType == PlayerType.REMOTE
+
         for (i in hexagonGrid.components) {
 
-            if (nextPlayer.playerType == PlayerType.REMOTE) {
+            if (isPlayerRemote) {
                 i.apply { isDisabled = true }
             } else {
                 i.apply { isDisabled = false }
             }
+        }
+        if (isPlayerRemote) {
+            rotateLeftButton.apply { isDisabled = true }
+            rotateRightButton.apply { isDisabled = true }
+        } else {
+            rotateLeftButton.apply { isDisabled = false }
+            rotateRightButton.apply { isDisabled = false }
         }
     }
 
@@ -590,4 +621,9 @@ class GameScene(
             gatesTokenList[index++].visual = ImageVisual(path = "PlayerColor" + gates[i].second.toString() + ".png")
         }
     }
+
+    private fun isNetworkGame() =
+        checkNotNull(rootService.currentGame).players.any {
+            it.playerType == PlayerType.REMOTE
+        }
 }
