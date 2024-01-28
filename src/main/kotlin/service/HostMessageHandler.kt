@@ -34,6 +34,8 @@ class HostMessageHandler(private val rootService: RootService,
 
             val msg = convertGameState()
             client.sendGameActionMessage(msg)
+
+            rootService.playerService.processAllAIMoves()
         }
     }
 

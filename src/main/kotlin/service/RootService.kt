@@ -64,7 +64,9 @@ class RootService : AbstractRefreshingService() {
 
         onAllRefreshables { onGameStart(playerList, gates.toList()) }
 
-        playerService.processAllAIMoves()
+        if (!isNetworkGame()) {
+            playerService.processAllAIMoves()
+        }
 
         val state = checkNotNull(currentGame)
 
