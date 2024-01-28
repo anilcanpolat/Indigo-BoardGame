@@ -64,6 +64,8 @@ class RootService : AbstractRefreshingService() {
 
         onAllRefreshables { onGameStart(playerList, gates.toList()) }
 
+        playerService.processAllAIMoves()
+
         val state = checkNotNull(currentGame)
 
         if (state.currentPlayer.playerType == PlayerType.PERSON) {
