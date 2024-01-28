@@ -35,14 +35,14 @@ class EndgameScene : MenuScene(1920, 1080,
         )
     }
 
-    private val bronze = Label(width = 30, height = 50,
+    val bronze = Label(width = 30, height = 50,
         posX = 1335, posY = 250).apply{
         visual = CompoundVisual(
             ImageVisual(path = "bronze.png")
         )
     }
 
-    private val fourthPlace = Label(width = 30, height = 50,
+    val fourthPlace = Label(width = 30, height = 50,
         posX = 405, posY = 700, text = "4.", font = Font(size = 35)
     )
 
@@ -66,6 +66,8 @@ class EndgameScene : MenuScene(1920, 1080,
         winnerTwo.isVisible = true
         winnerThree.isVisible = true
         winnerFour.isVisible = true
+        fourthPlace.isVisible = true
+        bronze.isVisible = true
         }
     }
 
