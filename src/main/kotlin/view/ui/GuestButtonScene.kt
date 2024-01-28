@@ -141,8 +141,14 @@ class GuestButtonScene(networkService: NetworkService,
             isPerson = PlayerType.COMPUTER
         }
 
-        return PlayerConfig(playerATextBox.text,0,isPerson,
-            isRandomKi, 250)
+        val delay = try {
+            Integer.parseInt(kiSpeedGuestText.text, 10)
+        } catch (e: NumberFormatException) {
+            println("Invalid speed value. Defaulting to 250ms!")
+            250
+        }
+
+        return PlayerConfig(playerATextBox.text,0, isPerson, isRandomKi, delay)
     }
 
     init {
