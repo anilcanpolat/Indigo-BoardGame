@@ -7,6 +7,7 @@ import entity.Tile
 import tools.aqua.bgw.net.common.notification.PlayerJoinedNotification
 import tools.aqua.bgw.net.common.response.JoinGameResponse
 import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
+import java.util.concurrent.Semaphore
 
 
 /**
@@ -17,6 +18,8 @@ import tools.aqua.bgw.net.common.response.JoinGameResponseStatus
 class GuestMessageHandler(private val rootService: RootService,
                           private val config: PlayerConfig
 ): MessageHandler {
+    private val gameStateInitLock = Semaphore(0)
+
     override fun onJoinGame(client: IndigoClient, resp: JoinGameResponse) {
         if (resp.status != JoinGameResponseStatus.SUCCESS) {
             throw NetworkServiceException(NetworkServiceException.Type.CannotJoinGame)
@@ -79,10 +82,14 @@ class GuestMessageHandler(private val rootService: RootService,
         }
     }
 
-    private fun getGameState(): entity.GameState = checkNotNull(rootService.currentGame)
+    private fun getGameState(): entity.GameState {
+        gameStateInitLock.acquire()
+        return checkNotNull(rootService.currentGame)
+    }
 
     private fun setGameState(state: entity.GameState) {
         rootService.currentGame = state
+        gameStateInitLock.release(Int.MAX_VALUE)
     }
 
     private fun translateMode(mode: GameMode): entity.GameMode =
