@@ -15,11 +15,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
      */
 
     fun playerMove(move: Pair<Tile, Int>, position: Pair<Int, Int>) {
-        val game = checkNotNull(rootService.currentGame)
-
-        // create a copy so that using undo/redo works
-        val gameCopy = game.deepCopy()
-        gameCopy.nextState = game
+        var game = checkNotNull(rootService.currentGame) { "game is not initialized" }
 
         check(!gameIsFinished()) { "cannot perform any moves in a finished game" }
 
@@ -32,6 +28,15 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         check(!isBlockingGates(move.first, move.second, position)) {
             "It is not permitted to block two gates by putting a curve to both gates"
         }
+
+        val previousGame = checkNotNull(rootService.currentGame)
+        rootService.currentGame = rootService.currentGame?.deepCopy()
+
+        previousGame.nextState = rootService.currentGame
+        rootService.currentGame?.previousState = previousGame
+        rootService.currentGame?.nextState = null
+
+        game = checkNotNull(rootService.currentGame)
 
         move.first.rotate(move.second)
         game.board.grid.grid[position] = move.first
@@ -99,10 +104,6 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         }
 
         game.currentPlayer = nextPlayer
-
-        game.previousState = gameCopy
-        game.nextState = null
-        gameCopy.nextState = game
 
         if (gameIsFinished()) {
             refreshList.add {
