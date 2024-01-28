@@ -1,4 +1,4 @@
-package service.AIServiceTest
+package service.aIServiceTest
 
 import entity.*
 import service.*
@@ -25,7 +25,7 @@ class ProperMoveForAITest {
         player3 = PlayerConfig("Cortana", 8, PlayerType.PERSON)
         player4 = PlayerConfig("GoogleAssistant", 8, PlayerType.COMPUTER)
     }
-/*
+
     @Test
     fun `test properMoveForAI with ideal conditions`() {
         players = listOf(player1, player2)
@@ -46,6 +46,7 @@ class ProperMoveForAITest {
         //rootService.playerService.playerMove(betterMove.first, betterMove.second)
         //gameState.currentPlayer.currentTile = Tile(TileType.CURVES_TO_CORNER)
 
+        /*
         for(i in 1..26) {
 
             print("Round: ")
@@ -97,6 +98,8 @@ class ProperMoveForAITest {
         println(point2)
         //Assertion and fine-tuning can be done when bugs in PlayerActionService are fixed.
         //assertTrue { point1 >= point2 }
+
+         */
     }
-*/
+
 }

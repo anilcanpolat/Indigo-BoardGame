@@ -1,7 +1,8 @@
-package service
+package service.aIServiceTest
 
 import entity.*
 import kotlin.test.*
+import service.*
 
 /**
  * Test class for AIService.randomMove method.

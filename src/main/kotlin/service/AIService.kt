@@ -1,7 +1,6 @@
 package service
 
 import entity.*
-import kotlinx.coroutines.*
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import service.CommonMethods.neighbouringPositions
@@ -133,7 +132,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
         return score
     }
 
-    private val MAX_SCORE = 10
+    private val maxScore = 10
 
     private fun calculateProximityScore(game: GameState, aiPlayerToken: PlayerToken): Int {
         var score = 0
@@ -146,7 +145,7 @@ class AIService(private val rootService: RootService) : AbstractRefreshingServic
             // give points if it is self gate
             if (nearestGateDistance != null &&
                 (nearestGate?.first == aiPlayerToken || nearestGate?.second == aiPlayerToken)) {
-                var gateScore = MAX_SCORE - nearestGateDistance
+                var gateScore = maxScore - nearestGateDistance
                 gateScore += gem.score() * 2 // add gem's value
                 score += gateScore
             }
