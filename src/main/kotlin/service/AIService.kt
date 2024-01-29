@@ -15,11 +15,9 @@ import service.CommonMethods.neighbouringPositions
  *
  * @property rootService Reference to the RootService,
  * which provides access to the current game state and other services.
- * @property ps Reference to the PlayerService, used to execute moves on behalf of the AI player.
+ * ps was Reference to the PlayerService, used to execute moves on behalf of the AI player.
  */
 class AIService(private val rootService: RootService) : AbstractRefreshingService() {
-
-    private val ps = rootService.playerService
 
     /**
      * Calculates the next move for the AI player based on the current game state.

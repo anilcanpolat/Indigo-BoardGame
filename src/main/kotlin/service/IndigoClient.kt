@@ -76,7 +76,7 @@ class IndigoClient(
             if (captureCallbackFailures) {
                 try {
                     callback()
-                } catch (e: Exception) {
+                } catch (e: IllegalStateException) {
                     println("exception in event handler: ${e.message}")
                     println(e.stackTraceToString())
                 }
