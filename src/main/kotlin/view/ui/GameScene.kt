@@ -486,6 +486,7 @@ class GameScene(
     }
 
     override fun onStateChange(newGameState: GameState) {
+        rotationRate = 0
 
         playerList = newGameState.players
         changePlayerNamesAndGates(playerList, newGameState.board.gates.toList())
@@ -493,6 +494,7 @@ class GameScene(
             visual = ImageVisual(
                 findTilePath(newGameState.currentPlayer.currentTile!!.tileType)
             )
+            this.rotation = 90.0
         }
         for (i in hexagonGrid.components) {
             i.apply { visual = ColorVisual(250, 240, 202) }
