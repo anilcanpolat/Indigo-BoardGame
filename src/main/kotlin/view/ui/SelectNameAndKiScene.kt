@@ -93,10 +93,11 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
          onMouseClicked = {
+             kiLevelA++
              kiA = setKILevel(kiLevelA)
              playerATextBox.text = printOrDeleteKiNames(kiA, kiLevelA)
              visual = changeColorForKi(kiA, kiLevelA)
-             kiLevelA++
+
         }
     }
 
@@ -107,10 +108,10 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
+            kiLevelB++
             kiB = setKILevel(kiLevelB)
             playerBTextBox.text = printOrDeleteKiNames(kiB, kiLevelB)
             visual = changeColorForKi(kiB, kiLevelB)
-            kiLevelB++
         }
     }
 
@@ -121,10 +122,10 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
+            kiLevelC++
             kiC = setKILevel(kiLevelC)
             playerCTextBox.text = printOrDeleteKiNames(kiC, kiLevelC)
             visual = changeColorForKi(kiC, kiLevelC)
-            kiLevelC++
         }
     }
 
@@ -135,18 +136,18 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         font = Font(16)
     ).apply { visual = ColorVisual(ColorEnum.Papaya.toRgbValue())
         onMouseClicked = {
+            kiLevelD++
             kiD = setKILevel(kiLevelD)
             playerDTextBox.text = printOrDeleteKiNames(kiD, kiLevelD)
             visual = changeColorForKi(kiD, kiLevelD)
-            kiLevelD++
         }
     }
 
     //var for level of Ki
-    private var kiLevelA = 1
-    private var kiLevelB = 1
-    private var kiLevelC = 1
-    private var kiLevelD = 1
+    private var kiLevelA = 0
+    private var kiLevelB = 0
+    private var kiLevelC = 0
+    private var kiLevelD = 0
 
     var kiA : Boolean = false
     var kiB : Boolean = false
@@ -366,6 +367,16 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         }
     }
 
+    private fun setKIDelay() : Int{
+        val delay = try {
+            Integer.parseInt(kiSpeedTextField.text, 10)
+        } catch (e: NumberFormatException) {
+            println("Invalid speed value. Defaulting to 250ms!")
+            250
+        }
+        return delay
+    }
+
     /**
      * function to reset this Scene when pressing the return button.
      */
@@ -488,6 +499,16 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
         var p3Type: PlayerType = PlayerType.PERSON
         var p4Type: PlayerType = PlayerType.PERSON
 
+        var p1IsRandomKi = false
+        var p2IsRandomKi = false
+        var p3IsRandomKi = false
+        var p4IsRandomKi = false
+
+        var p1KiSpeed = 250
+        var p2KiSpeed = 250
+        var p3KiSpeed = 250
+        var p4KiSpeed = 250
+
         when (playerCount) {
             1 -> {
                 p1Name = playerATextBox.text
@@ -508,21 +529,30 @@ class SelectNameAndKiScene : MenuScene(1920, 1080,
 
         if(kiA){
             p1Type = PlayerType.COMPUTER
+             if(kiLevelA == 1){p1IsRandomKi = true}
+             p1KiSpeed = setKIDelay()
         }
         if(kiB){
             p2Type = PlayerType.COMPUTER
+            if(kiLevelB == 1){p2IsRandomKi = true}
+            p2KiSpeed = setKIDelay()
         }
         if(kiC){
             p3Type = PlayerType.COMPUTER
+            if(kiLevelC == 1){p3IsRandomKi = true}
+            p3KiSpeed = setKIDelay()
         }
         if(kiD){
             p4Type = PlayerType.COMPUTER
+            if(kiLevelC == 1){p4IsRandomKi = true}
+            p4KiSpeed = setKIDelay()
         }
 
-        val p1 = PlayerConfig(p1Name, 0, p1Type)
-        val p2 = PlayerConfig(p2Name, 0, p2Type)
-        val p3 = PlayerConfig(p3Name, 0, p3Type)
-        val p4 = PlayerConfig(p4Name, 0, p4Type)
+        val p1 = PlayerConfig(p1Name, 0, p1Type, p1IsRandomKi, p1KiSpeed)
+        val p2 = PlayerConfig(p2Name, 0, p2Type, p2IsRandomKi, p2KiSpeed)
+        val p3 = PlayerConfig(p3Name, 0, p3Type, p3IsRandomKi, p3KiSpeed)
+        val p4 = PlayerConfig(p4Name, 0, p4Type, p4IsRandomKi, p4KiSpeed)
+
 
         var finalTypeList : MutableList<PlayerConfig> = mutableListOf()
         finalTypeList = sequenceTheListForReturn(playerCount,p1, p2, p3, p4)
