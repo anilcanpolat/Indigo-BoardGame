@@ -43,6 +43,7 @@ class ProperMoveForAITest {
         aiService = AIService(rootService)
         gameState = rootService.currentGame!!
 
+        /**
         //Manual Moves zur Verfügung
 
         //gameState.currentPlayer.currentTile = Tile(TileType.STRAIGHT_NOCROSS)
@@ -55,7 +56,7 @@ class ProperMoveForAITest {
         //rootService.playerService.playerMove(betterMove.first, betterMove.second)
         //gameState.currentPlayer.currentTile = Tile(TileType.CURVES_TO_CORNER)
 
-        /*
+
         for(i in 1..26) {
             print("Round: ")
             println(i)
@@ -86,7 +87,8 @@ class ProperMoveForAITest {
             print(betterMove.first.second)
             print(", ")
             println(betterMove.second)
-            //rootService.playerService.playerMove(betterMove.first, betterMove.second) //Path leads to a tile with no connecting path
+            //rootService.playerService.playerMove(betterMove.first, betterMove.second)
+        //Path leads to a tile with no connecting path
 
             /*//Player
             print("Current Player: ")
