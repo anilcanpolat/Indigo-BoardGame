@@ -4,6 +4,9 @@ import entity.*
 import service.*
 import kotlin.test.*
 
+/**
+ * its seems to be a class to test the proper Ai with almost 0 testing being done
+ */
 class ProperMoveForAITest {
 
     private lateinit var rootService: RootService
@@ -16,6 +19,9 @@ class ProperMoveForAITest {
     private lateinit var player4: PlayerConfig
     private lateinit var players: List<PlayerConfig>
 
+    /**
+     * set up function to set values before the test runs.
+     */
     @BeforeTest
     fun setUp() {
 
@@ -26,6 +32,9 @@ class ProperMoveForAITest {
         player4 = PlayerConfig("GoogleAssistant", 8, PlayerType.COMPUTER)
     }
 
+    /**
+     * function to actually test something? not sure, I think it does nothing.
+     */
     @Test
     fun `test properMoveForAI with ideal conditions`() {
         players = listOf(player1, player2)
@@ -48,7 +57,6 @@ class ProperMoveForAITest {
 
         /*
         for(i in 1..26) {
-
             print("Round: ")
             println(i)
 

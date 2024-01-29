@@ -65,7 +65,7 @@ class AiIntegrationTest {
                 }
             })
 
-            for (i in 0..5) {
+            repeat(6) {
                 val move = CommonMethods.calculateRandomAIMove(gameState())
                 rootService.playerService.playerMove(move.first, move.second)
             }
@@ -79,7 +79,9 @@ class AiIntegrationTest {
             val host = RootService()
             val session = Random().nextInt().toString()
 
-            host.networkService.createGame(session, PlayerConfig("Alice", -1, PlayerType.PERSON, useRandomAI = true), GameMode.TWO_PLAYERS)
+            host.networkService.createGame(session,
+                PlayerConfig("Alice", -1, PlayerType.PERSON, useRandomAI = true),
+                GameMode.TWO_PLAYERS)
             Thread.sleep(1000)
 
             val guest = RootService()

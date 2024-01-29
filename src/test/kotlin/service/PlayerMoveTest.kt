@@ -157,7 +157,9 @@ class PlayerMoveTest {
 
         }
 
-
+        /**
+         * test if gems get eliminated if they run into each other via tiles placed together.
+         */
         @Test
         fun testGemEliminationDirectCenterContact() {
             val positions = listOf(
@@ -311,7 +313,8 @@ class PlayerMoveTest {
                 val center = getTileAt(Pair(0, 0))
                 val border = getTileAt(corner)
 
-                assertTrue(border.gems.all { gem -> gem == null }, "amber should have been moves of the border treasure tile")
+                assertTrue(border.gems.all { gem -> gem == null },
+                    "amber should have been moves of the border treasure tile")
                 assertTrue(center.gems.any { gem -> gem == Gem.SAPHIRE }, "the saphire should remain on the treasure tile")
 
                 val centerGemCount = center.gems.filterNotNull().size
@@ -323,7 +326,7 @@ class PlayerMoveTest {
     /** make sure that finishing the game works reliably by playing multiple games with random valid moves */
     @Test
     fun finishWithRandomMovesTest() {
-        for (i in 0..1000) {
+        repeat(1001) {
             val serv = RootService()
 
             val players = listOf(
